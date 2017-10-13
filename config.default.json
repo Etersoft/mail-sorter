@@ -1,0 +1,6 @@
+{
+  "imapConnection": {
+    "port": 993,
+    "tls": true
+  }
+}
