@@ -1,6 +1,7 @@
 const IMAP = require('imap');
 
 const Message = require('./Message');
+const parseMessage = require('mailparser').simpleParser;
 
 
 class Mailbox {
@@ -11,29 +12,22 @@ class Mailbox {
     this.imapConnection = new IMAP(options.connection);
   }
 
-  fetchMessages () {
-    return new Promise((resolve, reject) => {
-      const fetchObject = this.imapConnection.seq.fetch('1:2', {
-        bodies: [
-          'HEADER.FIELDS (FROM, TO)',
-          'TEXT'
-        ]
-      });
+  loadMessagesRange (from, to, onMessage, onError) {
+    const range = from + ':' + to;
+    const fetchObject = this.imapConnection.seq.fetch(range, {
+      bodies: ''
+    });
 
-      const messages = [];
+    fetchObject.on('message', (messageInfo, id) => {
+      this._loadMessage(messageInfo, id).then(onMessage).catch(onError);
+    });
 
-      fetchObject.on('message', async (message, seqNumber) => {
-        console.log(seqNumber);
-        messages.push(await this.loadMessage(message, seqNumber));
-      });
-
-      fetchObject.once('error', reject);
-
-      fetchObject.on('end', () => {
-        setTimeout(() => {
-          resolve(messages);
-        }, 500);
-      });
+    fetchObject.once('error', error => {
+      if (onError) {
+        onError(error);
+      } else {
+        throw error;
+      }
     });
   }
 
@@ -47,7 +41,7 @@ class Mailbox {
             return;
           }
 
-          this.mailbox = box;
+          this._mailbox = box;
           resolve();
         });
       });
@@ -55,45 +49,8 @@ class Mailbox {
     });
   }
 
-  loadMessage (message, index) {
-    return new Promise(resolve => {
-      let header, body, attributes;
-
-      message.on('body', async (stream, info) => {
-        console.log(index + 'Message [%s] found, %d total bytes', info.which, info.size);
-        const buffer = await this.loadMessageBodyStream(stream, index);
-        if (info.which === 'TEXT') {
-          body = buffer;
-        } else {
-          header = IMAP.parseHeader(buffer);
-        }
-      });
-
-      message.once('attributes', attr => {
-        attributes = attr;
-      });
-
-      message.once('end', () => {
-        setTimeout(() => {
-          resolve(new Message({
-            header, body, attributes
-          }));
-        }, 300);
-      });
-    });
-  }
-
-  loadMessageBodyStream (stream, index) {
-    return new Promise(resolve => {
-      let buffer = '';
-      stream.on('data', chunk => {
-        console.log(index + 'Body data' + chunk);
-        buffer += chunk.toString('utf8');
-      });
-      stream.once('end', () => {
-        setTimeout(() => resolve(buffer), 100);
-      });
-    });
+  messageCount () {
+    return this.mailbox.messages.total;
   }
 
   _getInitializedConnection () {
@@ -104,6 +61,33 @@ class Mailbox {
         this.onReady = resolve;
       });
     }
+  }
+
+  async _loadMessage (message, id) {
+    const [data, attributes] = await Promise.all([
+      // Parse message body
+      new Promise((resolve, reject) => {
+        message.on('body', stream => {
+          parseMessage(stream).then(resolve).catch(reject);
+        });
+      }),
+      // Wait for attributes
+      new Promise(resolve => message.once('attributes', resolve)),
+      // Wait for loading end
+      new Promise(resolve => message.once('end', resolve))
+    ]);
+ 
+    return new Message(data, attributes, id, this);
+  }
+
+  _loadMessageBodyStream (stream, onLoad) {
+    let buffer = '';
+    stream.on('data', chunk => {
+      buffer += chunk.toString('utf8');
+    });
+    stream.once('end', () => {
+      onLoad && onLoad(buffer);
+    });
   }
 }
 
