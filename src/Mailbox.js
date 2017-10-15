@@ -1,7 +1,7 @@
 const IMAP = require('imap');
+const parseMessage = require('mailparser').simpleParser;
 
 const Message = require('./Message');
-const parseMessage = require('mailparser').simpleParser;
 
 
 class Mailbox {
@@ -9,7 +9,7 @@ class Mailbox {
     this.boxName = options.boxName;
     this.connectionOptions = options.connection;
     this.readonly = (typeof options.readonly === 'undefined') ? true : options.readonly;
-    this.imapConnection = new IMAP(options.connection);
+    this.imapConnection = options.connection;
   }
 
   loadMessagesRange (from, to, onMessage, onError) {
@@ -31,21 +31,18 @@ class Mailbox {
     });
   }
 
-  initialize () {
-    return new Promise((resolve, reject) => {
-      this.imapConnection.connect();
-      this.imapConnection.once('ready', () => {
-        this.imapConnection.openBox(this.boxName, this.readonly, (error, box) => {
-          if (error) {
-            reject(error);
-            return;
-          }
+  async initialize () {
+    await this._ensureConnectionIsReady();
+    await new Promise((resolve, reject) => {
+      this.imapConnection.openBox(this.boxName, this.readonly, (error, box) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-          this._mailbox = box;
-          resolve();
-        });
+        this._mailbox = box;
+        resolve();
       });
-      this.imapConnection.once('error', reject);
     });
   }
 
@@ -53,13 +50,15 @@ class Mailbox {
     return this.mailbox.messages.total;
   }
 
-  _getInitializedConnection () {
-    if (this.ready) {
-      return Promise.resolve(this.imapConnection);
-    } else {
-      return new Promise(resolve => {
-        this.onReady = resolve;
+  _ensureConnectionIsReady () {
+    if (this.imapConnection.state !== 'authenticated') {
+      return new Promise((resolve, reject) => {
+        this.imapConnection.connect();
+        this.imapConnection.once('ready', resolve);
+        this.imapConnection.once('error', reject);
       });
+    } else {
+      return Promise.resolve();
     }
   }
 
@@ -78,16 +77,6 @@ class Mailbox {
     ]);
  
     return new Message(data, attributes, id, this);
-  }
-
-  _loadMessageBodyStream (stream, onLoad) {
-    let buffer = '';
-    stream.on('data', chunk => {
-      buffer += chunk.toString('utf8');
-    });
-    stream.once('end', () => {
-      onLoad && onLoad(buffer);
-    });
   }
 }
 
