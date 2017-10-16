@@ -12,8 +12,20 @@ class Mailbox {
     this.imapConnection = options.connection;
   }
 
-  loadMessagesRange (from, to, onMessage, onError) {
-    const range = from + ':' + to;
+  findUnseen () {
+    return new Promise((resolve, reject) => {
+      this.imapConnection.seq.search(['UNSEEN'], (error, results) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(results);
+      });
+    });
+  }
+
+  loadMessages (range, onMessage, onError) {
     const fetchObject = this.imapConnection.seq.fetch(range, {
       bodies: ''
     });
@@ -46,8 +58,16 @@ class Mailbox {
     });
   }
 
-  messageCount () {
-    return this.mailbox.messages.total;
+  markAsRead (messageId) {
+    return new Promise((resolve, reject) => {
+      this.imapConnection.delFlag(messageId, 'UNSEEN', error => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
   }
 
   _ensureConnectionIsReady () {

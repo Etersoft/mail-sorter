@@ -1,8 +1,13 @@
 const IMAP = require('imap');
 
 const readConfig = require('./readConfig');
-const Mailbox = require('./Mailbox');
+const ReadonlyMailbox = require('./ReadonlyMailbox');
 const MailboxSorter = require('./MailboxSorter');
+const MessageClassifier = require('./MessageClassifier');
+const MessageTypes = require('./MessageTypes');
+const HumanMessageHandler = require('./handlers/HumanMessageHandler');
+const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
+const MailingListDatabase = require('./MailingListDatabase');
 
 const CONFIG_HIERARCHY = [
   'config.default.json',
@@ -13,14 +18,25 @@ const CONFIG_HIERARCHY = [
 async function main () {
   const config = readConfig(CONFIG_HIERARCHY);
 
-  const mailbox = new Mailbox({
+  const mailbox = new ReadonlyMailbox({
     boxName: 'INBOX',
     connection: new IMAP(config.imapConnection)
   });
+  console.log('Connecting...');
   await mailbox.initialize();
 
-  const sorter = new MailboxSorter(mailbox);
-  await sorter.sort();
+  const mailServerMessageHandler = new MailServerMessageHandler(
+    new MailingListDatabase(), mailbox, config.temporaryFailureLimit
+  );
+  const sorter = createMailboxSorter(config, mailbox, mailServerMessageHandler);
+  const stats = await sorter.sort();
+
+  if (stats) {
+    console.log('Sorting stats:');
+    Object.keys(stats).forEach(field => {
+      console.log(`  ${field}: ${stats[field]}`);
+    });
+  }
 }
 
 main().then(() => {
@@ -30,3 +46,13 @@ main().then(() => {
   console.error(error.stack);
   process.exit(1);
 });
+
+
+function createMailboxSorter (config, mailbox, mailServerMessageHandler) {
+  const classifier = new MessageClassifier();
+  const handlerMap = {
+    [MessageTypes.HUMAN]: new HumanMessageHandler(),
+    [MessageTypes.MAIL_SERVER]: mailServerMessageHandler
+  };
+  return new MailboxSorter(mailbox, classifier, handlerMap);
+}

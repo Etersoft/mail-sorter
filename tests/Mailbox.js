@@ -1,4 +1,5 @@
-const { assert } = require('chai');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 const { EventEmitter } = require('events');
 const stream = require('stream');
@@ -10,72 +11,76 @@ const testEmail = readFileSync(join(__dirname, 'test-message.eml'), 'utf8');
 const Mailbox = require('../src/Mailbox');
 
 
+chai.use(chaiAsPromised);
+const { assert } = chai;
+
 describe('Mailbox', function() {
   // Initialization
-  let fakeConnection, mailbox;
+  let fakeConnection, fetchObject, fakeMessage, mailbox, testError, fakeBox;
 
   beforeEach(function () {
     // Create a new fresh Mailbox instance before each test
-    fakeConnection = {
+    fakeMessage = new EventEmitter();
+    fetchObject = new EventEmitter();
+    fakeBox = {};
+    testError = new Error();
+
+    fakeConnection = Object.assign(Object.create(new EventEmitter()), {
+      connect: sinon.spy(() => {
+        process.nextTick(() => {
+          fakeConnection.emit('ready');
+        });
+      }),
+      openBox: sinon.spy((box, readonly, onOpen) => {
+        process.nextTick(() => {
+          onOpen(null, fakeBox);
+        });
+      }),
       seq: {
-        fetch: sinon.spy(() => new EventEmitter)
-      }
-    };
+        fetch: sinon.spy(() => fetchObject),
+        search: sinon.spy()
+      },
+      state: 'disconnected'
+    });
 
     mailbox = new Mailbox({
       boxName: 'INBOX',
-      connection: fakeConnection
+      connection: fakeConnection,
+      readonly: true
     });
   });
 
   // Tests
 
-  describe('#loadMessagesRange', function() {
-    this.timeout(500);
-
-    it('should pass correct range to imap.fetch', function() {
-      mailbox.loadMessagesRange(1, 3, () => {}, () => {});
-      assert.isOk(fakeConnection.seq.fetch.calledWith('1:3'));
-    });
-
-    it('should call onError on fetch error', function() {
-      const errorSpy = sinon.spy();
-      const fetchObject = new EventEmitter();
-      const testError = new Error();
-
-      const fakeConnection = {
-        seq: {
-          fetch: () => fetchObject
-        }
-      };
-
-      const mailbox = new Mailbox({
+  describe('constructor', function () {
+    it('should be readonly by default', function () {
+      mailbox = new Mailbox({
         boxName: 'INBOX',
         connection: fakeConnection
       });
+      assert.isOk(mailbox.readonly);
+    });
+  });
 
-      mailbox.loadMessagesRange(1, 3, () => {}, errorSpy);
+  describe('#loadMessages', function () {
+    this.timeout(500);
+
+    it('should pass correct range to imap.fetch', function () {
+      mailbox.loadMessages('1:3', () => {}, () => {});
+      assert.isOk(fakeConnection.seq.fetch.calledWith('1:3'));
+    });
+
+    it('should call onError on fetch error', function () {
+      const errorSpy = sinon.spy();
+
+      mailbox.loadMessages('1:3', () => {}, errorSpy);
       assert.isNotOk(errorSpy.called);
       fetchObject.emit('error', testError);
       assert.isOk(errorSpy.calledWith(testError));
     });
 
-    it('should call onError on invalid message body', function(done) {
-      const fakeMessage = new EventEmitter();
-      const fetchObject = new EventEmitter();
-
-      const fakeConnection = {
-        seq: {
-          fetch: () => fetchObject
-        }
-      };
-
-      const mailbox = new Mailbox({
-        boxName: 'INBOX',
-        connection: fakeConnection
-      });
-
-      mailbox.loadMessagesRange(1, 3, () => {}, error => {
+    it('should call onError on invalid message body', function (done) {
+      mailbox.loadMessages('1:3', () => {}, error => {
         assert.isNotNull(error);
         done();
       });
@@ -83,25 +88,11 @@ describe('Mailbox', function() {
       fakeMessage.emit('body', null /* invalid body */);
     });
 
-    it('should call onError on stream error', function(done) {
-      const fakeMessage = new EventEmitter();
+    it('should call onError on stream error', function (done) {
       const fakeStream = new stream.Readable();
       fakeStream._read = () => {};
-      const fetchObject = new EventEmitter();
-      const testError = new Error();
 
-      const fakeConnection = {
-        seq: {
-          fetch: () => fetchObject
-        }
-      };
-
-      const mailbox = new Mailbox({
-        boxName: 'INBOX',
-        connection: fakeConnection
-      });
-
-      mailbox.loadMessagesRange(1, 3, () => {}, error => {
+      mailbox.loadMessages('1:3', () => {}, error => {
         assert.equal(error, testError);
         done();
       });
@@ -110,38 +101,73 @@ describe('Mailbox', function() {
       fakeStream.emit('error', testError);
     });
 
-    it('should call onMessage for each parsed message', async function () {
-      let fakeMessage = new EventEmitter();
-      const fetchObject = new EventEmitter();
-      const messageSpy = sinon.spy();
+    it('should call onMessage for each parsed message', function (done) {
+      mailbox.loadMessages('1:3', () => {
+        done();
+      });
+      fetchObject.emit('message', fakeMessage);
+      fakeMessage.emit('body', testEmail);
+      fakeMessage.emit('attributes', {});
+      fakeMessage.emit('end');
+    });
+  });
 
-      const fakeConnection = {
-        seq: {
-          fetch: () => fetchObject
-        }
+  describe('#findUnseen', function () {
+    it('should return array of unseed msg ids', function (done) {
+      const ids = [1, 2, 3];
+      mailbox.findUnseen().then(foundIds => {
+        assert.equal(ids, foundIds);
+        done();
+      });
+      process.nextTick(() => {
+        fakeConnection.seq.search.firstCall.args[1](null, ids);
+      });
+    });
+
+    it('should throw promise error on search error', function (done) {
+      mailbox.findUnseen().catch(error => {
+        assert.equal(error, testError);
+        done();
+      });
+      process.nextTick(() => {
+        fakeConnection.seq.search.firstCall.args[1](testError);
+      });
+    });
+  });
+
+  describe('#initialize', function () {
+    it('will behave correctly with already initialized connection', async function () {
+      fakeConnection.state = 'authenticated';
+
+      await assert.isFulfilled(mailbox.initialize());
+
+      assert.isOk(fakeConnection.openBox.calledOnce);
+      assert.isOk(fakeConnection.openBox.calledWith('INBOX', true));
+      assert.isNotOk(fakeConnection.connect.called);
+    });
+
+    it('will behave correctly with uninitialized connection', async function () {
+      await assert.isFulfilled(mailbox.initialize());
+
+      assert.isOk(fakeConnection.openBox.calledOnce);
+      assert.isOk(fakeConnection.openBox.calledWith('INBOX', true));
+      assert.isOk(fakeConnection.connect.calledOnce);
+    });
+
+    it('will throw on connection errors', async function () {
+      fakeConnection.connect = () => {
+        fakeConnection.emit('error', testError);
       };
 
-      const mailbox = new Mailbox({
-        boxName: 'INBOX',
-        connection: fakeConnection
-      });
+      await assert.isRejected(mailbox.initialize(), testError);
+    });
 
-      mailbox.loadMessagesRange(1, 3, messageSpy, console.log);
-      fetchObject.emit('message', fakeMessage);
+    it('will throw on openBox errors', async function () {
+      fakeConnection.openBox = (box, readonly, onOpen) => {
+        onOpen(testError);
+      }
 
-      fakeMessage.emit('body', testEmail);
-      fakeMessage.emit('attributes', {});
-      fakeMessage.emit('end');
-      // Because parser is async
-      await sleep(200);
-      assert.isOk(messageSpy.calledOnce);
-
-      fetchObject.emit('message', fakeMessage);
-      fakeMessage.emit('body', testEmail);
-      fakeMessage.emit('attributes', {});
-      fakeMessage.emit('end');
-      await sleep(200);
-      assert.isOk(messageSpy.calledTwice);
+      await assert.isRejected(mailbox.initialize(), testError);
     });
   });
 });

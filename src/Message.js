@@ -1,3 +1,6 @@
+const FROM_FIELD_REGEXP = /<(.+)>/;
+
+
 class Message {
   constructor (data, attributes, id, mailbox) {
     this.attributes = attributes;
@@ -13,16 +16,15 @@ class Message {
     this.mailbox = mailbox;
   }
 
-  markAsRead () {
-    return new Promise((resolve, reject) => {
-      this.mailbox.delFlag(id, 'UNSEEN', error => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve();
-      });
-    });
+  get fromAddress () {
+    const fromObject = this.headers.get('from');
+    if (!fromObject) return null;
+
+    const fromString = fromObject.text;
+    if (!fromString) return null;
+
+    const match = FROM_FIELD_REGEXP.exec(fromString);
+    return match && match[1];
   }
 }
 
