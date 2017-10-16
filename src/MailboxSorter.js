@@ -18,7 +18,11 @@ class MailboxSorter {
     const unseenIds = await this.mailbox.findUnseen();
     console.log(`Found ${unseenIds.length} unread messages`);
     const batchCount = Math.ceil(unseenIds.length / MESSAGE_BATCH_SIZE);
-    for (let i = batchCount; --i; ) {
+    if (batchCount === 0) {
+      return;
+    }
+
+    for (let i = batchCount; i--; ) {
       const rangeStart = i * MESSAGE_BATCH_SIZE;
       const rangeEnd = rangeStart + MESSAGE_BATCH_SIZE;
       const ids = unseenIds.slice(rangeStart, rangeEnd);
@@ -48,7 +52,12 @@ class MailboxSorter {
     const handler = this.handlerMap[messageType];
     console.log(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
-      const markAsRead = await handler.processMessage(message);
+      let markAsRead = false;
+      try {
+        markAsRead = await handler.processMessage(message);
+      } catch (error) {
+        console.warn(`Warning: message #${message.id} failed: ${error}`);
+      }
       if (markAsRead) {
         await this.mailbox.markAsRead(message.id);
       }

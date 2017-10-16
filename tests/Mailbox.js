@@ -50,6 +50,8 @@ describe('Mailbox', function() {
     });
   });
 
+  this.timeout(500);
+
   // Tests
 
   describe('constructor', function () {
@@ -63,8 +65,6 @@ describe('Mailbox', function() {
   });
 
   describe('#loadMessages', function () {
-    this.timeout(500);
-
     it('should pass correct range to imap.fetch', function () {
       mailbox.loadMessages('1:3', () => {}, () => {});
       assert.isOk(fakeConnection.seq.fetch.calledWith('1:3'));
