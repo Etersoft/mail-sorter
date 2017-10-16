@@ -1,0 +1,94 @@
+Received: from mxfront7o.mail.yandex.net ([127.0.0.1])
+	by mxfront7o.mail.yandex.net with LMTP id R7bpzps6
+	for <noreply@youngreaders.ru>; Fri, 13 Oct 2017 20:57:43 +0300
+Received: from mail.etersoft.ru (mail.etersoft.ru [91.232.225.46])
+	by mxfront7o.mail.yandex.net (nwsmtp/Yandex) with ESMTPS id EmT17SHoq7-vbNm35GN;
+	Fri, 13 Oct 2017 20:57:37 +0300
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client certificate not present)
+X-Yandex-Front: mxfront7o.mail.yandex.net
+X-Yandex-TimeMark: 1507917457
+X-Yandex-Spam: 1
+X-Yandex-Personal-Spam: MTEzMDAwMDA0MjU2OTA2MAo=
+Received: by mail.etersoft.ru (Postfix)
+	id AE59F2E2C83; Tue, 10 Oct 2017 08:08:15 +0300 (MSK)
+Date: Tue, 10 Oct 2017 08:08:15 +0300 (MSK)
+From: MAILER-DAEMON@etersoft.ru (Mail Delivery System)
+Subject: Delayed Mail (still being retried)
+To: noreply@youngreaders.ru
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="C60A81037CE.1507612095/mail.etersoft.ru"
+Message-Id: <20171010050815.AE59F2E2C83@mail.etersoft.ru>
+X-Yandex-Forward: e5e3ff69cf16c5897d356145d298848b
+
+This is a MIME-encapsulated message.
+
+--C60A81037CE.1507612095/mail.etersoft.ru
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host mail.etersoft.ru.
+
+####################################################################
+# THIS IS A WARNING ONLY.  YOU DO NOT NEED TO RESEND YOUR MESSAGE. #
+####################################################################
+
+Your message could not be delivered for more than 2 hour(s).
+It will be retried until it is 5 day(s) old.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<popa.opa.ru@mail.ru>: host mxs.mail.ru[94.100.180.104] said: 421 Try again
+    later. Too many invalid recipients from IP 91.232.225.46. Contact
+    abuse@corp.mail.ru. (in reply to DATA command)
+
+--C60A81037CE.1507612095/mail.etersoft.ru
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; mail.etersoft.ru
+X-Postfix-Queue-ID: C60A81037CE
+X-Postfix-Sender: rfc822; noreply@youngreaders.ru
+Arrival-Date: Tue, 10 Oct 2017 05:03:10 +0300 (MSK)
+
+Final-Recipient: rfc822; popa.opa.ru@mail.ru
+Original-Recipient: rfc822;popa.opa.ru@mail.ru
+Action: delayed
+Status: 4.0.0
+Remote-MTA: dns; mxs.mail.ru
+Diagnostic-Code: smtp; 421 Try again later. Too many invalid recipients from IP
+    91.232.225.46. Contact abuse@corp.mail.ru.
+Will-Retry-Until: Sun, 15 Oct 2017 05:03:10 +0300 (MSK)
+
+--C60A81037CE.1507612095/mail.etersoft.ru
+Content-Description: Undelivered Message Headers
+Content-Type: text/rfc822-headers
+
+Return-Path: <noreply@youngreaders.ru>
+Content-Type: text/html; charset=utf-8
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.etersoft.ru C60A81037CE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=youngreaders.ru;
+	s=eterdkim; t=1507600990;
+	bh=47PxuC18/SozTP5z2FnLGYHPG51JvN33/Hmc2x5DGZc=;
+	h=From:To:Subject:Date:From;
+	b=HN66G0muOinD5RIA7f1CrajtxSkHwLB5m/pp4jUOVFaUVUsSWqiF1pnnKJEN+A1Qu
+	 kY5HK0eOR+gTYv73Jb5Sf1+Ts5/JF6MiJr2FCQ3PXrVwYSLcPuDAyf/YlUMbUDiBi3
+	 +1XNzvKVHZYbICc6hGCVd6a3l5ObKsoMoI1avGTU=
+From: =?UTF-8?B?0JbQuNCy0LDRjyDQmtC70LDRgdGB0LjQutCw?=
+ <noreply@youngreaders.ru>
+To: popa.opa.ru@mail.ru
+Subject: =?UTF-8?B?0J/RgNC40LPQu9Cw0YjQtdC90LjQtSDQsiDQnNCU?=
+ =?UTF-8?B?0KYgwqvQkNGA0YLQtdC6wrs=?=
+Message-ID: <2213dc47-f5b4-13e2-74db-bf51691ae36c@youngreaders.ru>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 10 Oct 2017 01:26:34 +0000
+MIME-Version: 1.0
+
+--C60A81037CE.1507612095/mail.etersoft.ru--

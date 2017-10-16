@@ -67,7 +67,12 @@ class Mailbox {
       // Parse message body
       new Promise((resolve, reject) => {
         message.on('body', stream => {
-          parseMessage(stream).then(resolve).catch(reject);
+          try {
+            stream.once && stream.once('error', reject);
+            parseMessage(stream).then(resolve).catch(reject);
+          } catch (error) {
+            reject(error);
+          }
         });
       }),
       // Wait for attributes
