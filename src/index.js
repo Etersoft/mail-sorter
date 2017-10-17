@@ -1,5 +1,5 @@
 const IMAP = require('imap');
-const { createLogger, format, transports } = require('winston');
+const { createLogger, config: winstonConfig, format, transports } = require('winston');
 
 const readConfig = require('./readConfig');
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -9,6 +9,7 @@ const MessageTypes = require('./MessageTypes');
 const HumanMessageHandler = require('./handlers/HumanMessageHandler');
 const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
 const MailingListDatabase = require('./MailingListDatabase');
+const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
 
 const CONFIG_HIERARCHY = [
   'config.default.json',
@@ -70,6 +71,7 @@ function initLogger () {
         info.timestamp = new Date().toLocaleString();
         return info;
       })(),
+      format.colorize(),
       format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
     ),
     transports: [
@@ -82,7 +84,8 @@ function createMailboxSorter (config, mailbox, logger, mailServerMessageHandler)
   const classifier = new MessageClassifier();
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
-    [MessageTypes.MAIL_SERVER]: mailServerMessageHandler
+    [MessageTypes.MAIL_SERVER]: mailServerMessageHandler,
+    [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(logger)
   };
   return new MailboxSorter(mailbox, classifier, logger, {
     handlerMap,

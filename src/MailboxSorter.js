@@ -66,7 +66,7 @@ class MailboxSorter {
         await this.mailbox.markAsRead(message.id);
       }
     } else {
-      this.logger.warn(`Message #${message.id}: no action for this type`);
+      this.logger.warn(`Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`);
     }
   }
 }
