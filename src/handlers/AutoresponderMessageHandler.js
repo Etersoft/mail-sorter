@@ -1,10 +1,13 @@
 class AutoresponderMessageHandler {
-  constructor (logger) {
+  constructor (mailbox, logger) {
+    this.mailbox = mailbox;
     this.logger = logger;
   }
 
-  processMessage (message) {
-    this.logger.info(`Stub: do something with autoresponder message (from ${message.headers.get('from').text})`);
+  async processMessage (message) {
+    await this.mailbox.deleteMessage(message.id);
+    // Do not mark as read
+    return false;
   }
 }
 

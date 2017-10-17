@@ -12,6 +12,10 @@ class Mailbox {
     this.imapConnection = options.connection;
   }
 
+  deleteMessage (messageId) {
+    return this._addFlags(messageId, ['\\Deleted']);
+  }
+
   findUnseen () {
     return new Promise((resolve, reject) => {
       this.imapConnection.seq.search(['UNSEEN'], (error, results) => {
@@ -59,8 +63,12 @@ class Mailbox {
   }
 
   markAsRead (messageId) {
+    return this._addFlags(messageId, ['\\Seen']);
+  }
+
+  _addFlags (messageId, flags) {
     return new Promise((resolve, reject) => {
-      this.imapConnection.delFlag(messageId, 'UNSEEN', error => {
+      this.imapConnection.addFlags(messageId, flags, error => {
         if (error) {
           reject(error);
           return;

@@ -31,10 +31,7 @@ async function main () {
   logger.info('Connecting...');
   await mailbox.initialize();
 
-  const mailServerMessageHandler = new MailServerMessageHandler(
-    new MailingListDatabase(logger), mailbox, logger
-  );
-  const sorter = createMailboxSorter(config, mailbox, logger, mailServerMessageHandler);
+  const sorter = createMailboxSorter(config, mailbox, logger);
   const stats = await sorter.sort();
 
   if (stats) {
@@ -80,12 +77,14 @@ function initLogger () {
   });
 }
 
-function createMailboxSorter (config, mailbox, logger, mailServerMessageHandler) {
+function createMailboxSorter (config, mailbox, logger) {
   const classifier = new MessageClassifier();
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
-    [MessageTypes.MAIL_SERVER]: mailServerMessageHandler,
-    [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(logger)
+    [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
+      new MailingListDatabase(logger), mailbox, logger
+    ),
+    [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger)
   };
   return new MailboxSorter(mailbox, classifier, logger, {
     handlerMap,
