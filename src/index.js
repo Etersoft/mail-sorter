@@ -11,6 +11,7 @@ const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
 const MailingListDatabase = require('./MailingListDatabase');
 const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
 const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
+const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
 
 const CONFIG_HIERARCHY = [
   'config.default.json',
@@ -45,7 +46,7 @@ main().then(() => {
   process.exit(0);
 }).catch(error => {
   if (logger) {
-    logger.error(error);
+    logger.error(error.stack);
   } else {
     console.error(error.stack);
   }
@@ -75,13 +76,15 @@ function initLogger () {
 }
 
 function createMailboxSorter (config, mailbox, logger) {
-  const classifier = new MessageClassifier();
+  const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
+  const mailingListDatabase = new MailingListDatabase(logger);
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
-      new MailingListDatabase(logger), mailbox, logger
+      mailingListDatabase, mailbox, logger
     ),
-    [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger)
+    [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
+    [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)
   };
   return new MailboxSorter(mailbox, classifier, logger, {
     handlerMap,

@@ -48,7 +48,7 @@ class MailboxSorterStatsCollector {
 
   _handleFailedMessage (message) {
     this._incrementCounter('failed')();
-    this.stats.failedMessages.failedMessages.push(message.id);
+    this.stats.failedMessages.push(message.id);
   }
 
   _incrementCounter (counterName) {

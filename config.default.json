@@ -5,5 +5,5 @@
   },
   "maxLogLevel": "verbose",
   "messageBatchSize": 100,
-  "temporaryFailureLimit": 2
+  "unsubscribeAdditionalAddress": "unsubscribe"
 }

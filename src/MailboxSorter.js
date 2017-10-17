@@ -80,7 +80,7 @@ class MailboxSorter extends EventEmitter {
       }
       this.emit(Events.MESSAGE_PROCESSED, message);
     } else {
-      this.logger.warn(`Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`);
+      throw new Error(`Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`);
     }
   }
 }

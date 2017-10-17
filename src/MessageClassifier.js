@@ -2,7 +2,15 @@ const MessageTypes = require('./MessageTypes');
 
 
 class MessageClassifier {
+  constructor (unsubscribeAdditionalAddress) {
+    this.unsubscribeAdditionalAddress = unsubscribeAdditionalAddress;
+  }
+
   classifyMessage (message) {
+    if (this._isUnsubscribe(message)) {
+      return MessageTypes.UNSUBSCRIBE;
+    }
+
     if (this._isMailServer(message)) {
       return MessageTypes.MAIL_SERVER;
     }
@@ -48,6 +56,16 @@ class MessageClassifier {
     }
 
     return false;
+  }
+
+  _isUnsubscribe (message) {
+    const to = message.headers.get('to').text;
+    const username = to.split('@')[0];
+    const parts = username.split('+');
+    if (typeof parts[1] !== 'string') {
+      return;
+    }
+    return (parts[1].toLowerCase() === this.unsubscribeAdditionalAddress);
   }
 }
 
