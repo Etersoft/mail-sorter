@@ -3,7 +3,6 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 const { EventEmitter } = require('events');
 const stream = require('stream');
-const { sleep } = require('./utils');
 const { readFileSync } = require('fs');
 const { join } = require('path');
 const testEmail = readFileSync(join(__dirname, 'test-message.eml'), 'utf8');
@@ -165,7 +164,7 @@ describe('Mailbox', function() {
     it('will throw on openBox errors', async function () {
       fakeConnection.openBox = (box, readonly, onOpen) => {
         onOpen(testError);
-      }
+      };
 
       await assert.isRejected(mailbox.initialize(), testError);
     });

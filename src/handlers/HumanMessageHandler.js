@@ -4,7 +4,9 @@ class HumanMessageHandler {
   }
 
   processMessage (message) {
-    this.logger.info(`Stub: do something with human message (from ${message.headers.get('from').text})`);
+    this.logger.info(
+      `Stub: do something with human message (from ${message.headers.get('from').text})`
+    );
   }
 }
 

@@ -3,7 +3,7 @@ class MailingListDatabase {
     this.logger = logger;
   }
 
-  setAddressStatus (address, status, metadata) {
+  setAddressStatus (address, status) {
     this.logger.verbose(`${address}: set status = ${status}`);
     return true;
   }

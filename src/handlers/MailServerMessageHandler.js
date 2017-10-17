@@ -16,7 +16,7 @@ class MailServerMessageHandler {
     const checks = [
       this._tryWithDsnInfo,
       this._tryWithXMailerDaemonError
-    ].map(check => check.bind(this))
+    ].map(check => check.bind(this));
 
     for (const check of checks) {
       const result = await check(message);

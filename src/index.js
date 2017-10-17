@@ -1,5 +1,5 @@
 const IMAP = require('imap');
-const { createLogger, config: winstonConfig, format, transports } = require('winston');
+const { createLogger, format, transports } = require('winston');
 
 const readConfig = require('./readConfig');
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -48,6 +48,7 @@ main().then(() => {
   if (logger) {
     logger.error(error.stack);
   } else {
+    // eslint-disable-next-line no-console
     console.error(error.stack);
   }
   process.exit(1);

@@ -1,4 +1,3 @@
-const IMAP = require('imap');
 const parseMessage = require('mailparser').simpleParser;
 
 const Message = require('./Message');

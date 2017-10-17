@@ -24,7 +24,7 @@ class MailboxSorterStatsCollector {
     this.logger.info(`Marked as read messages count: ${this.stats.counters.markedAsRead}`);
     this.logger.info(`Successful messages count: ${this.stats.counters.successful}`);
     if (this.stats.failedMessages.length) {
-      this.logger.info(`Failed messages list:`);
+      this.logger.info('Failed messages list:');
       const messageIdsWithQuotes = this.stats.failedMessages.map((id, index) => {
         return (index === this.stats.failedMessages.length - 1) ? id : id + ', ';
       });

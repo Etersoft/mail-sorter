@@ -25,7 +25,7 @@ class MailboxSorter extends EventEmitter {
   }
 
   async sort () {
-    this.logger.info(`Fetching list of unread messages...`);
+    this.logger.info('Fetching list of unread messages...');
     const unseenIds = await this.mailbox.findUnseen();
     this.logger.info(`Found ${unseenIds.length} unread messages, processing...`);
     const batchCount = Math.ceil(unseenIds.length / this.messageBatchSize);
@@ -80,7 +80,9 @@ class MailboxSorter extends EventEmitter {
       }
       this.emit(Events.MESSAGE_PROCESSED, message);
     } else {
-      throw new Error(`Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`);
+      throw new Error(
+        `Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`
+      );
     }
   }
 }

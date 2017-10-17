@@ -8,12 +8,12 @@ class ReadonlyMailbox extends Mailbox {
     }));
   }
 
-  deleteMessage (messageId) {
+  deleteMessage () {
     // Stub
     return Promise.resolve();
   }
 
-  markAsRead (messageId) {
+  markAsRead () {
     // Stub
     return Promise.resolve();
   }

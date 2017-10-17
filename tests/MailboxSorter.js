@@ -1,12 +1,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
-const { EventEmitter } = require('events');
-const stream = require('stream');
-const { sleep, createFakeLogger } = require('./utils');
-const { readFileSync } = require('fs');
-const { join } = require('path');
-const testEmail = readFileSync(join(__dirname, 'test-message.eml'), 'utf8');
+const { createFakeLogger } = require('./utils');
 
 const MailboxSorter = require('../src/MailboxSorter');
 
@@ -46,7 +41,7 @@ describe('MailboxSorter', function() {
       findUnseen: sinon.spy(() => {
         return Promise.resolve(unseenIds);
       }),
-      loadMessages: sinon.spy((range, onMessage, onError) => {
+      loadMessages: sinon.spy((range, onMessage) => {
         process.nextTick(() => {
           const messagesToReturn = Array.isArray(range) ? (
             messages.filter(msg => range.indexOf(msg.id) !== -1)
