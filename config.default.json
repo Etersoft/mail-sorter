@@ -3,5 +3,6 @@
     "port": 993,
     "tls": true
   },
+  "messageBatchSize": 100,
   "temporaryFailureLimit": 2
 }

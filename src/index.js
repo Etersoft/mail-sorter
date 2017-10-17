@@ -54,5 +54,5 @@ function createMailboxSorter (config, mailbox, mailServerMessageHandler) {
     [MessageTypes.HUMAN]: new HumanMessageHandler(),
     [MessageTypes.MAIL_SERVER]: mailServerMessageHandler
   };
-  return new MailboxSorter(mailbox, classifier, handlerMap);
+  return new MailboxSorter(mailbox, classifier, handlerMap, config.messageBatchSize);
 }

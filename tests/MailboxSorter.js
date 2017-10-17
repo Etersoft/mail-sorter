@@ -17,6 +17,7 @@ const { assert } = chai;
 describe('MailboxSorter', function() {
   // Initialization
   const [TYPE_1, TYPE_2] = [1, 2];
+  const BATCH_SIZE = 10;
   const messages = [
     {
       id: 1,
@@ -45,7 +46,10 @@ describe('MailboxSorter', function() {
       }),
       loadMessages: sinon.spy((range, onMessage, onError) => {
         process.nextTick(() => {
-          messages.forEach(msg => onMessage(msg));
+          const messagesToReturn = Array.isArray(range) ? (
+            messages.filter(msg => range.indexOf(msg.id) !== -1)
+          ) : messages;
+          messagesToReturn.forEach(msg => onMessage(msg));
         });
       }),
       markAsRead: sinon.spy(() => Promise.resolve())
@@ -60,7 +64,7 @@ describe('MailboxSorter', function() {
       }
     };
 
-    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap);
+    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, BATCH_SIZE);
     testError = new Error();
     unseenIds = [1, 2, 3];
   });
@@ -117,7 +121,7 @@ describe('MailboxSorter', function() {
       await assert.isRejected(sorter.sort(), testError);
     });
 
-    it('should throw on findUnseed error', async function () {
+    it('should throw on findUnseen error', async function () {
       fakeMailbox.findUnseen = () => Promise.reject(testError);
       await assert.isRejected(sorter.sort(), testError);
     });
@@ -125,6 +129,20 @@ describe('MailboxSorter', function() {
     it('should not throw on handler error', async function () {
       handlerMap[TYPE_2].processMessage = () => Promise.reject(testError);
       await assert.isFulfilled(sorter.sort());
+    });
+
+    it('should behave correctly with batchSize = 1', async function () {
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, 1);
+      await assert.isFulfilled(sorter.sort());
+      assert.isOk(handlerMap[TYPE_1].processMessage.calledTwice);
+      assert.isOk(handlerMap[TYPE_2].processMessage.calledOnce);
+    });
+
+    it('should behave correctly with batchSize = msgCount', async function () {
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, 3);
+      await assert.isFulfilled(sorter.sort());
+      assert.isOk(handlerMap[TYPE_1].processMessage.calledTwice);
+      assert.isOk(handlerMap[TYPE_2].processMessage.calledOnce);
     });
   });
 });
