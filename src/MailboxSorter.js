@@ -1,8 +1,18 @@
+const { EventEmitter } = require('events');
+
 const MessageTypes = require('./MessageTypes');
 
 
-class MailboxSorter {
+const Events = {
+  MESSAGE_CLASSIFIED: 1,
+  MESSAGE_PROCESSED: 2,
+  MESSAGE_MARKED_AS_READ: 3,
+  MESSAGE_ERROR: 4
+};
+
+class MailboxSorter extends EventEmitter {
   constructor (mailbox, classifier, logger, options) {
+    super();
     this.mailbox = mailbox;
     this.classifier = classifier;
     this.messageBatchSize = options.messageBatchSize;
@@ -41,6 +51,7 @@ class MailboxSorter {
         try {
           await this._processMessage(message);
         } catch (error) {
+          this.emit(Events.MESSAGE_ERROR, message, error);
           this.logger.warn(`Warning: message #${message.id} failed: ${error}`);
         }
         processedCount++;
@@ -57,6 +68,7 @@ class MailboxSorter {
 
   async _processMessage (message) {
     const messageType = this.classifier.classifyMessage(message);
+    this.emit(Events.MESSAGE_CLASSIFIED, message, messageType);
     const handler = this.handlerMap[messageType];
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
@@ -64,11 +76,15 @@ class MailboxSorter {
       markAsRead = await handler.processMessage(message);
       if (markAsRead) {
         await this.mailbox.markAsRead(message.id);
+        this.emit(Events.MESSAGE_MARKED_AS_READ, message);
       }
+      this.emit(Events.MESSAGE_PROCESSED, message);
     } else {
       this.logger.warn(`Message #${message.id}: no action for this type ${MessageTypes.names[messageType]}`);
     }
   }
 }
+
+MailboxSorter.Events = Events;
 
 module.exports = MailboxSorter;

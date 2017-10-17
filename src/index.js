@@ -10,6 +10,7 @@ const HumanMessageHandler = require('./handlers/HumanMessageHandler');
 const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
 const MailingListDatabase = require('./MailingListDatabase');
 const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
+const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 
 const CONFIG_HIERARCHY = [
   'config.default.json',
@@ -32,14 +33,10 @@ async function main () {
   await mailbox.initialize();
 
   const sorter = createMailboxSorter(config, mailbox, logger);
-  const stats = await sorter.sort();
+  const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
+  await sorter.sort();
 
-  if (stats) {
-    logger.info('Sorting stats:');
-    Object.keys(stats).forEach(field => {
-      logger.info(`  ${field}: ${stats[field]}`);
-    });
-  }
+  statsCollector.logStats();
 
   logger.info('Done.');
 }

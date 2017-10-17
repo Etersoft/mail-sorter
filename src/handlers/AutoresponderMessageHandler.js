@@ -6,8 +6,7 @@ class AutoresponderMessageHandler {
 
   async processMessage (message) {
     await this.mailbox.deleteMessage(message.id);
-    // Do not mark as read
-    return false;
+    return true;
   }
 }
 

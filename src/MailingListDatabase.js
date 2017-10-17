@@ -5,6 +5,7 @@ class MailingListDatabase {
 
   setAddressStatus (address, status, metadata) {
     this.logger.verbose(`${address}: set status = ${status}`);
+    return true;
   }
 }
 
