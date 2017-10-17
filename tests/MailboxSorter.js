@@ -59,10 +59,10 @@ describe('MailboxSorter', function() {
 
     handlerMap = {
       [TYPE_1]: {
-        processMessage: sinon.spy(() => Promise.resolve())
+        processMessage: sinon.spy(() => Promise.resolve(true))
       },
       [TYPE_2]: {
-        processMessage: sinon.spy(() => Promise.resolve())
+        processMessage: sinon.spy(() => Promise.resolve(true))
       }
     };
 
@@ -149,6 +149,38 @@ describe('MailboxSorter', function() {
     it('should not throw on handler error', async function () {
       handlerMap[TYPE_2].processMessage = () => Promise.reject(testError);
       await assert.isFulfilled(sorter.sort());
+    });
+
+    it('should not throw on classifier error', async function () {
+      fakeClassifier.classifyMessage = () => {
+        throw testError;
+      };
+      await assert.isFulfilled(sorter.sort());
+    });
+
+    it('should not throw on markAsRead error', async function () {
+      fakeMailbox.markAsRead = () => Promise.reject(testError);
+      await assert.isFulfilled(sorter.sort());
+    });
+
+    it('should warn on handler error', async function () {
+      handlerMap[TYPE_2].processMessage = () => Promise.reject(testError);
+      await sorter.sort();
+      assert.isOk(fakeLogger.warn.calledOnce);
+    });
+
+    it('should warn on classifier error', async function () {
+      fakeClassifier.classifyMessage = () => {
+        throw testError;
+      };
+      await sorter.sort();
+      assert.isOk(fakeLogger.warn.calledThrice);
+    });
+
+    it('should warn on markAsRead error', async function () {
+      fakeMailbox.markAsRead = () => Promise.reject(testError);
+      await sorter.sort();
+      assert.isOk(fakeLogger.warn.calledThrice);
     });
 
     it('should behave correctly with batchSize = 1', async function () {

@@ -38,7 +38,11 @@ class MailboxSorter {
     return new Promise((resolve, reject) => {
       let processedCount = 0;
       const onMessage = async message => {
-        await this._processMessage(message);
+        try {
+          await this._processMessage(message);
+        } catch (error) {
+          this.logger.warn(`Warning: message #${message.id} failed: ${error}`);
+        }
         processedCount++;
         if (processedCount === ids.length) {
           resolve();
@@ -57,11 +61,7 @@ class MailboxSorter {
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
       let markAsRead = false;
-      try {
-        markAsRead = await handler.processMessage(message);
-      } catch (error) {
-        this.logger.warn(`Warning: message #${message.id} failed: ${error}`);
-      }
+      markAsRead = await handler.processMessage(message);
       if (markAsRead) {
         await this.mailbox.markAsRead(message.id);
       }
