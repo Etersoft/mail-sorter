@@ -5,10 +5,11 @@ const ReplyStatuses = {
 
 
 class MailServerMessageHandler {
-  constructor (userDatabase, mailbox, temporaryFailureLimit) {
+  constructor (userDatabase, mailbox, logger) {
     this.userDatabase = userDatabase;
     this.mailbox = mailbox;
     this.handledAddresses = new Map();
+    this.logger = logger;
   }
 
   async processMessage (message) {
@@ -39,7 +40,7 @@ class MailServerMessageHandler {
 
   async _excludeImmediatelyIfNotAlready (recipient, status, message) {
     if (status === ReplyStatuses.TEMPORARY_FAILURE) {
-      console.log(`Skipping message #${message.id} (${recipient}) with temporary failure`);
+      this.logger.verbose(`Skipping message #${message.id} (${recipient}) with temporary failure`);
     } else {
       // Write latest result to database, if several messages are present
       // for single recipient

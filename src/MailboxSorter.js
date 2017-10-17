@@ -2,18 +2,23 @@ const MessageTypes = require('./MessageTypes');
 
 
 class MailboxSorter {
-  constructor (mailbox, classifier, handlerMap, batchSize) {
+  constructor (mailbox, classifier, logger, options) {
     this.mailbox = mailbox;
     this.classifier = classifier;
-    this.handlerMap = handlerMap;
-    this.batchSize = batchSize;
+    this.messageBatchSize = options.messageBatchSize;
+    this.handlerMap = options.handlerMap;
+    this.logger = logger;
+
+    if (!Number.isInteger(this.messageBatchSize) || this.messageBatchSize < 1) {
+      throw new Error('Invalid messageBatchSize value: ' + this.messageBatchSize);
+    }
   }
 
   async sort () {
-    console.log(`Fetching list of unread messages...`);
+    this.logger.info(`Fetching list of unread messages...`);
     const unseenIds = await this.mailbox.findUnseen();
-    console.log(`Found ${unseenIds.length} unread messages`);
-    const batchCount = Math.ceil(unseenIds.length / this.batchSize);
+    this.logger.info(`Found ${unseenIds.length} unread messages, processing...`);
+    const batchCount = Math.ceil(unseenIds.length / this.messageBatchSize);
     if (batchCount === 0) {
       return;
     }
@@ -22,8 +27,8 @@ class MailboxSorter {
     // load next N. This is made to avoid loading all messages
     // at once because that may lead to high memory consumption
     for (let i = batchCount; i--; ) {
-      const rangeStart = i * this.batchSize;
-      const rangeEnd = rangeStart + this.batchSize;
+      const rangeStart = i * this.messageBatchSize;
+      const rangeEnd = rangeStart + this.messageBatchSize;
       const ids = unseenIds.slice(rangeStart, rangeEnd);
       await this._processMessageBatch(ids);
     }
@@ -49,19 +54,19 @@ class MailboxSorter {
   async _processMessage (message) {
     const messageType = this.classifier.classifyMessage(message);
     const handler = this.handlerMap[messageType];
-    console.log(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
+    this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
       let markAsRead = false;
       try {
         markAsRead = await handler.processMessage(message);
       } catch (error) {
-        console.warn(`Warning: message #${message.id} failed: ${error}`);
+        this.logger.warn(`Warning: message #${message.id} failed: ${error}`);
       }
       if (markAsRead) {
         await this.mailbox.markAsRead(message.id);
       }
     } else {
-      console.log(`Message #${message.id}: no action for this type`);
+      this.logger.warn(`Message #${message.id}: no action for this type`);
     }
   }
 }

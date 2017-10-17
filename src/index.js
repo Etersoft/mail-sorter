@@ -1,4 +1,5 @@
 const IMAP = require('imap');
+const { createLogger, format, transports } = require('winston');
 
 const readConfig = require('./readConfig');
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -14,45 +15,77 @@ const CONFIG_HIERARCHY = [
   'config.json'
 ];
 
+let logger;
+
 
 async function main () {
-  const config = readConfig(CONFIG_HIERARCHY);
+  initLogger();
+  const config = readConfig(CONFIG_HIERARCHY, logger);
+  adjustLogger(config);
 
   const mailbox = new ReadonlyMailbox({
     boxName: 'INBOX',
     connection: new IMAP(config.imapConnection)
   });
-  console.log('Connecting...');
+  logger.info('Connecting...');
   await mailbox.initialize();
 
   const mailServerMessageHandler = new MailServerMessageHandler(
-    new MailingListDatabase(), mailbox, config.temporaryFailureLimit
+    new MailingListDatabase(logger), mailbox, logger
   );
-  const sorter = createMailboxSorter(config, mailbox, mailServerMessageHandler);
+  const sorter = createMailboxSorter(config, mailbox, logger, mailServerMessageHandler);
   const stats = await sorter.sort();
 
   if (stats) {
-    console.log('Sorting stats:');
+    logger.info('Sorting stats:');
     Object.keys(stats).forEach(field => {
-      console.log(`  ${field}: ${stats[field]}`);
+      logger.info(`  ${field}: ${stats[field]}`);
     });
   }
+
+  logger.info('Done.');
 }
 
 main().then(() => {
-  console.log('Done.');
   process.exit(0);
 }).catch(error => {
-  console.error(error.stack);
+  if (logger) {
+    logger.error(error);
+  } else {
+    console.error(error.stack);
+  }
   process.exit(1);
 });
 
+function adjustLogger (config) {
+  logger.transports.forEach(transport => {
+    transport.level = config.maxLogLevel;
+  });
+}
 
-function createMailboxSorter (config, mailbox, mailServerMessageHandler) {
+function initLogger () {
+  logger = createLogger({
+    format: format.combine(
+      format(info => {
+        info.timestamp = new Date().toLocaleString();
+        return info;
+      })(),
+      format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+      new transports.Console()
+    ]
+  });
+}
+
+function createMailboxSorter (config, mailbox, logger, mailServerMessageHandler) {
   const classifier = new MessageClassifier();
   const handlerMap = {
-    [MessageTypes.HUMAN]: new HumanMessageHandler(),
+    [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: mailServerMessageHandler
   };
-  return new MailboxSorter(mailbox, classifier, handlerMap, config.messageBatchSize);
+  return new MailboxSorter(mailbox, classifier, logger, {
+    handlerMap,
+    messageBatchSize: config.messageBatchSize
+  });
 }

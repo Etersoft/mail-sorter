@@ -3,7 +3,7 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 const { EventEmitter } = require('events');
 const stream = require('stream');
-const { sleep } = require('./utils');
+const { sleep, createFakeLogger } = require('./utils');
 const { readFileSync } = require('fs');
 const { join } = require('path');
 const testEmail = readFileSync(join(__dirname, 'test-message.eml'), 'utf8');
@@ -31,7 +31,7 @@ describe('MailboxSorter', function() {
     }
   ];
 
-  let fakeClassifier, fakeMailbox, handlerMap, sorter, testError, unseenIds;
+  let fakeClassifier, fakeMailbox, fakeLogger, handlerMap, sorter, testError, unseenIds;
 
   beforeEach(function () {
     fakeClassifier = {
@@ -39,6 +39,8 @@ describe('MailboxSorter', function() {
         return message.type;
       })
     };
+
+    fakeLogger = createFakeLogger();
 
     fakeMailbox = {
       findUnseen: sinon.spy(() => {
@@ -64,7 +66,10 @@ describe('MailboxSorter', function() {
       }
     };
 
-    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, BATCH_SIZE);
+    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      handlerMap,
+      messageBatchSize: BATCH_SIZE
+    });
     testError = new Error();
     unseenIds = [1, 2, 3];
   });
@@ -72,6 +77,21 @@ describe('MailboxSorter', function() {
   this.timeout(500);
 
   // Tests
+  describe('constructor', function () {
+    it('should throw on null messageBatchSize value', function () {
+      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+        handlerMap,
+        messageBatchSize: null
+      }));
+    });
+
+    it('should throw on negative messageBatchSize value', function () {
+      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+        handlerMap,
+        messageBatchSize: -1
+      }));
+    });
+  });
 
   describe('#sort', function () {
     it('should fetch unread ids', async function () {
@@ -132,14 +152,20 @@ describe('MailboxSorter', function() {
     });
 
     it('should behave correctly with batchSize = 1', async function () {
-      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, 1);
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+        handlerMap,
+        messageBatchSize: 1
+      });
       await assert.isFulfilled(sorter.sort());
       assert.isOk(handlerMap[TYPE_1].processMessage.calledTwice);
       assert.isOk(handlerMap[TYPE_2].processMessage.calledOnce);
     });
 
     it('should behave correctly with batchSize = msgCount', async function () {
-      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, handlerMap, 3);
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+        handlerMap,
+        messageBatchSize: messages.length
+      });
       await assert.isFulfilled(sorter.sort());
       assert.isOk(handlerMap[TYPE_1].processMessage.calledTwice);
       assert.isOk(handlerMap[TYPE_2].processMessage.calledOnce);

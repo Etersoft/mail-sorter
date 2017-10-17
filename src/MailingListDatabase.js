@@ -1,6 +1,10 @@
 class MailingListDatabase {
+  constructor (logger) {
+    this.logger = logger;
+  }
+
   setAddressStatus (address, status, metadata) {
-    console.log(`${address}: set status = ${status}`);
+    this.logger.verbose(`${address}: set status = ${status}`);
   }
 }
 

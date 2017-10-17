@@ -2,9 +2,9 @@ const { readFileSync } = require('fs');
 const { merge } = require('lodash');
 
 
-module.exports = function (filenames) {
+module.exports = function (filenames, logger) {
   const configs = filenames
-    .map(loadAndParseFile)
+    .map(filename =>loadAndParseFile(filename, logger))
     .filter(string => string !== null);
 
   if (!configs.length) {
@@ -14,12 +14,12 @@ module.exports = function (filenames) {
   return merge(configs[0], ...configs.slice(1));
 };
 
-function loadAndParseFile (filename) {
+function loadAndParseFile (filename, logger) {
   let string;
   try {
     string = readFileSync(filename, 'utf8');
   } catch (error) {
-    console.warn(`Warning: can't read config file ${filename}. ${error.message}`);
+    logger.warn(`Warning: can't read config file ${filename}. ${error.message}`);
     return null;
   }
 

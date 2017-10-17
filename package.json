@@ -10,7 +10,8 @@
   "dependencies": {
     "imap": "0.8.19",
     "lodash": "4.17.4",
-    "mailparser": "2.1.0"
+    "mailparser": "2.1.0",
+    "winston": "3.0.0-rc0"
   },
   "devDependencies": {
     "chai": "4.1.2",

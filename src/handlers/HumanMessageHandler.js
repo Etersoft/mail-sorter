@@ -1,6 +1,10 @@
 class HumanMessageHandler {
+  constructor (logger) {
+    this.logger = logger;
+  }
+
   processMessage (message) {
-    console.log('Stub: do something with human message');
+    this.logger.info('Stub: do something with human message');
   }
 }
 
