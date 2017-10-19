@@ -35,7 +35,9 @@ class MessageClassifier {
       return true;
     }
 
-    if (message.headers.get('subject').toLowerCase().indexOf('autoreply') !== -1) {
+    const subject = message.headers.get('subject');
+
+    if (subject && subject.toLowerCase().indexOf('autoreply') !== -1) {
       return true;
     }
 
