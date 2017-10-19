@@ -1,7 +1,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
-const { createFakeLogger } = require('./utils');
+const { createFakeLogger } = require('./testing-utils');
 
 const MailboxSorter = require('../src/MailboxSorter');
 

@@ -1,16 +1,47 @@
-const sinon = require('sinon');
-const winston = require('winston');
+const { assert } = require('chai');
+
+const utils = require('../src/utils');
 
 
-module.exports = {
-  createFakeLogger () {
-    const logger = {};
-    Object.keys(winston.config.npm.levels).forEach(level => {
-      logger[level] = sinon.spy();
+describe('utils', function() {
+  this.timeout(500);
+
+  describe('extractFromAddress', function () {
+    it('should extract addresses of form NAME LASTNAME <FROM>', function () {
+      const message = {
+        headers: new Map([
+          ['from', {
+            text: 'Иван Иванов <ivan.ivanov.non-existent@yandex.ru>'
+          }]
+        ])
+      };
+      const from = utils.extractFromAddress(message);
+      assert.equal(from, 'ivan.ivanov.non-existent@yandex.ru');
     });
-    return logger;
-  },
-  sleep (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-};
+
+    it('should extract addresses of form FROM', function () {
+      const message = {
+        headers: new Map([
+          ['from', {
+            text: 'ivan.ivanov.non-existent@yandex.ru'
+          }]
+        ])
+      };
+      const from = utils.extractFromAddress(message);
+      assert.equal(from, 'ivan.ivanov.non-existent@yandex.ru');
+    });
+
+    it('should return equal results on subsequent calls', function () {
+      const message = {
+        headers: new Map([
+          ['from', {
+            text: 'ivan.ivanov.non-existent@yandex.ru'
+          }]
+        ])
+      };
+      const from1 = utils.extractFromAddress(message);
+      const from2 = utils.extractFromAddress(message);
+      assert.equal(from1, from2);
+    });
+  });
+});

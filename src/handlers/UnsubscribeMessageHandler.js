@@ -1,4 +1,4 @@
-const FROM_ADDRESS_REGEXP = /<(.+)>/gi;
+const { extractFromAddress } = require('../utils');
 
 
 class UnsubscribeMessageHandler {
@@ -9,17 +9,11 @@ class UnsubscribeMessageHandler {
   }
 
   async processMessage (message) {
-    const from = this._extractFromAddress(message);
+    const from = extractFromAddress(message);
 
     await this.mailingListDatabase.unsubscribeAddress(from);
     await this.mailbox.deleteMessage(message.id);
     return true;
-  }
-
-  _extractFromAddress (message) {
-    const from = message.headers.get('from').text;
-    const match = FROM_ADDRESS_REGEXP.exec(from);
-    return match && match[1];
   }
 }
 
