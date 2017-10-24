@@ -1,7 +1,7 @@
 {
-  "name": "mailbox-reader",
+  "name": "mail-sorter",
   "version": "0.1.0",
-  "description": "Mailbox reading robot",
+  "description": "Mailbox reading and sorting library",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint 'src/**/*.js' 'tests/**/*.js'",

@@ -3,6 +3,7 @@ const { writeFileSync } = require('fs');
 const createLogger = require('logger');
 
 const ReadonlyMailbox = require('./ReadonlyMailbox');
+const Mailbox = require('./Mailbox');
 const MailboxSorter = require('./MailboxSorter');
 const MessageClassifier = require('./MessageClassifier');
 const MessageTypes = require('./MessageTypes');
@@ -19,10 +20,12 @@ async function main (config, logger, database) {
     logger = createLogger(config.logging);
   }
 
-  const mailbox = new ReadonlyMailbox({
+  const mailboxConfig = {
     boxName: 'INBOX',
-    connection: new IMAP(config.imapConnection)
-  });
+    connection: new IMAP(config.imapConnection),
+    readonly: config.readonly
+  };
+  const mailbox = config.readonly ? new ReadonlyMailbox(mailboxConfig) : new Mailbox(mailboxConfig);
   logger.info('Connecting...');
   await mailbox.initialize();
 

@@ -49,7 +49,8 @@ class MailServerMessageHandler {
         return;
       }
       this.handledAddresses.set(recipient, message.attributes.date);
-      return await this.userDatabase.setAddressStatus(recipient, status);
+      await this.userDatabase.setAddressStatus(recipient, status);
+      return true;
     }
   }
 

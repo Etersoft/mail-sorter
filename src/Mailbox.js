@@ -62,6 +62,7 @@ class Mailbox {
   }
 
   markAsRead (messageId) {
+    console.log(messageId);
     return this._addFlags(messageId, ['\\Seen']);
   }
 
