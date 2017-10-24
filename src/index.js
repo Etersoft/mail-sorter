@@ -1,5 +1,6 @@
 const IMAP = require('imap');
 const { createLogger, format, transports } = require('winston');
+const { writeFileSync } = require('fs');
 
 const readConfig = require('./readConfig');
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -39,6 +40,8 @@ async function main () {
 
   statsCollector.logStats();
 
+  dumpStatsIfEnabled(sorter, config);
+
   logger.info('Done.');
 }
 
@@ -58,6 +61,24 @@ function adjustLogger (config) {
   logger.transports.forEach(transport => {
     transport.level = config.maxLogLevel;
   });
+}
+
+function dumpStatsIfEnabled (sorter, config) {
+  if (typeof config.failedAddressesFile === 'string') {
+    const fileString = Array.from(
+      sorter.handlerMap[MessageTypes.MAIL_SERVER].userDatabase.failedAddresses
+    ).join('\n');
+    writeFileSync(config.failedAddressesFile, fileString, 'utf8');
+    logger.info(`Failed addresses dumped into ${config.failedAddressesFile}`);
+  }
+
+  if (typeof config.unsubscribedAddressesFile === 'string') {
+    const fileString = Array.from(
+      sorter.handlerMap[MessageTypes.MAIL_SERVER].userDatabase.unsubscribedAddresses
+    ).join('\n');
+    writeFileSync(config.unsubscribedAddressesFile, fileString, 'utf8');
+    logger.info(`Unsubscribed addresses dumped into ${config.unsubscribedAddressesFile}`);
+  }
 }
 
 function initLogger () {
