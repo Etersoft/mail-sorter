@@ -1,5 +1,4 @@
 const IMAP = require('imap');
-const { writeFileSync } = require('fs');
 const createLogger = require('logger');
 
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -35,8 +34,6 @@ async function main (config, logger, database) {
 
   statsCollector.logStats();
 
-  dumpStatsIfEnabled(logger, sorter, config);
-
   logger.info('Done.');
 }
 
@@ -51,24 +48,6 @@ module.exports = function (config, logger, database) {
     throw error;
   });
 };
-
-function dumpStatsIfEnabled (logger, sorter, config) {
-  if (typeof config.failedAddressesFile === 'string') {
-    const fileString = Array.from(
-      sorter.handlerMap[MessageTypes.MAIL_SERVER].userDatabase.failedAddresses
-    ).join('\n');
-    writeFileSync(config.failedAddressesFile, fileString, 'utf8');
-    logger.info(`Failed addresses dumped into ${config.failedAddressesFile}`);
-  }
-
-  if (typeof config.unsubscribedAddressesFile === 'string') {
-    const fileString = Array.from(
-      sorter.handlerMap[MessageTypes.MAIL_SERVER].userDatabase.unsubscribedAddresses
-    ).join('\n');
-    writeFileSync(config.unsubscribedAddressesFile, fileString, 'utf8');
-    logger.info(`Unsubscribed addresses dumped into ${config.unsubscribedAddressesFile}`);
-  }
-}
 
 function createMailboxSorter (config, mailbox, logger, database) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
