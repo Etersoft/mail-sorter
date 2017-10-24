@@ -1,9 +1,0 @@
-{
-  "imapConnection": {
-    "port": 993,
-    "tls": true
-  },
-  "maxLogLevel": "verbose",
-  "messageBatchSize": 100,
-  "unsubscribeAdditionalAddress": "unsubscribe"
-}
