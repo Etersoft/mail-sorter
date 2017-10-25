@@ -8,7 +8,6 @@ const MessageClassifier = require('./MessageClassifier');
 const MessageTypes = require('./MessageTypes');
 const HumanMessageHandler = require('./handlers/HumanMessageHandler');
 const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
-const MailingListDatabase = require('./MailingListDatabase');
 const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
 const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
@@ -51,7 +50,7 @@ module.exports = function (config, logger, database) {
 
 function createMailboxSorter (config, mailbox, logger, database) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
-  const mailingListDatabase = database || new MailingListDatabase(logger);
+  const mailingListDatabase = database;
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
