@@ -61,9 +61,8 @@ class Mailbox {
     });
   }
 
-  markAsRead (messageId) {
-    console.log(messageId);
-    return this._addFlags(messageId, ['\\Seen']);
+  async markAsRead (messageId) {
+    await this._addFlags(messageId, ['\\Seen']);
   }
 
   _addFlags (messageId, flags) {

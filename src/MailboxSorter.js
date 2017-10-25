@@ -41,6 +41,7 @@ class MailboxSorter extends EventEmitter {
       const rangeEnd = rangeStart + this.messageBatchSize;
       const ids = unseenIds.slice(rangeStart, rangeEnd);
       await this._processMessageBatch(ids);
+      this.logger.debug('Processed message batch #' + (batchCount - i));
     }
   }
 
@@ -75,7 +76,10 @@ class MailboxSorter extends EventEmitter {
       let markAsRead = false;
       markAsRead = await handler.processMessage(message);
       if (markAsRead) {
-        await this.mailbox.markAsRead(message.id);
+        // Pass UID instead of seq no, because some servers do not work correctly
+        // with seq numbers
+        await this.mailbox.markAsRead(message.attributes.uid);
+        await this.mailbox.deleteMessage(message.attributes.uid);
         this.emit(Events.MESSAGE_MARKED_AS_READ, message);
       }
       this.emit(Events.MESSAGE_PROCESSED, message);
