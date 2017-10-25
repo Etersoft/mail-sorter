@@ -13,7 +13,7 @@ const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
 
 
-async function main (config, logger, database) {
+async function run (config, logger, database) {
   if (!logger) {
     logger = createLogger(config.logging);
   }
@@ -23,6 +23,9 @@ async function main (config, logger, database) {
     connection: new IMAP(config.imapConnection),
     readonly: config.readonly
   };
+  if (config.readonly) {
+    logger.info('Mailbox opened in readonly mode: no modifications will be made');
+  }
   const mailbox = config.readonly ? new ReadonlyMailbox(mailboxConfig) : new Mailbox(mailboxConfig);
   logger.info('Connecting...');
   await mailbox.initialize();
@@ -37,7 +40,7 @@ async function main (config, logger, database) {
 }
 
 module.exports = function (config, logger, database) {
-  return main(config, logger, database).catch(error => {
+  return run(config, logger, database).catch(error => {
     if (logger) {
       logger.error(error.stack);
     } else {
