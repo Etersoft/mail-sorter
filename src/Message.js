@@ -1,4 +1,4 @@
-const FROM_FIELD_REGEXP = /<(.+)>/;
+const { extractFromAddress } = require('./utils');
 
 
 class Message {
@@ -17,14 +17,11 @@ class Message {
   }
 
   get fromAddress () {
-    const fromObject = this.headers.get('from');
-    if (!fromObject) return null;
+    return extractFromAddress(this);
+  }
 
-    const fromString = fromObject.text;
-    if (!fromString) return null;
-
-    const match = FROM_FIELD_REGEXP.exec(fromString);
-    return match && match[1];
+  get uid () {
+    return this.attributes.uid;
   }
 }
 

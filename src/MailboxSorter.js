@@ -78,8 +78,8 @@ class MailboxSorter extends EventEmitter {
       if (markAsRead) {
         // Pass UID instead of seq no, because some servers do not work correctly
         // with seq numbers
-        await this.mailbox.markAsRead(message.attributes.uid);
-        await this.mailbox.deleteMessage(message.attributes.uid);
+        await this.mailbox.markAsRead(message.uid);
+        await this.mailbox.deleteMessage(message.uid);
         this.emit(Events.MESSAGE_MARKED_AS_READ, message);
       }
       this.emit(Events.MESSAGE_PROCESSED, message);

@@ -17,7 +17,7 @@ class Mailbox {
 
   findUnseen () {
     return new Promise((resolve, reject) => {
-      this.imapConnection.seq.search(['UNSEEN'], (error, results) => {
+      this.imapConnection.search(['UNSEEN'], (error, results) => {
         if (error) {
           reject(error);
           return;
@@ -29,7 +29,7 @@ class Mailbox {
   }
 
   loadMessages (range, onMessage, onError) {
-    const fetchObject = this.imapConnection.seq.fetch(range, {
+    const fetchObject = this.imapConnection.fetch(range, {
       bodies: ''
     });
 
