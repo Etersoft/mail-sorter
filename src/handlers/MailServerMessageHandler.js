@@ -39,19 +39,15 @@ class MailServerMessageHandler {
   }
 
   async _excludeImmediatelyIfNotAlready (recipient, status, message) {
-    if (status === ReplyStatuses.TEMPORARY_FAILURE) {
-      this.logger.verbose(`Skipping message #${message.id} (${recipient}) with temporary failure`);
-    } else {
-      // Write latest result to database, if several messages are present
-      // for single recipient
-      if (this.handledAddresses.has(recipient) &&
-          this.handledAddresses.get(recipient) > message.attributes.date) {
-        return;
-      }
-      this.handledAddresses.set(recipient, message.attributes.date);
-      await this.userDatabase.setAddressStatus(recipient, status);
-      return true;
+    // Write latest result to database, if several messages are present
+    // for single recipient
+    if (this.handledAddresses.has(recipient) &&
+        this.handledAddresses.get(recipient) > message.attributes.date) {
+      return;
     }
+    this.handledAddresses.set(recipient, message.attributes.date);
+    await this.userDatabase.setAddressStatus(recipient, status);
+    return true;
   }
 
   _extractDeliveryStatusNotification (message) {

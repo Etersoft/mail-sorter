@@ -27,7 +27,7 @@ async function run (config, logger, database) {
     logger.info('Mailbox opened in readonly mode: no modifications will be made');
   }
   const mailbox = config.readonly ? new ReadonlyMailbox(mailboxConfig) : new Mailbox(mailboxConfig);
-  logger.info('Connecting...');
+  logger.verbose('Connecting...');
   await mailbox.initialize();
 
   const sorter = createMailboxSorter(config, mailbox, logger, database);

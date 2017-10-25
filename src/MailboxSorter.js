@@ -25,7 +25,7 @@ class MailboxSorter extends EventEmitter {
   }
 
   async sort () {
-    this.logger.info('Fetching list of unread messages...');
+    this.logger.verbose('Fetching list of unread messages...');
     const unseenIds = await this.mailbox.findUnseen();
     this.logger.info(`Found ${unseenIds.length} unread messages, processing...`);
     const batchCount = Math.ceil(unseenIds.length / this.messageBatchSize);
