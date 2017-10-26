@@ -16,12 +16,15 @@ describe('MailboxSorter', function() {
   const messages = [
     {
       id: 1,
+      uid: 1,
       type: TYPE_1
     }, {
       id: 3,
+      uid: 3,
       type: TYPE_1
     }, {
       id: 2,
+      uid: 2,
       type: TYPE_2
     }
   ];
@@ -52,16 +55,25 @@ describe('MailboxSorter', function() {
       markAsRead: sinon.spy(() => Promise.resolve())
     };
 
+    const result = {
+      performedActions: ['test action'],
+      reason: 'test reason',
+      skipped: false
+    };
+
     handlerMap = {
       [TYPE_1]: {
-        processMessage: sinon.spy(() => Promise.resolve(true))
+        processMessage: sinon.spy(() => Promise.resolve(result))
       },
       [TYPE_2]: {
-        processMessage: sinon.spy(() => Promise.resolve(true))
+        processMessage: sinon.spy(() => Promise.resolve(result))
       }
     };
 
     sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      actions: {
+        markAsRead: true
+      },
       handlerMap,
       messageBatchSize: BATCH_SIZE
     });
@@ -114,16 +126,15 @@ describe('MailboxSorter', function() {
       await assert.isFulfilled(sorter.sort());
     });
 
-    it('should mark as read when handler returns true', async function () {
-      handlerMap[TYPE_2].processMessage = sinon.spy(() => Promise.resolve(true));
+    it('should mark as read when handler returns { skipped: false }', async function () {
       await assert.isFulfilled(sorter.sort());
-      assert.isOk(fakeMailbox.markAsRead.calledWith(messages[2].id));
+      assert.isOk(fakeMailbox.markAsRead.calledWith(messages[2].uid));
     });
 
     it('should not mark as read when handler returns false', async function () {
       handlerMap[TYPE_2].processMessage = sinon.spy(() => Promise.resolve(false));
       await assert.isFulfilled(sorter.sort());
-      assert.isNotOk(fakeMailbox.markAsRead.calledWith(messages[2].id));
+      assert.isNotOk(fakeMailbox.markAsRead.calledWith(messages[2].uid));
     });
 
     it('should throw on loadMessages error', async function () {
@@ -160,7 +171,7 @@ describe('MailboxSorter', function() {
 
     it('should warn on handler error', async function () {
       handlerMap[TYPE_2].processMessage = () => Promise.reject(testError);
-      await sorter.sort();
+      await assert.isFulfilled(sorter.sort());
       assert.isOk(fakeLogger.warn.calledOnce);
     });
 
@@ -168,13 +179,13 @@ describe('MailboxSorter', function() {
       fakeClassifier.classifyMessage = () => {
         throw testError;
       };
-      await sorter.sort();
+      await assert.isFulfilled(sorter.sort());
       assert.isOk(fakeLogger.warn.calledThrice);
     });
 
     it('should warn on markAsRead error', async function () {
       fakeMailbox.markAsRead = () => Promise.reject(testError);
-      await sorter.sort();
+      await assert.isFulfilled(sorter.sort());
       assert.isOk(fakeLogger.warn.calledThrice);
     });
 

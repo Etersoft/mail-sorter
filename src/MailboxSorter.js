@@ -112,7 +112,7 @@ class MailboxSorter extends EventEmitter {
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
       const result = await handler.processMessage(message);
-      this._performActionsAndLogResult(message, result);
+      await this._performActionsAndLogResult(message, result);
       this.emit(Events.MESSAGE_PROCESSED, message);
     } else {
       throw new Error(

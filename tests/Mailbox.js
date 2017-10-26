@@ -35,10 +35,8 @@ describe('Mailbox', function() {
           onOpen(null, fakeBox);
         });
       }),
-      seq: {
-        fetch: sinon.spy(() => fetchObject),
-        search: sinon.spy()
-      },
+      fetch: sinon.spy(() => fetchObject),
+      search: sinon.spy(),
       state: 'disconnected'
     });
 
@@ -66,7 +64,7 @@ describe('Mailbox', function() {
   describe('#loadMessages', function () {
     it('should pass correct range to imap.fetch', function () {
       mailbox.loadMessages('1:3', () => {}, () => {});
-      assert.isOk(fakeConnection.seq.fetch.calledWith('1:3'));
+      assert.isOk(fakeConnection.fetch.calledWith('1:3'));
     });
 
     it('should call onError on fetch error', function () {
@@ -119,7 +117,7 @@ describe('Mailbox', function() {
         done();
       });
       process.nextTick(() => {
-        fakeConnection.seq.search.firstCall.args[1](null, ids);
+        fakeConnection.search.firstCall.args[1](null, ids);
       });
     });
 
@@ -129,7 +127,7 @@ describe('Mailbox', function() {
         done();
       });
       process.nextTick(() => {
-        fakeConnection.seq.search.firstCall.args[1](testError);
+        fakeConnection.search.firstCall.args[1](testError);
       });
     });
   });
