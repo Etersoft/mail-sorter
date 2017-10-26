@@ -31,6 +31,11 @@ Options:
     - unsubscribeAddress (address: string): Promise
     Is called for each mail that has a `+unsubscribe` address.
 
+- runCli (Database)
+Runs as CLI program: parses arguments and reads config.
+Options:
+  - Database: database constructor, will be invoked with config.database and logger as arguments
+
 - ReplyStatuses. Object with two properties:
   - INVALID_ADDRESS: 1 (5.*.* statuses, these indicate that address can be immediately removed from mailing list)
   - TEMPORARY_FAILURE: 2 (4.*.* statuses, indicate temporary failures)
