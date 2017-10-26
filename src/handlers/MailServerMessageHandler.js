@@ -1,3 +1,5 @@
+const { unwrapFrom } = require('../utils');
+
 const ReplyStatuses = {
   INVALID_ADDRESS: 1,
   TEMPORARY_FAILURE: 2
@@ -79,7 +81,7 @@ class MailServerMessageHandler {
 
   _extractOriginalRecipientAddress (headerString) {
     const tuple = headerString.split(';').map(part => part.trim());
-    return tuple[1] || null;
+    return tuple[1] ? unwrapFrom(tuple[1]) : null;
   }
 
   async _tryWithDsnInfo (message) {
