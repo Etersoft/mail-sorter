@@ -21,11 +21,14 @@ class MailServerMessageHandler {
     for (const check of checks) {
       const result = await check(message);
       if (result) {
-        return true;
+        return result;
       }
     }
 
-    return false;
+    return {
+      reason: 'Failed to parse and extract failure reason',
+      skipped: true
+    };
   }
 
   _convertDsnStatus (status) {
@@ -38,16 +41,8 @@ class MailServerMessageHandler {
     }[status];
   }
 
-  async _excludeImmediatelyIfNotAlready (recipient, status, message) {
-    // Write latest result to database, if several messages are present
-    // for single recipient
-    if (this.handledAddresses.has(recipient) &&
-        this.handledAddresses.get(recipient) > message.attributes.date) {
-      return;
-    }
-    this.handledAddresses.set(recipient, message.attributes.date);
-    await this.userDatabase.setAddressStatus(recipient, status);
-    return true;
+  async _excludeImmediatelyIfNotAlready (recipient, status, message, fullStatus) {
+    return await this.userDatabase.setAddressStatus(recipient, status, fullStatus);
   }
 
   _extractDeliveryStatusNotification (message) {
@@ -96,25 +91,30 @@ class MailServerMessageHandler {
 
     const status = this._convertDsnStatus(dsnInfo.status);
     return await this._excludeImmediatelyIfNotAlready(
-      dsnInfo.recipient, status, message
+      dsnInfo.recipient, status, message, dsnInfo.status
     );
   }
 
   async _tryWithXMailerDaemonError (message) {
-    if (!message.headers.has('x-mailer-daemon-error')) {
+    const hasXMailerDaemonError = message.headers.has('x-mailer-daemon-error');
+
+    if (!hasXMailerDaemonError &&
+        !message.headers.has('x-failed-recipients')) {
       return false;
     }
 
-    if (!message.headers.has('x-mailer-daemon-recipients')) {
+    if (!message.headers.has('x-mailer-daemon-recipients') &&
+        !message.headers.has('x-failed-recipients')) {
       return false;
     }
 
-    const status = this._convertXMailerDaemonErrorStatus(
+    const status = hasXMailerDaemonError ? this._convertXMailerDaemonErrorStatus(
       message.headers.get('x-mailer-daemon-error')
-    );
-    const recipient = message.headers.get('x-mailer-daemon-recipients');
+    ) : ReplyStatuses.INVALID_ADDRESS;
+    const recipient = message.headers.get('x-mailer-daemon-recipients') || 
+                      message.headers.get('x-failed-recipients');
     return await this._excludeImmediatelyIfNotAlready(
-      recipient, status, message
+      recipient, status, message, 'not set'
     );
   }
 }

@@ -6,7 +6,7 @@ const MessageTypes = require('./MessageTypes');
 const Events = {
   MESSAGE_CLASSIFIED: 1,
   MESSAGE_PROCESSED: 2,
-  MESSAGE_MARKED_AS_READ: 3,
+  MESSAGE_ACTIONS_PERFORMED: 3,
   MESSAGE_ERROR: 4
 };
 
@@ -17,6 +17,7 @@ class MailboxSorter extends EventEmitter {
     this.classifier = classifier;
     this.messageBatchSize = options.messageBatchSize;
     this.handlerMap = options.handlerMap;
+    this.actions = options.actions || {};
     this.logger = logger;
 
     if (!Number.isInteger(this.messageBatchSize) || this.messageBatchSize < 1) {
@@ -25,7 +26,7 @@ class MailboxSorter extends EventEmitter {
   }
 
   async sort () {
-    this.logger.verbose('Fetching list of unread messages...');
+    this.logger.debug('Fetching list of unread messages...');
     const unseenIds = await this.mailbox.findUnseen();
     this.logger.info(`Found ${unseenIds.length} unread messages, processing...`);
     const batchCount = Math.ceil(unseenIds.length / this.messageBatchSize);
@@ -43,6 +44,43 @@ class MailboxSorter extends EventEmitter {
       await this._processMessageBatch(ids);
       this.logger.debug('Processed message batch #' + (batchCount - i));
     }
+  }
+
+  async _performActionsAndLogResult (message, result) {
+    const messageInfo = `UID ${message.uid} (from ${message.fromAddress})`;
+    if (result && !result.skipped) {
+      let performedActions = await this._performPostProcessActions(message);
+      if (result.performedActions) {
+        performedActions = performedActions.concat(result.performedActions);
+      }
+      const actionString = performedActions.join(', ');
+      const reasonString = result.reason || 'unknown';
+      this.logger.verbose(
+        `Message ${messageInfo} actions: ${actionString}; reason: ${reasonString}`
+      );
+    } else {
+      const reasonString = result.reason || 'unknown';
+      this.logger.verbose(
+        `Message ${messageInfo} skipped, no actions performed, reason: ${reasonString}`
+      );
+    }
+  }
+
+  async _performPostProcessActions (message) {
+    const actionsPerformed = [];
+    if (this.actions.markAsRead) {
+      // Pass UID instead of seq no, because some servers do not work correctly
+      // with seq numbers
+      await this.mailbox.markAsRead(message.uid);
+      actionsPerformed.push('mark as read');
+    }
+    if (this.actions.delete) {
+      await this.mailbox.deleteMessage(message.uid);
+      actionsPerformed.push('delete message');
+    }
+
+    this.emit(Events.MESSAGE_ACTIONS_PERFORMED, message);
+    return actionsPerformed;
   }
 
   _processMessageBatch (ids) {
@@ -73,15 +111,8 @@ class MailboxSorter extends EventEmitter {
     const handler = this.handlerMap[messageType];
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
     if (handler) {
-      let markAsRead = false;
-      markAsRead = await handler.processMessage(message);
-      if (markAsRead) {
-        // Pass UID instead of seq no, because some servers do not work correctly
-        // with seq numbers
-        await this.mailbox.markAsRead(message.uid);
-        await this.mailbox.deleteMessage(message.uid);
-        this.emit(Events.MESSAGE_MARKED_AS_READ, message);
-      }
+      const result = await handler.processMessage(message);
+      this._performActionsAndLogResult(message, result);
       this.emit(Events.MESSAGE_PROCESSED, message);
     } else {
       throw new Error(

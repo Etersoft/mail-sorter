@@ -21,7 +21,7 @@ class MailboxSorterStatsCollector {
     });
 
     this.logger.info(`Failed messages count: ${this.stats.counters.failed}`);
-    this.logger.info(`Marked as read messages count: ${this.stats.counters.markedAsRead}`);
+    this.logger.info(`Messages with performed actions: ${this.stats.counters.actionsPerformed}`);
     this.logger.info(`Successful messages count: ${this.stats.counters.successful}`);
     if (this.stats.failedMessages.length) {
       this.logger.info('Failed messages list:');
@@ -38,8 +38,8 @@ class MailboxSorterStatsCollector {
     this.stats = {
       classDistribution: new Map(),
       counters: {
+        actionsPerformed: 0,
         failed: 0,
-        markedAsRead: 0,
         successful: 0
       },
       failedMessages: []
@@ -63,7 +63,7 @@ class MailboxSorterStatsCollector {
     };
     listen(MailboxSorter.Events.MESSAGE_CLASSIFIED, this._updateClassDistribution);
     listen(MailboxSorter.Events.MESSAGE_PROCESSED, this._incrementCounter('successful'));
-    listen(MailboxSorter.Events.MESSAGE_MARKED_AS_READ, this._incrementCounter('markedAsRead'));
+    listen(MailboxSorter.Events.MESSAGE_ACTIONS_PERFORMED, this._incrementCounter('actionsPerformed'));
     listen(MailboxSorter.Events.MESSAGE_ERROR, this._handleFailedMessage);
   }
 

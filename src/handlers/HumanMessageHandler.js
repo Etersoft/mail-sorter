@@ -4,9 +4,13 @@ class HumanMessageHandler {
   }
 
   processMessage (message) {
-    this.logger.verbose(
+    this.logger.debug(
       `Stub: do something with human message (from ${message.headers.get('from').text})`
     );
+    return {
+      reason: 'Human message',
+      skipped: true
+    };
   }
 }
 

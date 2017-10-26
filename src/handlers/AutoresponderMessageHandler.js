@@ -5,8 +5,13 @@ class AutoresponderMessageHandler {
   }
 
   async processMessage (message) {
-    await this.mailbox.deleteMessage(message.id);
-    return true;
+    await this.mailbox.deleteMessage(message);
+    this.logger.debug(`Autoresponder message (${message.fromAddress}): delete`);
+    return {
+      performedActions: ['delete'],
+      reason: 'Autoresponder message',
+      skipped: false
+    };
   }
 }
 

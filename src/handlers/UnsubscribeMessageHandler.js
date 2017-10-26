@@ -1,6 +1,3 @@
-const { extractFromAddress } = require('../utils');
-
-
 class UnsubscribeMessageHandler {
   constructor (mailbox, mailingListDatabase, logger) {
     this.mailbox = mailbox;
@@ -9,10 +6,7 @@ class UnsubscribeMessageHandler {
   }
 
   async processMessage (message) {
-    const from = extractFromAddress(message);
-
-    await this.mailingListDatabase.unsubscribeAddress(from);
-    await this.mailbox.deleteMessage(message.id);
+    await this.mailingListDatabase.unsubscribeAddress(message.fromAddress);
     return true;
   }
 }

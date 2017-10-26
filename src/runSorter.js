@@ -63,6 +63,7 @@ function createMailboxSorter (config, mailbox, logger, database) {
     [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)
   };
   return new MailboxSorter(mailbox, classifier, logger, {
+    actions: config.actions,
     handlerMap,
     messageBatchSize: config.messageBatchSize
   });
