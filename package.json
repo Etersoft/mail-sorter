@@ -14,7 +14,9 @@
     "lodash": "4.17.4",
     "logger": "git+https://gitlab.eterfund.ru/TheOwl/logger.git",
     "mailparser": "2.1.0",
-    "winston": "3.0.0-rc0"
+    "winston": "3.0.0-rc0",
+    "read-config": "git+https://gitlab.eterfund.ru/TheOwl/read-config.git#87bb1aba6ed991cbfa53ec97bd1d737729dfb71f",
+    "yargs": "10.0.3"
   },
   "devDependencies": {
     "chai": "4.1.2",

@@ -1,0 +1,19 @@
+{
+  "actions": {
+    "markAsRead": true,
+    "delete": false
+  },
+  "database": {
+    "readonly": true
+  },
+  "imapConnection": {
+    "port": 993,
+    "tls": true
+  },
+  "logging": {
+    "maxLogLevel": "verbose"
+  },
+  "messageBatchSize": 100,
+  "readonly": true,
+  "unsubscribeAdditionalAddress": "unsubscribe"
+}
