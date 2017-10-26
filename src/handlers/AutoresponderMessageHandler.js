@@ -5,7 +5,7 @@ class AutoresponderMessageHandler {
   }
 
   async processMessage (message) {
-    await this.mailbox.deleteMessage(message);
+    await this.mailbox.deleteMessage(message.uid);
     this.logger.debug(`Autoresponder message (${message.fromAddress}): delete`);
     return {
       performedActions: ['delete'],
