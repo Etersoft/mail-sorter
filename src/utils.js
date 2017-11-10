@@ -2,9 +2,8 @@ const FROM_ADDRESS_REGEXP = /<(.+)>/i;
 
 
 const utils = {
-  extractFromAddress (message) {
-    let from = message.headers.get('from');
-    if (typeof from !== 'string') {
+  extractAddress (from) {
+    if (typeof from !== 'string' && from) {
       from = from.text;
     }
 

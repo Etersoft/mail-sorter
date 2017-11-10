@@ -1,4 +1,4 @@
-const { extractFromAddress } = require('./utils');
+const { extractAddress } = require('./utils');
 
 
 class Message {
@@ -17,7 +17,11 @@ class Message {
   }
 
   get fromAddress () {
-    return extractFromAddress(this);
+    return extractAddress(this.headers.get('from'));
+  }
+
+  get toAddress () {
+    return extractAddress(this.headers.get('to'));
   }
 
   get uid () {

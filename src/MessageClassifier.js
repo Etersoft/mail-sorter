@@ -61,7 +61,7 @@ class MessageClassifier {
   }
 
   _isUnsubscribe (message) {
-    const to = message.headers.get('to').text;
+    const to = message.toAddress;
     const username = to.split('@')[0];
     const parts = username.split('+');
     if (typeof parts[1] !== 'string') {
