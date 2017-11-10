@@ -13,7 +13,7 @@ const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
 
 
-async function run (config, logger, database) {
+async function run (config, logger, actionLogger, database) {
   if (!logger) {
     logger = createLogger(config.logging);
   }
@@ -30,7 +30,7 @@ async function run (config, logger, database) {
   logger.verbose('Connecting...');
   await mailbox.initialize();
 
-  const sorter = createMailboxSorter(config, mailbox, logger, database);
+  const sorter = createMailboxSorter(config, mailbox, logger, actionLogger, database);
   const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
   await sorter.sort();
 
@@ -39,8 +39,8 @@ async function run (config, logger, database) {
   logger.info('Done.');
 }
 
-module.exports = function (config, logger, database) {
-  return run(config, logger, database).catch(error => {
+module.exports = function (config, logger, actionLogger, database) {
+  return run(config, logger, actionLogger, database).catch(error => {
     if (logger) {
       logger.error(error.stack);
     } else {
@@ -51,7 +51,7 @@ module.exports = function (config, logger, database) {
   });
 };
 
-function createMailboxSorter (config, mailbox, logger, database) {
+function createMailboxSorter (config, mailbox, logger, actionLogger, database) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
   const mailingListDatabase = database;
   const handlerMap = {
@@ -62,7 +62,7 @@ function createMailboxSorter (config, mailbox, logger, database) {
     [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
     [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)
   };
-  return new MailboxSorter(mailbox, classifier, logger, {
+  return new MailboxSorter(mailbox, classifier, logger, actionLogger, {
     actions: config.actions,
     handlerMap,
     messageBatchSize: config.messageBatchSize

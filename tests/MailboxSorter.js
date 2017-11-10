@@ -29,7 +29,7 @@ describe('MailboxSorter', function() {
     }
   ];
 
-  let fakeClassifier, fakeMailbox, fakeLogger, handlerMap, sorter, testError, unseenIds;
+  let fakeClassifier, fakeMailbox, fakeLogger, fakeActionLogger, handlerMap, sorter, testError, unseenIds;
 
   beforeEach(function () {
     fakeClassifier = {
@@ -37,6 +37,8 @@ describe('MailboxSorter', function() {
         return message.type;
       })
     };
+
+    fakeActionLogger = createFakeLogger();
 
     fakeLogger = createFakeLogger();
 
@@ -70,7 +72,7 @@ describe('MailboxSorter', function() {
       }
     };
 
-    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+    sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, fakeActionLogger, {
       actions: {
         markAsRead: true
       },
@@ -86,14 +88,14 @@ describe('MailboxSorter', function() {
   // Tests
   describe('constructor', function () {
     it('should throw on null messageBatchSize value', function () {
-      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
         handlerMap,
         messageBatchSize: null
       }));
     });
 
     it('should throw on negative messageBatchSize value', function () {
-      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
         handlerMap,
         messageBatchSize: -1
       }));
@@ -189,8 +191,13 @@ describe('MailboxSorter', function() {
       assert.isOk(fakeLogger.warn.calledThrice);
     });
 
+    it('should log actions to action log', async function () {
+      await assert.isFulfilled(sorter.sort());
+      assert.isOk(fakeActionLogger.info.calledThrice);
+    });
+
     it('should behave correctly with batchSize = 1', async function () {
-      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
         handlerMap,
         messageBatchSize: 1
       });
@@ -200,7 +207,7 @@ describe('MailboxSorter', function() {
     });
 
     it('should behave correctly with batchSize = msgCount', async function () {
-      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, {
+      sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
         handlerMap,
         messageBatchSize: messages.length
       });

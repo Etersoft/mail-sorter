@@ -11,7 +11,7 @@ const Events = {
 };
 
 class MailboxSorter extends EventEmitter {
-  constructor (mailbox, classifier, logger, options) {
+  constructor (mailbox, classifier, logger, actionLogger, options) {
     super();
     this.mailbox = mailbox;
     this.classifier = classifier;
@@ -19,6 +19,7 @@ class MailboxSorter extends EventEmitter {
     this.handlerMap = options.handlerMap;
     this.actions = options.actions || {};
     this.logger = logger;
+    this.actionLogger = actionLogger;
 
     if (!Number.isInteger(this.messageBatchSize) || this.messageBatchSize < 1) {
       throw new Error('Invalid messageBatchSize value: ' + this.messageBatchSize);
@@ -55,9 +56,12 @@ class MailboxSorter extends EventEmitter {
       }
       const actionString = performedActions.join(', ');
       const reasonString = result.reason || 'unknown';
-      this.logger.verbose(
-        `Message ${messageInfo} actions: ${actionString}; reason: ${reasonString}`
-      );
+
+      const logMessage = `Message ${messageInfo} actions: ${actionString}; reason: ${reasonString}`;
+      this.logger.verbose(logMessage);
+      if (this.actionLogger) {
+        this.actionLogger.info(logMessage);
+      }
     } else {
       const reasonString = result.reason || 'unknown';
       this.logger.verbose(

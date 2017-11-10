@@ -36,8 +36,17 @@ module.exports = function (Database) {
 
   const config = readConfig([defaultConfig, 'config.json', cliOptions]);
   const logger = createLogger(config.logging);
+  let actionLogger = null;
+  if (config.logging.actionLogFile) {
+    actionLogger = createLogger({
+      colors: false,
+      file: config.logging.actionLogFile,
+      levels: false,
+      timestamp: true
+    });
+  }
   const database = new Database(config.database, logger);
-  require('./runSorter')(config, logger, database).then(() => {
+  require('./runSorter')(config, logger, actionLogger, database).then(() => {
     process.exit(0);
   }).catch(() => {
     process.exit(1);
