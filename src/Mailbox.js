@@ -90,10 +90,13 @@ class Mailbox {
   }
 
   async _loadMessage (message, id) {
+    const buffers = [];
+
     const [data, attributes] = await Promise.all([
       // Parse message body
       new Promise((resolve, reject) => {
         message.on('body', stream => {
+          stream.on('data', buffer => buffers.push(buffer));
           try {
             stream.once && stream.once('error', reject);
             parseMessage(stream).then(resolve).catch(reject);
@@ -108,7 +111,7 @@ class Mailbox {
       new Promise(resolve => message.once('end', resolve))
     ]);
  
-    return new Message(data, attributes, id, this);
+    return new Message(data, attributes, id, this, Buffer.concat(buffers));
   }
 }
 

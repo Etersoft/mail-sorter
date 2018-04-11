@@ -95,7 +95,7 @@ class MailboxSorter extends EventEmitter {
           await this._processMessage(message);
         } catch (error) {
           this.emit(Events.MESSAGE_ERROR, message, error);
-          this.logger.warn(`Warning: message #${message.id} failed: ${error}`);
+          this.logger.warn(`Warning: message #${message.id} failed: ${error.stack}`);
         }
         processedCount++;
         if (processedCount === ids.length) {

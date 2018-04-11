@@ -1,8 +1,9 @@
 const { extractAddress } = require('./utils');
+const parseMessage = require('mailparser').simpleParser;
 
 
 class Message {
-  constructor (data, attributes, id, mailbox) {
+  constructor (data, attributes, id, mailbox, source) {
     this.attributes = attributes;
 
     this.attachments = data.attachments;
@@ -10,14 +11,35 @@ class Message {
     this.html = data.html;
     this.text = data.text;
     this.textAsHtml = data.textAsHtml;
+    this.source = source;
 
     this.id = id;
-
     this.mailbox = mailbox;
+    this.extractAdditionalAttachmentSource();
   }
 
   get fromAddress () {
     return extractAddress(this.headers.get('from'));
+  }
+
+  extractAdditionalAttachmentSource () {
+    const stringSource = this.source.toString('utf8');
+    const contentType = this.headers.get('content-type');
+    if (contentType && contentType.params) {
+      const boundary = contentType.params.boundary;
+      const parts = stringSource.split('--' + boundary);
+      const last = parts[parts.length - 2];
+      if (last) {
+        this.additionalAttachmentString = last.split('\n').slice(4).join('\n');
+      }
+    }
+  }
+
+  getAdditionalAttachment () {
+    if (!this.additionalAttachmentString) {
+      return Promise.resolve(null);
+    }
+    return parseMessage(this.additionalAttachmentString);
   }
 
   get toAddress () {
