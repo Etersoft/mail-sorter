@@ -7,11 +7,12 @@ const ReplyStatuses = {
 
 
 class MailServerMessageHandler {
-  constructor (userDatabase, mailbox, logger) {
+  constructor (userDatabase, mailbox, logger, mailingRepository) {
     this.userDatabase = userDatabase;
     this.mailbox = mailbox;
     this.handledAddresses = new Map();
     this.logger = logger;
+    this.mailingRepository = mailingRepository;
   }
 
   async processMessage (message) {
@@ -89,6 +90,15 @@ class MailServerMessageHandler {
 
     if (!dsnInfo) {
       return false;
+    }
+
+    const listId = message.headers.get('list-id');
+    if (listId && this.mailingRepository) {
+      const mailing = await this.mailingRepository.getByListId(listId);
+      if (mailing) {
+        mailing.errorCount++;
+        await this.mailingRepository.update(mailing);
+      }
     }
 
     const status = this._convertDsnStatus(dsnInfo.status);

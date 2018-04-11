@@ -11,6 +11,8 @@ const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
 const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
 const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
+const { RedisMailingRepository } = require('mail-server/server/dist/RedisMailingRepository');
+const { createRedisClient } = require('mail-server/server/dist/createRedisClient');
 
 
 async function run (config, logger, actionLogger, database) {
@@ -30,7 +32,12 @@ async function run (config, logger, actionLogger, database) {
   logger.verbose('Connecting...');
   await mailbox.initialize();
 
-  const sorter = createMailboxSorter(config, mailbox, logger, actionLogger, database);
+  const mailingRepository = config.redis ? new RedisMailingRepository(
+    createRedisClient(config.redis)
+  ) : null;
+  const sorter = createMailboxSorter({
+    config, mailbox, logger, actionLogger, database, mailingRepository
+  });
   const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
   await sorter.sort();
 
@@ -51,13 +58,15 @@ module.exports = function (config, logger, actionLogger, database) {
   });
 };
 
-function createMailboxSorter (config, mailbox, logger, actionLogger, database) {
+function createMailboxSorter ({ 
+  config, mailbox, logger, actionLogger, database, mailingRepository
+}) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
   const mailingListDatabase = database;
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
-      mailingListDatabase, mailbox, logger
+      mailingListDatabase, mailbox, logger, mailingRepository
     ),
     [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
     [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)

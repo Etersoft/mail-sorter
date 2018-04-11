@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "eslint 'src/**/*.js' 'tests/**/*.js'",
     "lint-fix": "eslint --fix 'src/**/*.js' 'tests/**/*.js'",
+    "postinstall": "cd node_modules/mail-server && npm i && npm run server:build",
     "test": "mocha tests"
   },
   "private": true,
@@ -14,6 +15,7 @@
     "lodash": "4.17.4",
     "logger": "git+https://gitlab.eterfund.ru/TheOwl/logger.git",
     "mailparser": "2.1.0",
+    "mail-server": "git+https://gitlab.eterfund.ru/TheOwl/mail-server.git",
     "winston": "3.0.0-rc0",
     "read-config": "git+https://gitlab.eterfund.ru/TheOwl/read-config.git#87bb1aba6ed991cbfa53ec97bd1d737729dfb71f",
     "yargs": "10.0.3"
