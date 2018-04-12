@@ -63,7 +63,10 @@ class MailboxSorterStatsCollector {
     };
     listen(MailboxSorter.Events.MESSAGE_CLASSIFIED, this._updateClassDistribution);
     listen(MailboxSorter.Events.MESSAGE_PROCESSED, this._incrementCounter('successful'));
-    listen(MailboxSorter.Events.MESSAGE_ACTIONS_PERFORMED, this._incrementCounter('actionsPerformed'));
+    listen(
+      MailboxSorter.Events.MESSAGE_ACTIONS_PERFORMED,
+      this._incrementCounter('actionsPerformed')
+    );
     listen(MailboxSorter.Events.MESSAGE_ERROR, this._handleFailedMessage);
   }
 

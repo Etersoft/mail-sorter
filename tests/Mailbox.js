@@ -81,8 +81,9 @@ describe('Mailbox', function() {
         assert.isNotNull(error);
         done();
       });
+      const fakeStream = new stream.Readable();
       fetchObject.emit('message', fakeMessage);
-      fakeMessage.emit('body', null /* invalid body */);
+      fakeMessage.emit('body', fakeStream);
     });
 
     it('should call onError on stream error', function (done) {
@@ -102,8 +103,11 @@ describe('Mailbox', function() {
       mailbox.loadMessages('1:3', () => {
         done();
       });
+      const fakeStream = new stream.Readable();
       fetchObject.emit('message', fakeMessage);
-      fakeMessage.emit('body', testEmail);
+      fakeMessage.emit('body', fakeStream);
+      fakeStream.push(new Buffer(testEmail));
+      fakeStream.push(null);
       fakeMessage.emit('attributes', {});
       fakeMessage.emit('end');
     });

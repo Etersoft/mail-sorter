@@ -97,15 +97,14 @@ class MailServerMessageHandler {
     const originalMessage = await message.getAdditionalAttachment();
     if (originalMessage && this.mailingRepository) {
       let listId = originalMessage.headers.get('list');
-      this.logger.debug(JSON.stringify([...originalMessage.headers], null, 2));
       // because mailparser transforms headers
       if (listId && listId.id && listId.id.name) {
         listId = listId.id.name;
         this.logger.debug(`UID ${message.uid}: list-id ${listId}`);
         const mailing = await this.mailingRepository.getByListId(listId);
         if (mailing) {
-          mailing.errorCount++;
-          this.logger.debug(`UID ${message.uid}: mailing #${mailing.id} errorCount = ${mailing.errorCount}`);
+          mailing.undeliveredCount++;
+          this.logger.debug(`UID ${message.uid}: mailing #${mailing.id} undeliveredCount = ${mailing.undeliveredCount}`);
           await this.mailingRepository.update(mailing);
         } else {
           this.logger.debug(`UID ${message.uid}: no mailing with list-id ${listId}`);

@@ -29,7 +29,8 @@ describe('MailboxSorter', function() {
     }
   ];
 
-  let fakeClassifier, fakeMailbox, fakeLogger, fakeActionLogger, handlerMap, sorter, testError, unseenIds;
+  let fakeClassifier, fakeMailbox, fakeLogger, fakeActionLogger, handlerMap, sorter;
+  let testError, unseenIds;
 
   beforeEach(function () {
     fakeClassifier = {
