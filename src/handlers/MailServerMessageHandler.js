@@ -7,12 +7,13 @@ const ReplyStatuses = {
 
 
 class MailServerMessageHandler {
-  constructor (userDatabase, mailbox, logger, mailingRepository) {
+  constructor (userDatabase, mailbox, logger, mailingRepository, addressStatsRepository) {
     this.userDatabase = userDatabase;
     this.mailbox = mailbox;
     this.handledAddresses = new Map();
     this.logger = logger;
     this.mailingRepository = mailingRepository;
+    this.addressStatsRepository = addressStatsRepository;
   }
 
   async processMessage (message) {
@@ -85,6 +86,24 @@ class MailServerMessageHandler {
     return tuple[1] ? unwrapFrom(tuple[1]) : null;
   }
 
+  async _performActions (recipient, status, message, dsnStatus) {
+    if (this.addressStatsRepository) {
+      // Optimistic locking
+      const stats = await this.addressStatsRepository.updateInTransaction(
+        recipient, // find stats by this email
+        async stats => { // if found, this will be executed as update transaction
+          stats.lastStatus = dsnStatus;
+          stats.lastStatusDate = new Date();
+        }
+      );
+      if (stats) {
+        this.logger.debug(`${recipient}: updated stats`);
+      }
+    }
+
+    return await this._excludeImmediatelyIfNotAlready(recipient, status, message, dsnStatus);
+  }
+
   /* eslint-disable */
   async _tryWithDsnInfo (message) {
     const dsnInfo = this._extractDeliveryStatusNotification(message);
@@ -117,7 +136,7 @@ class MailServerMessageHandler {
     }
 
     const status = this._convertDsnStatus(dsnInfo.status);
-    return await this._excludeImmediatelyIfNotAlready(
+    return await this._performActions(
       dsnInfo.recipient, status, message, dsnInfo.status
     );
   }
@@ -140,7 +159,7 @@ class MailServerMessageHandler {
     ) : ReplyStatuses.INVALID_ADDRESS;
     const recipient = message.headers.get('x-mailer-daemon-recipients') || 
                       message.headers.get('x-failed-recipients');
-    return await this._excludeImmediatelyIfNotAlready(
+    return await this._performActions(
       recipient, status, message, 'not set'
     );
   }
