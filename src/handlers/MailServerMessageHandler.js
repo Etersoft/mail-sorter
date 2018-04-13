@@ -147,7 +147,7 @@ class MailServerMessageHandler {
     } else if (statusClassification === ReplyStatuses.TEMPORARY_FAILURE) {
       return {
         reason: `Temporary delivery failure (${recipient}, status ${dsnStatus})`,
-        skipped: true
+        skipped: false
       };
     }
   }
