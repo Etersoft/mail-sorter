@@ -76,7 +76,10 @@ function createMailboxSorter ({
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
-      mailingListDatabase, mailbox, logger, mailingRepository, addressStatsRepository
+      mailingListDatabase, logger, mailingRepository, addressStatsRepository,
+      {
+        maxTemporaryFailures: config.maxTemporaryFailures
+      }
     ),
     [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
     [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)

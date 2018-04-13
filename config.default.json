@@ -13,6 +13,7 @@
   "logging": {
     "maxLogLevel": "verbose"
   },
+  "maxTemporaryFailures": 0,
   "messageBatchSize": 100,
   "readonly": true,
   "redis": {

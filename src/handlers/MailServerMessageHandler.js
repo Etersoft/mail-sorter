@@ -7,22 +7,30 @@ const ReplyStatuses = {
 
 
 class MailServerMessageHandler {
-  constructor (userDatabase, mailbox, logger, mailingRepository, addressStatsRepository) {
+  constructor (
+    userDatabase, logger, mailingRepository, addressStatsRepository, config
+  ) {
     this.userDatabase = userDatabase;
-    this.mailbox = mailbox;
     this.handledAddresses = new Map();
     this.logger = logger;
     this.mailingRepository = mailingRepository;
     this.addressStatsRepository = addressStatsRepository;
+    this.maxTemporaryFailures = config.maxTemporaryFailures;
     this.listIdToMailingId = new Map();
   }
 
   /**
    * Порядок обработки ответов почтовых серверов:
    * 1. Извлечь информацию о DSN: адрес получателя, статус (тип ошибки)
-   * и (опционально) list-id.
-   * 2. 
-   * 
+   * и (опционально) list-id. Пробуем сначала извлечь стандартный DSN, потом
+   * пробуем нестандартные заголовки (x-mailer-daemon-error)
+   * 2. Если удалось получить list-id, то ищем рассылку по list-id и увеличиваем
+   * счётчик ошибок доставки.
+   * 3. Изменить статистику для конкретного адреса. Если ошибка постоянная (5.*),
+   * то просто выставляется последний статус и его дата. Если же ошибка временная,
+   * то дополнительно счётчик временных ошибок увеличивается на 1.
+   * 4. Если ошибка постоянная или превышено пороговое значение,
+   * то адрес исключается из базы рассылок.
    */
   async processMessage (message) {
     const checks = [
@@ -106,14 +114,17 @@ class MailServerMessageHandler {
     return null;
   }
 
-  async _performActions (recipient, status, message, dsnStatus) {
+  async _performActions (recipient, statusClassification, message, dsnStatus) {
+    let stats;
     if (this.addressStatsRepository) {
-      // Optimistic locking
-      const stats = await this.addressStatsRepository.updateInTransaction(
+      stats = await this.addressStatsRepository.updateInTransaction(
         recipient, // find stats by this email
         async stats => { // if found, this will be executed as update transaction
           stats.lastStatus = dsnStatus;
           stats.lastStatusDate = new Date();
+          if (statusClassification === ReplyStatuses.TEMPORARY_FAILURE) {
+            stats.temporaryFailureCount++;
+          }
         }
       );
       if (stats) {
@@ -121,10 +132,26 @@ class MailServerMessageHandler {
       }
     }
 
-    return await this._excludeImmediatelyIfNotAlready(recipient, status, message, dsnStatus);
+    if (statusClassification === ReplyStatuses.INVALID_ADDRESS ||
+       (stats && stats.temporaryFailureCount > this.maxTemporaryFailures)) {
+      
+      const result = await this.userDatabase.disableAddressEmails(recipient);
+      if (result) {
+        return result;
+      }
+      return {
+        performedActions: ['disable emails'],
+        reason: `Invalid address (${recipient}, status ${dsnStatus})`,
+        skipped: false
+      };
+    } else if (statusClassification === ReplyStatuses.TEMPORARY_FAILURE) {
+      return {
+        reason: `Temporary delivery failure (${recipient}, status ${dsnStatus})`,
+        skipped: true
+      };
+    }
   }
 
-  /* eslint-disable */
   async _tryWithDsnInfo (message) {
     const dsnInfo = this._extractDeliveryStatusNotification(message);
 
@@ -160,7 +187,7 @@ class MailServerMessageHandler {
     const recipient = message.headers.get('x-mailer-daemon-recipients') || 
                       message.headers.get('x-failed-recipients');
     return await this._performActions(
-      recipient, status, message, 'not set'
+      recipient, status, message, '<unknown>'
     );
   }
 
