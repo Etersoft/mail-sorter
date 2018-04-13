@@ -15,9 +15,10 @@ const { RedisMailingRepository } = require('mail-server/server/dist/RedisMailing
 const { RedisAddressStatsRepository } = require(
   'mail-server/server/dist/RedisAddressStatsRepository'
 );
-const { createRedisClient } = require('mail-server/server/dist/createRedisClient');
+const { RedisConnectionPoolImpl } = require('mail-server/server/dist/RedisConnectionPool');
 
 
+/* eslint-disable max-statements */
 async function run (config, logger, actionLogger, database) {
   if (!logger) {
     logger = createLogger(config.logging);
@@ -35,11 +36,14 @@ async function run (config, logger, actionLogger, database) {
   logger.verbose('Connecting...');
   await mailbox.initialize();
 
-  const mailingRepository = config.redis ? new RedisMailingRepository(
-    createRedisClient(config.redis), config.redis.prefixes
+  const redisConnectionPool = config.redis ? new RedisConnectionPoolImpl(
+    config.redis
   ) : null;
-  const addressStatsRepository = config.redis ? new RedisAddressStatsRepository(
-    createRedisClient(config.redis), config.redis.prefixes
+  const mailingRepository = redisConnectionPool ? new RedisMailingRepository(
+    redisConnectionPool, config.redis.prefixes
+  ) : null;
+  const addressStatsRepository = redisConnectionPool ? new RedisAddressStatsRepository(
+    redisConnectionPool, config.redis.prefixes
   ) : null;
   const sorter = createMailboxSorter({
     config, mailbox, logger, actionLogger, database, mailingRepository, addressStatsRepository

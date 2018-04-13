@@ -15,5 +15,11 @@
   },
   "messageBatchSize": 100,
   "readonly": true,
+  "redis": {
+    "pool": {
+      "min": 1,
+      "max": 5
+    }
+  },
   "unsubscribeAdditionalAddress": "unsubscribe"
 }

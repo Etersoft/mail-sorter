@@ -14,8 +14,16 @@ class MailServerMessageHandler {
     this.logger = logger;
     this.mailingRepository = mailingRepository;
     this.addressStatsRepository = addressStatsRepository;
+    this.listIdToMailingId = new Map();
   }
 
+  /**
+   * Порядок обработки ответов почтовых серверов:
+   * 1. Извлечь информацию о DSN: адрес получателя, статус (тип ошибки)
+   * и (опционально) list-id.
+   * 2. 
+   * 
+   */
   async processMessage (message) {
     const checks = [
       this._tryWithDsnInfo,
@@ -86,6 +94,18 @@ class MailServerMessageHandler {
     return tuple[1] ? unwrapFrom(tuple[1]) : null;
   }
 
+  async _getMailingIdByListId (listId) {
+    if (this.listIdToMailingId.has(listId)) {
+      return this.listIdToMailingId.get(listId);
+    }
+    const mailing = await this.mailingRepository.getByListId(listId);
+    if (mailing) {
+      this.listIdToMailingId.set(listId, mailing.id);
+      return mailing.id;
+    }
+    return null;
+  }
+
   async _performActions (recipient, status, message, dsnStatus) {
     if (this.addressStatsRepository) {
       // Optimistic locking
@@ -113,27 +133,7 @@ class MailServerMessageHandler {
       return false;
     }
 
-    const originalMessage = await message.getAdditionalAttachment();
-    if (originalMessage && this.mailingRepository) {
-      let listId = originalMessage.headers.get('list');
-      // because mailparser transforms headers
-      if (listId && listId.id && listId.id.name) {
-        listId = listId.id.name;
-        this.logger.debug(`UID ${message.uid}: list-id ${listId}`);
-        const mailing = await this.mailingRepository.getByListId(listId);
-        if (mailing) {
-          mailing.undeliveredCount++;
-          this.logger.debug(`UID ${message.uid}: mailing #${mailing.id} undeliveredCount = ${mailing.undeliveredCount}`);
-          await this.mailingRepository.update(mailing);
-        } else {
-          this.logger.debug(`UID ${message.uid}: no mailing with list-id ${listId}`);
-        }
-      } else {
-        this.logger.debug(`UID ${message.uid}: no list-id`);
-      }
-    } else {
-      this.logger.debug(`UID ${message.uid}: no original message to get list-id from`);
-    }
+    await this._updateMailingCounters(message);
 
     const status = this._convertDsnStatus(dsnInfo.status);
     return await this._performActions(
@@ -161,6 +161,45 @@ class MailServerMessageHandler {
                       message.headers.get('x-failed-recipients');
     return await this._performActions(
       recipient, status, message, 'not set'
+    );
+  }
+
+  async _updateMailingCounters (message) {
+    const originalMessage = await message.getAdditionalAttachment();
+    if (!this.mailingRepository) {
+      return;
+    }
+    if (!originalMessage) {
+      this.logger.debug(`UID ${message.uid}: Failed to extract original message, can't collect mailing stats`);
+      return;
+    }
+
+    let listId = originalMessage.headers.get('list');
+    // because mailparser transforms headers
+    if (listId && listId.id && listId.id.name) {
+      listId = listId.id.name;
+    } else {
+      this.logger.debug(`UID ${message.uid}: no list-id`);
+      return;
+    }
+
+    this.logger.debug(`UID ${message.uid}: list-id ${listId}`);
+    const mailingId = await this._getMailingIdByListId(listId);
+    if (!mailingId) {
+      this.logger.debug(`UID ${message.uid}: no mailing with list-id ${listId}`);
+      return;
+    }
+    
+    const mailing = await this.mailingRepository.updateInTransaction(
+      mailingId,
+      async mailing => {
+        mailing.undeliveredCount++;
+      }
+    );
+    this.logger.debug(
+      `UID ${message.uid}: mailing #${mailingId} undeliveredCount = ${
+        mailing.undeliveredCount
+      }`
     );
   }
 }
