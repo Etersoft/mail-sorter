@@ -16,6 +16,10 @@ const { RedisAddressStatsRepository } = require(
   'mail-server/server/dist/RedisAddressStatsRepository'
 );
 const { RedisConnectionPoolImpl } = require('mail-server/server/dist/RedisConnectionPool');
+const FailureInfoParser = require('./FailureInfoParser');
+const DsnParser = require('./DsnParser');
+const SpecialHeaderParser = require('./SpecialHeaderParser');
+const MailingStatsTracker = require('./MailingStatsTracker');
 
 
 /* eslint-disable max-statements */
@@ -72,12 +76,15 @@ function createMailboxSorter ({
   config, mailbox, logger, actionLogger, database, mailingRepository, addressStatsRepository
 }) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
+  const failureInfoParser = new FailureInfoParser(
+    new DsnParser(logger), new SpecialHeaderParser(logger)
+  );
+  const statsTracker = new MailingStatsTracker(logger, mailingRepository, addressStatsRepository);
   const mailingListDatabase = database;
   const handlerMap = {
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
-      mailingListDatabase, logger, mailingRepository, addressStatsRepository,
-      {
+      mailingListDatabase, statsTracker, failureInfoParser, {
         maxTemporaryFailures: config.maxTemporaryFailures
       }
     ),

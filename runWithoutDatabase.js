@@ -3,7 +3,7 @@ require('./src/runCli')(class {
     this.logger = logger;
   }
 
-  disableAddressEmails (address, status, fullStatus) {
-    this.logger.debug(`Disabling address ${address} in DB`);
+  disableEmailsForAddress (address) {
+    this.logger.debug(`Disabling address ${address} in mailing DB`);
   }
 });
