@@ -20,7 +20,7 @@ describe('MailServerMessageHandler', function() {
       uid: 123
     };
     fakeDb = {
-      disableEmailsForAddress: sinon.spy(() => Promise.resolve())
+      disableEmailsForAddress: sinon.spy(() => Promise.resolve(true))
     };
     fakeStatsTracker = {
       countFailure: sinon.spy(() => Promise.resolve(statsActions)),
@@ -64,6 +64,14 @@ describe('MailServerMessageHandler', function() {
       assert.isTrue(fakeDb.disableEmailsForAddress.calledWith(testAddress));
       assert.isFalse(result.skipped);
       assert.isOk(result.performedActions.length);
+    });
+
+    it('should not include additional action when DB returned false', async function () {
+      fakeDb.disableEmailsForAddress = () => false;
+      const result = await handler.processMessage(message);
+      assert.isOk(result.performedActions.indexOf(
+        'disabled emails (excluded from mailing database)'
+      ) === -1);
     });
 
 

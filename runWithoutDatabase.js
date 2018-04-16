@@ -5,5 +5,6 @@ require('./src/runCli')(class {
 
   disableEmailsForAddress (address) {
     this.logger.debug(`Disabling address ${address} in mailing DB`);
+    return true;
   }
 });

@@ -35,7 +35,7 @@ class MailServerMessageHandler {
 
     const statsActions = await this.statsTracker.countFailure(failureInfo);
 
-    return await this._performAction(failureInfo, statsActions);
+    return await this._performAction(failureInfo, [...statsActions]);
   }
 
   async _exceedsTemporaryFailureLimit (failureInfo) {
@@ -47,16 +47,19 @@ class MailServerMessageHandler {
 
   async _performAction (failureInfo, statsActions) {
     if (await this._shouldExclude(failureInfo)) {
-      await this.userDatabase.disableEmailsForAddress(failureInfo.recipient);
+      const excluded = await this.userDatabase.disableEmailsForAddress(failureInfo.recipient);
+      if (excluded) {
+        statsActions.push('disabled emails (excluded from mailing database)');
+      }
       return {
-        performedActions: [...statsActions, 'disabled emails (excluded from mailing database)'],
+        performedActions: statsActions,
         reason: `Received mail server reply (DSN). Info: ${failureInfo.comment
           }. Address: ${failureInfo.recipient}`,
         skipped: false
       };
     } else {
       return {
-        performedActions: [...statsActions],
+        performedActions: statsActions,
         reason: `Received mail server reply (DSN) with temporary failure. Info: ${
           failureInfo.comment}. Address: ${failureInfo.recipient}`,
         skipped: false
