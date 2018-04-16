@@ -1,0 +1,123 @@
+Received: from mxfront13g.mail.yandex.net ([127.0.0.1])
+	by mxfront13g.mail.yandex.net with LMTP id yh5OBd1c
+	for <noreply@youngreaders.ru>; Thu, 12 Apr 2018 08:17:02 +0300
+Received: from fallback7.mail.ru (fallback7.mail.ru [94.100.181.128])
+	by mxfront13g.mail.yandex.net (nwsmtp/Yandex) with ESMTPS id q81PTjTayJ-H1lCIRtp;
+	Thu, 12 Apr 2018 08:17:01 +0300
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client certificate not present)
+X-Yandex-Front: mxfront13g.mail.yandex.net
+X-Yandex-TimeMark: 1523510221
+Authentication-Results: mxfront13g.mail.yandex.net; spf=pass (mxfront13g.mail.yandex.net: domain of fallback.mail.ru designates 94.100.181.128 as permitted sender, rule=[ip4:94.100.176.0/20]) smtp.mail=; dkim=pass header.i=@corp.mail.ru
+X-Yandex-Spam: 1
+X-Yandex-Personal-Spam: MTEzMDAwMDA0MjU2OTA2MAo=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=corp.mail.ru; s=mail;
+	h=Date:Message-Id:Subject:Content-Type:Content-Transfer-Encoding:To:From; bh=GpSS8FT1FaXyxJCdUgdqJxkI4TtDtC2kAUtEgXfxo94=;
+	b=kzdeSDE3mapE8QrnIyM9BpdIjs1kY462JiRyDLSvSJRU+NYFPkyxugD7sEUAlYhkHi5gEEAwwcRGUNDFSwH7VdQU5NbuCuQ5naiEu9FkfdMnfS6VOEjb0+YAEcngzJ7XTJBLzCCYyI0eQYIv3pdFxW8b4p0/FLc1uxzPnMMJjgw=;
+Received: from mail by fallback7.mail.ru with local id 1f6UbV-0000rw-Km
+	for noreply@youngreaders.ru; Thu, 12 Apr 2018 08:17:01 +0300
+X-Failed-Recipients: ucdb@olympus.ru
+X-Mailer-Daemon-Recipients: ucdb@olympus.ru
+Auto-Submitted: auto-replied
+From: mailer-daemon@corp.mail.ru
+To: noreply@youngreaders.ru
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Subject: =?UTF-8?B?0JLQsNGI0LUg0YHQvtC+0LHRidC10L3QuNC1INC90LUg0LTQvtGB0YLQsNCy0LvQtdC90L4=?=. Mail failure.
+Message-Id: <E1f6UbV-0000rw-Km@fallback7.mail.ru>
+Date: Thu, 12 Apr 2018 08:17:01 +0300
+X-Yandex-Forward: e5e3ff69cf16c5897d356145d298848b
+
+Это письмо создано автоматически сервером Mail.Ru, отвечать на него не нужно.
+
+К сожалению, Ваше письмо не может быть доставлено одному или нескольким получателям:
+
+  ucdb@olympus.ru
+    SMTP error from remote mail server after RCPT TO:<ucdb@olympus.ru>:
+    host mail.olympus.ru [217.76.183.56]: 450 4.1.1 <ucdb@olympus.ru>:
+    Recipient address rejected: User unknown in local recipient table:
+    retry timeout exceeded
+
+Рекомендуем Вам проверить корректность указания адресов получателей.
+
+**********************
+
+
+This message was created automatically by mail delivery software.
+
+A message that you sent could not be delivered to one or more of its
+recipients. This is a permanent error. The following address(es) failed:
+
+  ucdb@olympus.ru
+    SMTP error from remote mail server after RCPT TO:<ucdb@olympus.ru>:
+    host mail.olympus.ru [217.76.183.56]: 450 4.1.1 <ucdb@olympus.ru>:
+    Recipient address rejected: User unknown in local recipient table:
+    retry timeout exceeded
+
+------ This is a copy of the message, including all the headers. ------
+
+Return-path: <noreply@youngreaders.ru>
+Received: from [10.161.56.251] (port=38442 helo=mx147.mail.ru)
+	by fallback7.mail.ru with esmtp (envelope-from <noreply@youngreaders.ru>)
+	id 1f685E-0000If-Cc
+	for ucdb@olympus.ru; Wed, 11 Apr 2018 08:14:12 +0300
+Received: from [91.232.225.46] (ident=mail)
+	by mx147.mail.ru with local (envelope-from <noreply@youngreaders.ru>)
+	id 1f685D-0004Oy-GO
+	for ucdb@olympus.ru; Wed, 11 Apr 2018 08:14:11 +0300
+X-ResentFrom: <folga_leto@list.ru>
+X-MailRu-Forward: 1
+Received-SPF: pass (mx147.mail.ru: domain of youngreaders.ru designates 91.232.225.46 as permitted sender) client-ip=91.232.225.46; envelope-from=noreply@youngreaders.ru; helo=mail.etersoft.ru;
+Received: from mail.etersoft.ru ([91.232.225.46]:48846)
+	by mx147.mail.ru with esmtp (envelope-from <noreply@youngreaders.ru>)
+	id 1f685C-0004N2-B3
+	for folga_leto@list.ru; Wed, 11 Apr 2018 08:14:10 +0300
+Received: from youngreaders.ru (localhost [127.0.0.1])
+	by youngreaders (Postfix) with ESMTP id 61C6A2D4B33B
+	for <folga_leto@list.ru>; Wed, 11 Apr 2018 08:14:09 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.etersoft.ru 8FD806D795F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=youngreaders.ru;
+	s=eterdkim; t=1523423649;
+	bh=WbVBq8awM17Y+OqZjZzY4R/DnAvrrsbMTM3MeMpCytE=;
+	h=Date:To:From:Reply-To:Subject:From;
+	b=hIWroPuQPM29NZ/8sJbYymlqZCN507yzRJwjEZeTPkkEo0TL42aSyzqkapOuEfZu3
+	 vw2IrLq/RuEjiZUDcDzL6uOX+lFyBURQcNBTQkjJjHzAeVXPY/xgjqOtO4Nqx43Yyn
+	 Lu8BQcHHZkwLZt1yfT8ZY4HPA4Y1UP0xVkSdn6Ds=
+Date: Wed, 11 Apr 2018 08:14:09 +0300
+To: =?UTF-8?B?0KTQuNGA0YHQsNC90L7QsiDQkNC90YLQvtC9?= <folga_leto@list.ru>
+From: =?UTF-8?B?0JbQuNCy0LDRjyDQmtC70LDRgdGB0LjQutCw?= <noreply@youngreaders.ru>
+Reply-To: pochta@youngreaders.ru
+Subject: =?UTF-8?B?0JLRhdC+0LQg0L3QsCDRgdCw0LnRgiDQutC+0L3QutGD0YDRgdCwINCW0Lg=?=
+ =?UTF-8?B?0LLQsNGPINCa0LvQsNGB0YHQuNC60LA=?=
+Message-ID: <ff35e92ca5017bcb3dd91a69a10c9b5a@youngreaders.ru>
+X-Mailer: PHPMailer 5.2.21 (https://github.com/PHPMailer/PHPMailer)
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-6b629377: 1
+X-DMARC-Policy: reject
+X-DMARC-Result: pass
+X-Mailru-Noreply: yes
+X-Mras: OK
+X-Spam: undefined
+X-6b629377: 1
+X-DMARC-Policy: reject
+X-DMARC-Result: pass
+X-Mailru-Noreply: yes
+X-Mras: OK
+X-Mailru-Noreply: yes
+X-Mras: OK
+
+<p> Здравствуйте, Фирсанов Антон!<br>
+            Вы запросили восстановление доступа к сайту конкурса «Живая классика».
+        </p>
+        <p>
+            <a href="https://youngreaders.ru/lk.html?action=auth%2Flogin&amp;email=folga_leto%2540list.ru&amp;hash=323e96dbdefba587f260ce99538cd76d%3A8LubvdeXEt">Перейдите по ссылке</a>, чтобы попасть в личный кабинет.
+            При этом вам будет установлен новый пароль.<br>
+            Используйте в дальнейшем следующие данные для входа:<br>
+            <strong>folga_leto@list.ru</strong><br>
+            <strong>8LubvdeXEt</strong>
+        </p>
+        <p>Воспользуйтесь ссылкой для сброса пароля до 11-04-2018 09:54.</p>
+        <p>Если вы не запрашивали восстановление пароля, просто игнорируйте это письмо.</p>
+
