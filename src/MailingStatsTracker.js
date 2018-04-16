@@ -52,6 +52,13 @@ class MailingStatsTracker {
     if (stats) {
       actions.push('updated address stats');
       this.logger.debug(`${recipient}: updated stats`);
+    } else {
+      await this.addressStatsRepository.create({
+        email: recipient,
+        lastStatus: dsnStatus,
+        lastStatusDate: new Date()
+      });
+      actions.push('created address stats');
     }
   }
 

@@ -37,6 +37,7 @@ describe('MailingStatsTracker', function() {
       updateInTransaction: sinon.spy(() => Promise.resolve(mailing))
     };
     fakeStatsRepository = {
+      create: sinon.spy(() => Promise.resolve(addressStats)),
       getByEmail: sinon.spy(() => Promise.resolve(addressStats)),
       updateInTransaction: sinon.spy(() => Promise.resolve(addressStats))
     };
@@ -110,6 +111,17 @@ describe('MailingStatsTracker', function() {
       const initialValue = addressStats.temporaryFailureCount;
       await transactionScenario(addressStats);
       assert.equal(addressStats.temporaryFailureCount, initialValue);
+    });
+
+    it('should not create new address stats object if it was found in repo', async function () {
+      const actions = await tracker.countFailure(failureInfo);
+      assert.isFalse(fakeStatsRepository.create.called);
+    });
+
+    it('should create new address stats object if missing', async function () {
+      fakeStatsRepository.updateInTransaction = () => Promise.resolve(null);
+      const actions = await tracker.countFailure(failureInfo);
+      assert.isTrue(fakeStatsRepository.create.calledOnce);
     });
   });
 
