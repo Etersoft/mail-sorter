@@ -75,8 +75,12 @@ class DsnParser {
 
     let listId = originalMessage.headers.get('list');
     // because mailparser transforms headers
-    if (listId && listId.id && listId.id.name) {
-      listId = listId.id.name;
+    if (listId && listId.id) {
+      listId = listId.id;
+      return [
+        listId.name,
+        listId.mail ? `<${listId.mail}>` : null
+      ].filter(part => typeof part === 'string').join(' ');
     } else {
       this.logger.debug(`UID ${message.uid}: no list-id`);
       return null;
