@@ -7,7 +7,6 @@ const parseMessage = require('mailparser').simpleParser;
 
 const FailureInfoParser = require('../src/FailureInfoParser');
 const Message = require('../src/Message');
-const FailureTypes = require('../src/FailureTypes');
 
 
 chai.use(chaiAsPromised);

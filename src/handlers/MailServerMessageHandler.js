@@ -9,6 +9,7 @@ class MailServerMessageHandler {
     this.statsTracker = statsTracker;
     this.failureInfoParser = failureInfoParser;
     this.maxTemporaryFailures = config.maxTemporaryFailures;
+    this.readonly = config.readonly;
   }
 
   /**
@@ -33,7 +34,7 @@ class MailServerMessageHandler {
       };
     }
 
-    const statsActions = await this.statsTracker.countFailure(failureInfo);
+    const statsActions = this.readonly ? [] : await this.statsTracker.countFailure(failureInfo);
 
     return await this._performAction(failureInfo, [...statsActions]);
   }

@@ -117,5 +117,14 @@ describe('MailServerMessageHandler', function() {
       const result = await handler.processMessage(message);
       assert.equal(result.performedActions.length, 2);
     });
+
+    it('should not modify stats in readonly mode', async function () {
+      handler = new MailServerMessageHandler(fakeDb, fakeStatsTracker, fakeFailureParser, {
+        maxTemporaryFailures: 2,
+        readonly: true
+      });
+      await handler.processMessage(message);
+      assert.isFalse(fakeStatsTracker.countFailure.called);
+    });
   });
 });

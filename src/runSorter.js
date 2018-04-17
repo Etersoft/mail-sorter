@@ -85,7 +85,8 @@ function createMailboxSorter ({
     [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
       mailingListDatabase, statsTracker, failureInfoParser, {
-        maxTemporaryFailures: config.maxTemporaryFailures
+        maxTemporaryFailures: config.maxTemporaryFailures,
+        readonly: config.readonly
       }
     ),
     [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
