@@ -104,6 +104,16 @@ describe('MailServerMessageHandler', function() {
       assert.isTrue(fakeDb.disableEmailsForAddress.calledWith(testAddress));
     });
 
+    it('should not exclude temp failures when limit = 0', async function () {
+      failureInfo.status = FailureTypes.TEMPORARY_FAILURE;
+      handler = new MailServerMessageHandler(fakeDb, fakeStatsTracker, fakeFailureParser, {
+        maxTemporaryFailures: 0
+      });
+      fakeStatsTracker.getTemporaryFailureCount = sinon.spy(() => Promise.resolve(3));
+      await handler.processMessage(message);
+      assert.isFalse(fakeDb.disableEmailsForAddress.called);
+    });
+
     it('should not skip temp failures that exceed limit', async function () {
       failureInfo.status = FailureTypes.TEMPORARY_FAILURE;
       fakeStatsTracker.getTemporaryFailureCount = sinon.spy(() => Promise.resolve(3));

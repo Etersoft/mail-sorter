@@ -43,7 +43,7 @@ class MailServerMessageHandler {
     const temporaryFailureCount = await this.statsTracker.getTemporaryFailureCount(
       failureInfo.recipient
     );
-    return (temporaryFailureCount > this.maxTemporaryFailures);
+    return (temporaryFailureCount > this.maxTemporaryFailures) && (this.maxTemporaryFailures > 0);
   }
 
   async _performAction (failureInfo, statsActions) {
