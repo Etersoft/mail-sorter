@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const sinon = require('sinon');
 const { createFakeLogger } = require('./testing-utils');
 const { readFileSync } = require('fs');
 const { join } = require('path');
@@ -23,7 +22,7 @@ async function loadMessage (name) {
 }
 
 describe('DsnParser', function () {
-  let fakeLogger, parser;
+  let fakeLogger, dsnParser;
 
   beforeEach(async function () {
     fakeLogger = createFakeLogger();

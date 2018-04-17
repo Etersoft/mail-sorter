@@ -54,7 +54,7 @@ class MailServerMessageHandler {
       return {
         performedActions: statsActions,
         reason: `Received mail server reply (DSN). Info: ${failureInfo.comment
-          }. Address: ${failureInfo.recipient}`,
+        }. Address: ${failureInfo.recipient}`,
         skipped: false
       };
     } else {
