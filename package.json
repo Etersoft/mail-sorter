@@ -14,7 +14,7 @@
     "imap": "0.8.19",
     "lodash": "4.17.4",
     "logger": "git+https://gitlab.eterfund.ru/TheOwl/logger.git",
-    "mail-server": "git+https://gitlab.eterfund.ru/TheOwl/mail-server.git",
+    "mail-server": "git+ssh://git@gitlab.eterfund.ru:TheOwl/mail-server.git",
     "mailparser": "2.1.0",
     "moment": "^2.22.1",
     "read-config": "git+https://gitlab.eterfund.ru/TheOwl/read-config.git#87bb1aba6ed991cbfa53ec97bd1d737729dfb71f",
