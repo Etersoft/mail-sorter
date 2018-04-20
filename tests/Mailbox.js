@@ -25,6 +25,9 @@ describe('Mailbox', function() {
     testError = new Error();
 
     fakeConnection = Object.assign(Object.create(new EventEmitter()), {
+      closeBox: sinon.spy((expungeOnClose, callback) => {
+        callback();
+      }),
       connect: sinon.spy(() => {
         process.nextTick(() => {
           fakeConnection.emit('ready');
@@ -43,6 +46,7 @@ describe('Mailbox', function() {
     mailbox = new Mailbox({
       boxName: 'INBOX',
       connection: fakeConnection,
+      expungeOnClose: false,
       readonly: true
     });
   });
@@ -169,6 +173,27 @@ describe('Mailbox', function() {
       };
 
       await assert.isRejected(mailbox.initialize(), testError);
+    });
+  });
+
+  describe('#close', function () {
+    it('should pass false expungeOnClose', async function () {
+      await mailbox.initialize();
+      await mailbox.close();
+
+      assert.equal(fakeConnection.closeBox.getCall(0).args[0], false);
+    });
+
+    it('should pass true expungeOnClose', async function () {
+      mailbox.expungeOnClose = true;
+      await mailbox.initialize();
+      await mailbox.close();
+
+      assert.equal(fakeConnection.closeBox.getCall(0).args[0], true);
+    });
+
+    it('should throw if mailbox was not opened (initialized)', async function () {
+      await assert.isRejected(mailbox.close());
     });
   });
 });

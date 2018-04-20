@@ -9,6 +9,18 @@ class Mailbox {
     this.connectionOptions = options.connection;
     this.readonly = (typeof options.readonly === 'undefined') ? true : options.readonly;
     this.imapConnection = options.connection;
+    this.expungeOnClose = Boolean(options.expungeOnClose);
+  }
+
+  // Закрывает ящик и, если expungeOnClose == true, удаляет все письма,
+  // которые были помечены удалёнными
+  async close () {
+    return new Promise(resolve => {
+      if (!this._mailbox) {
+        throw new Error('Can\'t close a mailbox that was not opened');
+      }
+      this.imapConnection.closeBox(this.expungeOnClose, resolve);
+    });
   }
 
   deleteMessage (messageId) {

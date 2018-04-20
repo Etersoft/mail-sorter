@@ -6,6 +6,7 @@
   "database": {
     "readonly": true
   },
+  "expungeOnClose": false,
   "imapConnection": {
     "port": 993,
     "tls": true

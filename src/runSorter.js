@@ -32,6 +32,7 @@ async function run (config, logger, actionLogger, database) {
   const mailboxConfig = {
     boxName: 'INBOX',
     connection: new IMAP(config.imapConnection),
+    expungeOnClose: config.expungeOnClose,
     readonly: config.readonly
   };
   if (config.readonly) {
@@ -54,9 +55,11 @@ async function run (config, logger, actionLogger, database) {
     config, mailbox, logger, actionLogger, database, mailingRepository, addressStatsRepository
   });
   const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
+
   await sorter.sort();
 
   statsCollector.logStats();
+  await mailbox.close();
 
   logger.info('Done.');
 }
