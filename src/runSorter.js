@@ -82,7 +82,7 @@ function createMailboxSorter ({
   );
   const statsTracker = new MailingStatsTracker(logger, mailingRepository, addressStatsRepository);
   const sender = new SmtpMailSender({
-    from: 'theowl@etersoft.ru',
+    from: config.mailer.from,
     host: config.mailer.host,
     port: config.mailer.port
   });
