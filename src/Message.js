@@ -12,10 +12,15 @@ class Message {
     this.text = data.text;
     this.textAsHtml = data.textAsHtml;
     this.source = source;
+    this.subject = data.subject;
 
     this.id = id;
     this.mailbox = mailbox;
     this.extractAdditionalAttachmentSource();
+  }
+
+  get date () {
+    return this.attributes.date;
   }
 
   get fromAddress () {
@@ -40,6 +45,10 @@ class Message {
       return Promise.resolve(null);
     }
     return parseMessage(this.additionalAttachmentString);
+  }
+
+  get replyToAddress () {
+    return extractAddress(this.headers.get('reply-to'));
   }
 
   get toAddress () {

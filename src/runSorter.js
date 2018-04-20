@@ -15,6 +15,7 @@ const { RedisMailingRepository } = require('mail-server/server/dist/RedisMailing
 const { RedisAddressStatsRepository } = require(
   'mail-server/server/dist/RedisAddressStatsRepository'
 );
+const { SmtpMailSender } = require('mail-server/server/dist/SmtpMailSender');
 const { RedisConnectionPoolImpl } = require('mail-server/server/dist/RedisConnectionPool');
 const FailureInfoParser = require('./FailureInfoParser');
 const DsnParser = require('./DsnParser');
@@ -80,9 +81,17 @@ function createMailboxSorter ({
     new DsnParser(logger), new SpecialHeaderParser(logger)
   );
   const statsTracker = new MailingStatsTracker(logger, mailingRepository, addressStatsRepository);
+  const sender = new SmtpMailSender({
+    from: 'theowl@etersoft.ru',
+    host: config.mailer.host,
+    port: config.mailer.port
+  });
   const mailingListDatabase = database;
   const handlerMap = {
-    [MessageTypes.HUMAN]: new HumanMessageHandler(logger),
+    [MessageTypes.HUMAN]: new HumanMessageHandler(logger, sender, {
+      forwardTo: config.forwardTo,
+      maxForwardDays: config.maxForwardDays
+    }),
     [MessageTypes.MAIL_SERVER]: new MailServerMessageHandler(
       mailingListDatabase, statsTracker, failureInfoParser, {
         maxTemporaryFailures: config.maxTemporaryFailures,

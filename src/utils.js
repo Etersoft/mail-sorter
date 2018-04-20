@@ -10,6 +10,10 @@ const utils = {
     return utils.unwrapFrom(from);
   },
   unwrapFrom (from) {
+    if (typeof from !== 'string') {
+      return undefined;
+    }
+
     const match = from.match(FROM_ADDRESS_REGEXP);
 
     if (match) {
