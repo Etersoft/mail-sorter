@@ -2,10 +2,11 @@
   "name": "mail-sorter",
   "version": "0.1.0",
   "description": "Mailbox reading and sorting library",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "lint": "eslint 'src/**/*.js' 'tests/**/*.js'",
     "lint-fix": "eslint --fix 'src/**/*.js' 'tests/**/*.js'",
+    "prepare": "babel -d dist src",
     "test": "mocha tests"
   },
   "private": true,
@@ -21,6 +22,8 @@
     "yargs": "10.0.3"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "eslint": "4.9.0",
