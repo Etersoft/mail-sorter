@@ -3,7 +3,7 @@ module.exports = function (Database) {
   const yargs = require('yargs');
   // Parse CLI args before loading any other modules
   const argv = yargs
-    .usage('Usage: $0 [-d] [-h]')
+    .usage('Usage: $0 [-d] [-h] [-c path/to/config.json]')
     .option('dry', {
       alias: 'd',
       boolean: true,
@@ -12,6 +12,11 @@ module.exports = function (Database) {
     .option('loglevel', {
       alias: 'l',
       describe: 'Sets maximum log level',
+      string: true
+    })
+    .option('config', {
+      alias: 'c',
+      describe: 'Sets custom config',
       string: true
     })
     .version(false)
@@ -33,8 +38,9 @@ module.exports = function (Database) {
   const readConfig = require('read-config');
   const createLogger = require('logger');
   const defaultConfig = join(dirname(__dirname), 'config.default.json');
+  const configFilename = argv.config || 'config.json';
 
-  const config = readConfig([defaultConfig, 'config.json', cliOptions]);
+  const config = readConfig([defaultConfig, configFilename, cliOptions]);
   const logger = createLogger(config.logging);
   let actionLogger = null;
   if (config.logging.actionLogFile) {
