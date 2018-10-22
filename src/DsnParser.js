@@ -38,7 +38,7 @@ class DsnParser {
       listId: await this._extractListId(message),
       message,
       recipient,
-      spam: Boolean(diagnosticCode && diagnosticCode.indexOf('spam') !== -1),
+      spam: Boolean(diagnosticCode && diagnosticCode.indexOf('spam message') !== -1),
       status: this._convertDsnStatus(status)
     };
   }
