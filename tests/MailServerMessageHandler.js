@@ -35,6 +35,7 @@ describe('MailServerMessageHandler', function() {
       listId: 'test-list-id',
       message,
       recipient: testAddress,
+      spam: false,
       status: FailureTypes.INVALID_ADDRESS
     };
     handler = new MailServerMessageHandler(fakeDb, fakeStatsTracker, fakeFailureParser, {
@@ -135,6 +136,19 @@ describe('MailServerMessageHandler', function() {
       });
       await handler.processMessage(message);
       assert.isFalse(fakeStatsTracker.countFailure.called);
+    });
+
+
+    it('should not exclude mail.ru spam messages with non-temp statuses', async function () {
+      failureInfo.spam = true;
+      await handler.processMessage(message);
+      assert.isFalse(fakeDb.disableEmailsForAddress.called);
+    });
+
+    it('should count mail.ru spam messages with non-temp statuses', async function () {
+      failureInfo.spam = true;
+      await handler.processMessage(message);
+      assert.isOk(fakeStatsTracker.countFailure.called);
     });
   });
 });

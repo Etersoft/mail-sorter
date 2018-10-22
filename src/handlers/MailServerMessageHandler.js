@@ -36,6 +36,15 @@ class MailServerMessageHandler {
 
     const statsActions = this.readonly ? [] : await this.statsTracker.countFailure(failureInfo);
 
+    if (failureInfo.spam) {
+      return {
+        performedActions: statsActions,
+        reason: `Received mail server reply (DSN) about spam. Info: ${failureInfo.comment
+        }. Address: ${failureInfo.recipient}`,
+        skipped: false
+      };
+    }
+
     return await this._performAction(failureInfo, [...statsActions]);
   }
 

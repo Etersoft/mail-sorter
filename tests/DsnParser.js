@@ -54,5 +54,25 @@ describe('DsnParser', function () {
       const failureInfo = await dsnParser.extract(message);
       assert.isNull(failureInfo);
     });
+
+    it('should set spam flag for mail.ru spam replies', async function () {
+      const message = await loadMessage('mailru-spam-dsn.eml');
+      const failureInfo = await dsnParser.extract(message);
+      assert.isTrue(failureInfo.spam);
+    });
+
+    it('should not set spam flag for usual DSNs', async function () {
+      const message = await loadMessage('standard-dsn.eml');
+      const failureInfo = await dsnParser.extract(message);
+      assert.isFalse(failureInfo.spam);
+    });
+
+    it('should add Diagnostic-Code header into comment', async function () {
+      const message = await loadMessage('standard-dsn.eml');
+      const failureInfo = await dsnParser.extract(message);
+      assert.isTrue(failureInfo.comment.indexOf(
+        `X-Postfix; connect to ail.ru[72.52.4.120]:25: Connection refused`
+      ) !== -1);
+    });
   });
 });

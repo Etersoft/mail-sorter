@@ -25,14 +25,20 @@ class DsnParser {
       return null;
     }
     const status = headers.get('status');
+    const diagnosticCode = headers.get('diagnostic-code');
     const recipient = this._extractOriginalRecipientAddress(originalRecipient);
+    let comment = `DSN status = ${status}`;
+    if (diagnosticCode) {
+      comment += ', Diagnostic-Code = ' + diagnosticCode;
+    }
 
     return {
-      comment: `DSN status = ${status}`,
+      comment,
       dsnStatus: status,
       listId: await this._extractListId(message),
       message,
       recipient,
+      spam: Boolean(diagnosticCode && diagnosticCode.indexOf('spam') !== -1),
       status: this._convertDsnStatus(status)
     };
   }
@@ -56,11 +62,24 @@ class DsnParser {
   _extractDsnHeaders (dsnString) {
     const lines = dsnString.split('\n').filter(line => line.trim().length);
     const headers = new Map();
-    lines.map(line =>
-      line.split(':').map(part => part.trim())
-    ).filter(tuple => tuple.length === 2).forEach(headerTuple => {
-      headers.set(headerTuple[0].toLowerCase(), headerTuple[1]);
-    });
+
+    let lastHeader = null;
+    for (const line of lines) {
+      if (line[0] === ' ' || line[0] === '\t') {
+        if (!lastHeader) {
+          throw new Error('Invalid syntax: ' + line);
+        } else {
+          headers.set(lastHeader, headers.get(lastHeader) + ' ' + line.trim());
+        }
+      } else {
+        let [name, ...rest] = line.split(':');
+        const value = rest.join(':').trim();
+        name = name.trim().toLowerCase();
+        headers.set(name, value);
+        lastHeader = name;
+      }
+    }
+
     return headers;
   }
 
