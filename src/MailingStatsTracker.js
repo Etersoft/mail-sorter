@@ -38,12 +38,13 @@ class MailingStatsTracker {
     return null;
   }
 
-  async _modifyAddressCounters ({ dsnStatus, recipient, status }, actions) {
+  async _modifyAddressCounters ({ dsnStatus, recipient, spam, status }, actions) {
     const stats = await this.addressStatsRepository.updateInTransaction(
       recipient, // find stats by this email
       async stats => { // if found, this will be executed as update transaction
         stats.lastStatus = dsnStatus;
         stats.lastStatusDate = new Date();
+        stats.spam = spam;
         if (status === FailureTypes.TEMPORARY_FAILURE) {
           stats.temporaryFailureCount++;
         }
