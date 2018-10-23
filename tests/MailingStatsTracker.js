@@ -123,6 +123,22 @@ describe('MailingStatsTracker', function() {
       const actions = await tracker.countFailure(failureInfo);
       assert.isTrue(fakeStatsRepository.create.calledOnce);
     });
+
+    it('should change spam flag for address in transaction', async function () {
+      failureInfo.spam = true;
+      await tracker.countFailure(failureInfo);
+      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await transactionScenario(addressStats);
+      assert.equal(addressStats.spam, true);
+    });
+
+    it('should set diagnosticCode for address in transaction', async function () {
+      failureInfo.diagnosticCode = 'test';
+      await tracker.countFailure(failureInfo);
+      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await transactionScenario(addressStats);
+      assert.equal(addressStats.diagnosticCode, 'test');
+    });
   });
 
   describe('#getTemporaryFailureCount', function () {

@@ -38,13 +38,15 @@ class MailingStatsTracker {
     return null;
   }
 
-  async _modifyAddressCounters ({ dsnStatus, recipient, spam, status }, actions) {
+  async _modifyAddressCounters (failureInfo, actions) {
+    const { diagnosticCode, dsnStatus, recipient, spam, status } = failureInfo;
     const stats = await this.addressStatsRepository.updateInTransaction(
       recipient, // find stats by this email
       async stats => { // if found, this will be executed as update transaction
         stats.lastStatus = dsnStatus;
         stats.lastStatusDate = new Date();
         stats.spam = spam;
+        stats.diagnosticCode = diagnosticCode;
         if (status === FailureTypes.TEMPORARY_FAILURE) {
           stats.temporaryFailureCount++;
         }
@@ -57,7 +59,8 @@ class MailingStatsTracker {
       await this.addressStatsRepository.create({
         email: recipient,
         lastStatus: dsnStatus,
-        lastStatusDate: new Date()
+        lastStatusDate: new Date(),
+        spam, diagnosticCode
       });
       actions.push('created address stats');
     }
