@@ -34,6 +34,7 @@ class DsnParser {
 
     return {
       comment,
+      diagnosticCode,
       dsnStatus: status,
       listId: await this._extractListId(message),
       message,
