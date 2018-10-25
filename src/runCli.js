@@ -31,8 +31,11 @@ module.exports = function (Database) {
     logging: argv.loglevel ? {
       maxLogLevel: argv.loglevel
     } : {},
-    readonly: argv.dry
   };
+  
+  if (argv.dry) {
+    cliOptions.readonly = true;
+  }
 
 
   const readConfig = require('read-config');
