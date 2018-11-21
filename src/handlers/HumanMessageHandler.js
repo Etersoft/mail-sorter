@@ -37,7 +37,8 @@ class HumanMessageHandler {
         email: this.forwardTo
       }],
       replyTo: message.replyToAddress || message.fromAddress,
-      subject: 'Fwd: ' + message.subject
+      subject: 'Fwd: ' + message.subject,
+      text: message.text
     }));
   }
 }
