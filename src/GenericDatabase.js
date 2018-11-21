@@ -1,4 +1,3 @@
-const { ReplyStatuses } = require('mail-sorter');
 const { createConnection } = require('mysql');
 
 
