@@ -52,6 +52,9 @@ class DsnParser {
 
 
   _convertDsnStatus (status) {
+    if (!status) {
+      return undefined;
+    }
     return status.charAt(0) === '5' ? FailureTypes.INVALID_ADDRESS : FailureTypes.TEMPORARY_FAILURE;
   }
 
