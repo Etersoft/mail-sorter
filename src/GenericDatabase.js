@@ -66,7 +66,7 @@ class GenericDatabase {
   }
 
   _disableEmailsForAddress (address) {
-    this._query(`
+    return this._query(`
       DELETE FROM ${this.operation.table}
       WHERE ${this.operation.searchColumn} = ?
     `, [address]);
