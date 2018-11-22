@@ -5,7 +5,7 @@ class GenericDatabase {
   constructor (config, logger) {
     this.logger = logger;
 
-    if (!this.config.operation) {
+    if (!config.operation) {
       throw new Error('config.database.operation is not set.');
     }
 
@@ -13,7 +13,7 @@ class GenericDatabase {
       throw new Error('The only supported config.database.driver value is "mysql"');
     }
 
-    this.operation = this.config.operation;
+    this.operation = config.operation;
 
     if (!this.operation.table) {
       throw new Error('config.database.operation.table is not set.');
