@@ -5,7 +5,6 @@ const Message = require('./Message');
 
 class Mailbox {
   constructor (options) {
-    this.boxName = options.boxName;
     this.connectionOptions = options.connection;
     this.readonly = (typeof options.readonly === 'undefined') ? true : options.readonly;
     this.imapConnection = options.connection;
@@ -60,8 +59,15 @@ class Mailbox {
 
   async initialize () {
     await this._ensureConnectionIsReady();
+  }
+
+  async markAsRead (messageId) {
+    await this._addFlags(messageId, ['\\Seen']);
+  }
+
+  async setBoxName (boxName) {
     await new Promise((resolve, reject) => {
-      this.imapConnection.openBox(this.boxName, this.readonly, (error, box) => {
+      this.imapConnection.openBox(boxName, this.readonly, (error, box) => {
         if (error) {
           reject(error);
           return;
@@ -71,10 +77,6 @@ class Mailbox {
         resolve();
       });
     });
-  }
-
-  async markAsRead (messageId) {
-    await this._addFlags(messageId, ['\\Seen']);
   }
 
   _addFlags (messageId, flags) {

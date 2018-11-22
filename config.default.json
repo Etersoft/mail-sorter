@@ -18,6 +18,7 @@
     "host": "localhost",
     "port": 587
   },
+  "mailboxes": ["INBOX"],
   "maxForwardDays": 7,
   "maxTemporaryFailures": 0,
   "messageBatchSize": 100,
