@@ -8,7 +8,7 @@ class UnsubscribeMessageHandler {
   async processMessage (message) {
     await this.mailingListDatabase.unsubscribeAddress(message.fromAddress);
     return {
-      performedActions: ['unsubscribe (set mailagreed = 0)'],
+      performedActions: ['unsubscribe'],
       reason: 'Received unsubscribe email',
       skipped: false
     };
