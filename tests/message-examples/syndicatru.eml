@@ -1,0 +1,616 @@
+Received: from mxfront9j.mail.yandex.net ([127.0.0.1])
+	by mxfront9j.mail.yandex.net with LMTP id HdQyC53b
+	for <noreply@azbyka.ru>; Mon, 24 Sep 2018 12:06:32 +0300
+Received: from mail2.syndicat.ru (mail2.syndicat.ru [178.236.128.98])
+	by mxfront9j.mail.yandex.net (nwsmtp/Yandex) with ESMTPS id bdDUxDN0y5-6VK0oDwR;
+	Mon, 24 Sep 2018 12:06:31 +0300
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client certificate not present)
+X-Yandex-Front: mxfront9j.mail.yandex.net
+X-Yandex-TimeMark: 1537779991
+X-Yandex-Spam: 1
+X-MDAV-Result: clean
+X-MDAV-Processed: mail2.syndicat.ru, Mon, 24 Sep 2018 12:06:30 +0300
+Received: from mail.syndicat.ru by mail2.syndicat.ru with ESMTPS id md50000121366.msg; 
+	Mon, 24 Sep 2018 12:06:29 +0300
+X-Spam-Processed: mail2.syndicat.ru, Mon, 24 Sep 2018 12:06:29 +0300
+	(not processed: message from trusted or authenticated source)
+X-MDArrival-Date: Mon, 24 Sep 2018 12:06:29 +0300
+X-Return-Path: 
+X-Envelope-From: 
+X-MDaemon-Deliver-To: noreply@azbyka.ru
+X-CAV-Result: clean
+MIME-Version: 1.0
+From: <postmaster@syndicat.ru>
+To: <noreply@azbyka.ru>
+Date: Mon, 24 Sep 2018 12:06:22 +0300
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="02c5e184-93f7-42a5-85f2-909925f2d441"
+X-MS-Exchange-Message-Is-Ndr: 
+Content-Language: ru-RU
+Message-ID: <bf3ec3dc-df32-452d-b9f3-724869de325d@srv-exch01-kar.syndicat.ru>
+In-Reply-To: <5ba8a900082a3@azbyka.ru>
+References: <5ba8a900082a3@azbyka.ru>
+Subject: =?koi8-r?B?7sUg1cTBxdTT0SDEz9PUwdfJ1Ng6IPDSwdfP08zB187ZyiDLwczFzsTB0tgg?=
+ =?koi8-r?Q?=CE=C1_25.09.2018?=
+Auto-Submitted: auto-replied
+X-Yandex-Forward: c7763cc056d483393c3b3385dd610a95
+
+--02c5e184-93f7-42a5-85f2-909925f2d441
+Content-Type: multipart/alternative; differences=Content-Type;
+	boundary="fc93b426-ed96-460a-861d-cecf8f923fe1"
+
+--fc93b426-ed96-460a-861d-cecf8f923fe1
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
+
+=EE=C5 =D5=C4=C1=CC=CF=D3=D8 =D7=D9=D0=CF=CC=CE=C9=D4=D8 =C4=CF=D3=D4=C1=D7=
+=CB=D5 =D3=CC=C5=C4=D5=C0=DD=C9=CD =D0=CF=CC=D5=DE=C1=D4=C5=CC=D1=CD =C9=CC=
+=C9 =C7=D2=D5=D0=D0=C1=CD:
+
+=F3=C1=CC=CF=CD=C9=D1 (sabina_094@bl.ru)<mailto:sabina_094@bl.ru>
+=EE=C5 =D5=C4=C1=CC=CF=D3=D8 =CE=C1=CA=D4=C9 =D7=D7=C5=C4=C5=CE=CE=D9=CA =
+=DC=CC=C5=CB=D4=D2=CF=CE=CE=D9=CA =C1=C4=D2=C5=D3. =F0=D2=CF=D7=C5=D2=D8=D4=
+=C5 =C1=C4=D2=C5=D3 =D0=CF=CC=D5=DE=C1=D4=C5=CC=D1 =C9 =D0=CF=D0=D2=CF=C2=
+=D5=CA=D4=C5 =CF=D4=D0=D2=C1=D7=C9=D4=D8 =D3=CF=CF=C2=DD=C5=CE=C9=C5 =C5=DD=
+=C5 =D2=C1=DA. =E5=D3=CC=C9 =D0=D2=CF=C2=CC=C5=CD=C1 =D7=CF=DA=CE=C9=CB=CE=
+=C5=D4 =D3=CE=CF=D7=C1, =CF=C2=D2=C1=D4=C9=D4=C5=D3=D8 =CB =D3=D7=CF=C5=CD=
+=D5 =C1=C4=CD=C9=CE=C9=D3=D4=D2=C1=D4=CF=D2=D5 =DC=CC=C5=CB=D4=D2=CF=CE=CE=
+=CF=CA =D0=CF=DE=D4=D9.
+
+
+
+
+
+
+
+
+=E4=C9=C1=C7=CE=CF=D3=D4=C9=DE=C5=D3=CB=C9=C5 =D3=D7=C5=C4=C5=CE=C9=D1 =C4=
+=CC=D1 =C1=C4=CD=C9=CE=C9=D3=D4=D2=C1=D4=CF=D2=CF=D7:
+
+=E6=CF=D2=CD=C9=D2=D5=C0=DD=C9=CA =D3=C5=D2=D7=C5=D2: srv-exch01-kar.syndic=
+at.ru
+
+sabina_094@bl.ru
+Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipien=
+t not found by SMTP address lookup'
+
+=E9=D3=C8=CF=C4=CE=D9=C5 =DA=C1=C7=CF=CC=CF=D7=CB=C9 =D3=CF=CF=C2=DD=C5=CE=
+=C9=D1:
+
+Received: from srv-exch01-kar.syndicat.ru (192.168.130.13) by
+ srv-exch01-kar.syndicat.ru (192.168.130.13) with Microsoft SMTP Server
+ (version=3DTLS1_2, cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.669.32; Mon, 24 Sep 2018 12:06:21 +0300
+Received: from mail.syndicat.ru (172.16.0.8) by srv-exch01-kar.syndicat.ru
+ (192.168.130.13) with Microsoft SMTP Server (version=3DTLS1_2,
+ cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.669.32 via Fronten=
+d
+ Transport; Mon, 24 Sep 2018 12:06:21 +0300
+X-MDAV-Result: clean
+X-MDAV-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:27 +0300
+Authentication-Results: mail.syndicat.ru
+        spf=3Dpass smtp.mailfrom=3Dnoreply@azbyka.ru;
+        dkim=3Dpass (good signature) header.d=3Dazbyka.ru header.b=3DnRlo+R=
+NPAI;
+        iprev=3Dpass policy.iprev=3D138.201.53.216 (PTR smtp.azbyka.ru);
+        iprev=3Dpass policy.iprev=3D138.201.53.216 (HELO smtp.azbyka.ru);
+        iprev=3Dfail policy.iprev=3D138.201.53.216 reason=3D"does not match=
+" (MAIL noreply@azbyka.ru)
+Received-SPF: pass (mail.syndicat.ru: domain azbyka.ru
+        designates 138.201.53.216 as permitted sender)
+        receiver=3Dmail.syndicat.ru; client-ip=3D138.201.53.216;
+        mechanism=3Dip4:138.201.53.216; envelope-from=3D"noreply@azbyka.ru"=
+;
+        helo=3Dsmtp.azbyka.ru;
+Received: from smtp.azbyka.ru (smtp.azbyka.ru [138.201.53.216]) by mail.syn=
+dicat.ru (MDaemon PRO v17.0.2)
+        with ESMTPS id md50007712379.msg; Mon, 24 Sep 2018 12:03:26 +0300
+X-Spam-Level:
+X-Spam-Status: No, score=3D-3.70 required=3D5.0
+X-Spam-Report: *  0.0 URIBL_BLOCKED ADMINISTRATOR NOTICE: The query to URIB=
+L was blocked.
+        *       See http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl=
+-block
+        *      for more information.
+        *      [URIs: azbyka.ru]
+        * -4.7 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        *  0.0 HTML_MESSAGE BODY: HTML included in message
+        *  0.0 T_DKIM_INVALID DKIM-Signature header exists but is not valid
+        *  1.0 FROM_EXCESS_BASE64 From: base64 encoded unnecessarily
+X-Spam-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:26 +0300
+        (processed during SMTP session)
+X-MDDKIM-Result: unapproved (mail.syndicat.ru)
+X-MDSPF-Result: unapproved (mail.syndicat.ru)
+X-MDRemoteIP: 138.201.53.216
+X-MDHelo: smtp.azbyka.ru
+X-MDArrival-Date: Mon, 24 Sep 2018 12:03:26 +0300
+X-Rcpt-To: sabina_094@bl.ru
+X-MDRcpt-To: sabina_094@bl.ru
+X-Envelope-From: noreply@azbyka.ru
+X-CAV-Result: clean
+Received: from localhost.local (a01.azbyka.ru [136.243.107.44])
+        by smtp.azbyka.ru (Postfix) with ESMTP id 08FC21FC58
+        for <sabina_094@bl.ru>; Mon, 24 Sep 2018 12:06:08 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 smtp.azbyka.ru 08FC21FC58
+DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dazbyka.ru; =
+s=3Dsmtp;
+        t=3D1537779968; bh=3DWAEUFU+zMhTNsRkSCrobuuc8oJIeFLNGSqK0KhFZ37I=3D=
+;
+        h=3DDate:From:To:Subject:From;
+        b=3DnRlo+RNPAIZwpXufbJGf768kkq8bCZEE7Xh/i4EP5t4i8hd6tYORJ+KaI7dCqm1=
+l4
+         ULd17fjIB5n5kFNyqNqp+W6xPeTtkR1pLmDW9zM6WMZpwD6p/1u8Bwqyo9aL34E0M/
+         uDzJPlSIj8n+cWUNKpharXf4vu0BkjtdBhb9VHIE=3D
+Date: Mon, 24 Sep 2018 12:06:08 +0300
+From: =3D?UTF-8?B?0JDQt9Cx0YPQutCwINCy0LXRgNGL?=3D <noreply@azbyka.ru>
+To: =3D?UTF-8?B?0KHQsNC70L7QvNC40Y8=3D?=3D <sabina_094@bl.ru>
+Subject: =3D?UTF-8?B?0J/RgNCw0LLQvtGB0LvQsNCy0L3Ri9C5INC60LDQu9C10L3QtNCw0Y=
+DRjCA=3D?=3D
+ =3D?UTF-8?B?0L3QsCAyNS4wOS4yMDE4?=3D
+Message-ID: <5ba8a900082a3@azbyka.ru>
+X-Priority: 3 (Normal)
+X-Mailer: Azbyka.ru Mailer
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+        boundary=3D"B1_31d3979ea2fcb709379ad009d9f22d6a"
+X-Return-Path: <noreply@azbyka.ru>
+X-MDaemon-Deliver-To: <sabina_094@bl.ru>
+Return-Path: noreply@azbyka.ru
+
+
+--fc93b426-ed96-460a-861d-cecf8f923fe1
+Content-Type: text/html; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<Head></head><body>
+<p><b><font color=3D"#000066" size=3D"3" face=3D"Arial">=EE=C5 =D5=C4=C1=CC=
+=CF=D3=D8 =D7=D9=D0=CF=CC=CE=C9=D4=D8 =C4=CF=D3=D4=C1=D7=CB=D5 =D3=CC=C5=C4=
+=D5=C0=DD=C9=CD =D0=CF=CC=D5=DE=C1=D4=C5=CC=D1=CD =C9=CC=C9 =C7=D2=D5=D0=D0=
+=C1=CD:</font></b></p>
+<font color=3D"#000000" size=3D"2" face=3D"Tahoma"><p><a href=3D"mailto:sab=
+ina_094@bl.ru">=F3=C1=CC=CF=CD=C9=D1 (sabina_094@bl.ru)</a><br>
+</font>
+<font color=3D"#000000" size=3D"3" face=3D"Arial">=EE=C5 =D5=C4=C1=CC=CF=D3=
+=D8 =CE=C1=CA=D4=C9 =D7=D7=C5=C4=C5=CE=CE=D9=CA =DC=CC=C5=CB=D4=D2=CF=CE=CE=
+=D9=CA =C1=C4=D2=C5=D3. =F0=D2=CF=D7=C5=D2=D8=D4=C5 =C1=C4=D2=C5=D3 =D0=CF=
+=CC=D5=DE=C1=D4=C5=CC=D1 =C9 =D0=CF=D0=D2=CF=C2=D5=CA=D4=C5 =CF=D4=D0=D2=C1=
+=D7=C9=D4=D8 =D3=CF=CF=C2=DD=C5=CE=C9=C5 =C5=DD=C5 =D2=C1=DA. =E5=D3=CC=C9 =
+=D0=D2=CF=C2=CC=C5=CD=C1 =D7=CF=DA=CE=C9=CB=CE=C5=D4 =D3=CE=CF=D7=C1, =CF=
+=C2=D2=C1=D4=C9=D4=C5=D3=D8 =CB =D3=D7=CF=C5=CD=D5 =C1=C4=CD=C9=CE=C9=D3=D4=
+=D2=C1=D4=CF=D2=D5 =DC=CC=C5=CB=D4=D2=CF=CE=CE=CF=CA =D0=CF=DE=D4=D9.<br>
+</font>
+<font color=3D"#000000" size=3D"2" face=3D"Tahoma"><br>
+</p>
+</font>
+<br><br><br><br><br><br>
+<font color=3D"#808080" size=3D"2" face=3D"Tahoma"><p><b>=E4=C9=C1=C7=CE=CF=
+=D3=D4=C9=DE=C5=D3=CB=C9=C5 =D3=D7=C5=C4=C5=CE=C9=D1 =C4=CC=D1 =C1=C4=CD=C9=
+=CE=C9=D3=D4=D2=C1=D4=CF=D2=CF=D7:</b></p>
+<p>=E6=CF=D2=CD=C9=D2=D5=C0=DD=C9=CA =D3=C5=D2=D7=C5=D2: srv-exch01-kar.syn=
+dicat.ru<br>
+</p>
+<p>sabina_094@bl.ru<br>
+Remote Server  returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipie=
+nt not found by SMTP address lookup'<br>
+</p>
+<p>=E9=D3=C8=CF=C4=CE=D9=C5 =DA=C1=C7=CF=CC=CF=D7=CB=C9 =D3=CF=CF=C2=DD=C5=
+=CE=C9=D1:</p>
+<pre>Received: from srv-exch01-kar.syndicat.ru (192.168.130.13) by
+ srv-exch01-kar.syndicat.ru (192.168.130.13) with Microsoft SMTP Server
+ (version=3DTLS1_2, cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.669.32; Mon, 24 Sep 2018 12:06:21 +0300
+Received: from mail.syndicat.ru (172.16.0.8) by srv-exch01-kar.syndicat.ru
+ (192.168.130.13) with Microsoft SMTP Server (version=3DTLS1_2,
+ cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.669.32 via Fronten=
+d
+ Transport; Mon, 24 Sep 2018 12:06:21 +0300
+X-MDAV-Result: clean
+X-MDAV-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:27 +0300
+Authentication-Results: mail.syndicat.ru
+	spf=3Dpass smtp.mailfrom=3Dnoreply@azbyka.ru;
+	dkim=3Dpass (good signature) header.d=3Dazbyka.ru header.b=3DnRlo+RNPAI;
+	iprev=3Dpass policy.iprev=3D138.201.53.216 (PTR smtp.azbyka.ru);
+	iprev=3Dpass policy.iprev=3D138.201.53.216 (HELO smtp.azbyka.ru);
+	iprev=3Dfail policy.iprev=3D138.201.53.216 reason=3D&quot;does not match&q=
+uot; (MAIL noreply@azbyka.ru)
+Received-SPF: pass (mail.syndicat.ru: domain azbyka.ru
+	designates 138.201.53.216 as permitted sender)
+	receiver=3Dmail.syndicat.ru; client-ip=3D138.201.53.216;
+	mechanism=3Dip4:138.201.53.216; envelope-from=3D&quot;noreply@azbyka.ru&qu=
+ot;;
+	helo=3Dsmtp.azbyka.ru;
+Received: from smtp.azbyka.ru (smtp.azbyka.ru [138.201.53.216]) by mail.syn=
+dicat.ru (MDaemon PRO v17.0.2)=20
+	with ESMTPS id md50007712379.msg; Mon, 24 Sep 2018 12:03:26 +0300
+X-Spam-Level:
+X-Spam-Status: No, score=3D-3.70 required=3D5.0
+X-Spam-Report: *  0.0 URIBL_BLOCKED ADMINISTRATOR NOTICE: The query to URIB=
+L was blocked.
+	*       See http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+	*      for more information.
+	*      [URIs: azbyka.ru]
+	* -4.7 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
+	*  0.0 HTML_MESSAGE BODY: HTML included in message
+	*  0.0 T_DKIM_INVALID DKIM-Signature header exists but is not valid
+	*  1.0 FROM_EXCESS_BASE64 From: base64 encoded unnecessarily
+X-Spam-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:26 +0300
+	(processed during SMTP session)
+X-MDDKIM-Result: unapproved (mail.syndicat.ru)
+X-MDSPF-Result: unapproved (mail.syndicat.ru)
+X-MDRemoteIP: 138.201.53.216
+X-MDHelo: smtp.azbyka.ru
+X-MDArrival-Date: Mon, 24 Sep 2018 12:03:26 +0300
+X-Rcpt-To: sabina_094@bl.ru
+X-MDRcpt-To: sabina_094@bl.ru
+X-Envelope-From: noreply@azbyka.ru
+X-CAV-Result: clean
+Received: from localhost.local (a01.azbyka.ru [136.243.107.44])
+	by smtp.azbyka.ru (Postfix) with ESMTP id 08FC21FC58
+	for &lt;sabina_094@bl.ru&gt;; Mon, 24 Sep 2018 12:06:08 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 smtp.azbyka.ru 08FC21FC58
+DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dazbyka.ru; =
+s=3Dsmtp;
+	t=3D1537779968; bh=3DWAEUFU+zMhTNsRkSCrobuuc8oJIeFLNGSqK0KhFZ37I=3D;
+	h=3DDate:From:To:Subject:From;
+	b=3DnRlo+RNPAIZwpXufbJGf768kkq8bCZEE7Xh/i4EP5t4i8hd6tYORJ+KaI7dCqm1l4
+	 ULd17fjIB5n5kFNyqNqp+W6xPeTtkR1pLmDW9zM6WMZpwD6p/1u8Bwqyo9aL34E0M/
+	 uDzJPlSIj8n+cWUNKpharXf4vu0BkjtdBhb9VHIE=3D
+Date: Mon, 24 Sep 2018 12:06:08 +0300
+From: =3D?UTF-8?B?0JDQt9Cx0YPQutCwINCy0LXRgNGL?=3D &lt;noreply@azbyka.ru&gt=
+;
+To: =3D?UTF-8?B?0KHQsNC70L7QvNC40Y8=3D?=3D &lt;sabina_094@bl.ru&gt;
+Subject: =3D?UTF-8?B?0J/RgNCw0LLQvtGB0LvQsNCy0L3Ri9C5INC60LDQu9C10L3QtNCw0Y=
+DRjCA=3D?=3D
+ =3D?UTF-8?B?0L3QsCAyNS4wOS4yMDE4?=3D
+Message-ID: &lt;5ba8a900082a3@azbyka.ru&gt;
+X-Priority: 3 (Normal)
+X-Mailer: Azbyka.ru Mailer
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary=3D&quot;B1_31d3979ea2fcb709379ad009d9f22d6a&quot;
+X-Return-Path: &lt;noreply@azbyka.ru&gt;
+X-MDaemon-Deliver-To: &lt;sabina_094@bl.ru&gt;
+Return-Path: noreply@azbyka.ru
+</pre>
+</font>
+</body>
+</html>=
+
+--fc93b426-ed96-460a-861d-cecf8f923fe1--
+
+--02c5e184-93f7-42a5-85f2-909925f2d441
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns;srv-exch01-kar.syndicat.ru
+Received-From-MTA: dns;mail.syndicat.ru
+Arrival-Date: Mon, 24 Sep 2018 09:06:21 +0000
+
+Final-Recipient: rfc822;sabina_094@bl.ru
+Action: failed
+Status: 5.1.10
+Diagnostic-Code: smtp;550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup
+X-Display-Name: =?koi8-r?B?88HMz83J0Q==?=
+
+
+--02c5e184-93f7-42a5-85f2-909925f2d441
+Content-Type: message/rfc822
+
+Received: from srv-exch01-kar.syndicat.ru (192.168.130.13) by
+ srv-exch01-kar.syndicat.ru (192.168.130.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.669.32; Mon, 24 Sep 2018 12:06:21 +0300
+Received: from mail.syndicat.ru (172.16.0.8) by srv-exch01-kar.syndicat.ru
+ (192.168.130.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.669.32 via Frontend
+ Transport; Mon, 24 Sep 2018 12:06:21 +0300
+X-MDAV-Result: clean
+X-MDAV-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:27 +0300
+Authentication-Results: mail.syndicat.ru
+	spf=pass smtp.mailfrom=noreply@azbyka.ru;
+	dkim=pass (good signature) header.d=azbyka.ru header.b=nRlo+RNPAI;
+	iprev=pass policy.iprev=138.201.53.216 (PTR smtp.azbyka.ru);
+	iprev=pass policy.iprev=138.201.53.216 (HELO smtp.azbyka.ru);
+	iprev=fail policy.iprev=138.201.53.216 reason="does not match" (MAIL noreply@azbyka.ru)
+Received-SPF: pass (mail.syndicat.ru: domain azbyka.ru
+	designates 138.201.53.216 as permitted sender)
+	receiver=mail.syndicat.ru; client-ip=138.201.53.216;
+	mechanism=ip4:138.201.53.216; envelope-from="noreply@azbyka.ru";
+	helo=smtp.azbyka.ru;
+Received: from smtp.azbyka.ru (smtp.azbyka.ru [138.201.53.216]) by mail.syndicat.ru (MDaemon PRO v17.0.2) 
+	with ESMTPS id md50007712379.msg; Mon, 24 Sep 2018 12:03:26 +0300
+X-Spam-Level:
+X-Spam-Status: No, score=-3.70 required=5.0
+X-Spam-Report: *  0.0 URIBL_BLOCKED ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+	*       See http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+	*      for more information.
+	*      [URIs: azbyka.ru]
+	* -4.7 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
+	*  0.0 HTML_MESSAGE BODY: HTML included in message
+	*  0.0 T_DKIM_INVALID DKIM-Signature header exists but is not valid
+	*  1.0 FROM_EXCESS_BASE64 From: base64 encoded unnecessarily
+X-Spam-Processed: mail.syndicat.ru, Mon, 24 Sep 2018 12:03:26 +0300
+	(processed during SMTP session)
+X-MDDKIM-Result: unapproved (mail.syndicat.ru)
+X-MDSPF-Result: unapproved (mail.syndicat.ru)
+X-MDRemoteIP: 138.201.53.216
+X-MDHelo: smtp.azbyka.ru
+X-MDArrival-Date: Mon, 24 Sep 2018 12:03:26 +0300
+X-Rcpt-To: sabina_094@bl.ru
+X-MDRcpt-To: sabina_094@bl.ru
+X-Envelope-From: noreply@azbyka.ru
+X-CAV-Result: clean
+Received: from localhost.local (a01.azbyka.ru [136.243.107.44])
+	by smtp.azbyka.ru (Postfix) with ESMTP id 08FC21FC58
+	for <sabina_094@bl.ru>; Mon, 24 Sep 2018 12:06:08 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 smtp.azbyka.ru 08FC21FC58
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=azbyka.ru; s=smtp;
+	t=1537779968; bh=WAEUFU+zMhTNsRkSCrobuuc8oJIeFLNGSqK0KhFZ37I=;
+	h=Date:From:To:Subject:From;
+	b=nRlo+RNPAIZwpXufbJGf768kkq8bCZEE7Xh/i4EP5t4i8hd6tYORJ+KaI7dCqm1l4
+	 ULd17fjIB5n5kFNyqNqp+W6xPeTtkR1pLmDW9zM6WMZpwD6p/1u8Bwqyo9aL34E0M/
+	 uDzJPlSIj8n+cWUNKpharXf4vu0BkjtdBhb9VHIE=
+Date: Mon, 24 Sep 2018 12:06:08 +0300
+From: =?UTF-8?B?0JDQt9Cx0YPQutCwINCy0LXRgNGL?= <noreply@azbyka.ru>
+To: =?UTF-8?B?0KHQsNC70L7QvNC40Y8=?= <sabina_094@bl.ru>
+Subject: =?UTF-8?B?0J/RgNCw0LLQvtGB0LvQsNCy0L3Ri9C5INC60LDQu9C10L3QtNCw0YDRjCA=?=
+ =?UTF-8?B?0L3QsCAyNS4wOS4yMDE4?=
+Message-ID: <5ba8a900082a3@azbyka.ru>
+X-Priority: 3 (Normal)
+X-Mailer: Azbyka.ru Mailer
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="B1_31d3979ea2fcb709379ad009d9f22d6a"
+X-Return-Path: <noreply@azbyka.ru>
+X-MDaemon-Deliver-To: <sabina_094@bl.ru>
+Return-Path: noreply@azbyka.ru
+
+--B1_31d3979ea2fcb709379ad009d9f22d6a
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+=D0=97=D0=B4=D1=80=D0=B0=D0=B2=D1=81=D1=82=D0=B2=D1=83=D0=B9=D1=82=D0=B5, =
+=D0=A1=D0=B0=D0=BB=D0=BE=D0=BC=D0=B8=D1=8F!
+=D0=A1=D0=BE=D0=B1=D1=8B=D1=82=D0=B8=D1=8F =D0=BD=D0=B0 25 =D1=81=D0=B5=D0=
+=BD=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2018:
+=D0=9E=D1=82=D0=B4=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BF=D1=80=D0=B0=D0=B7=D0=B4=
+=D0=BD=D0=B8=D0=BA=D0=B0 =D0=A0=D0=BE=D0=B6=D0=B4=D0=B5=D1=81=D1=82=D0=B2=
+=D0=B0 =D0=9F=D1=80=D0=B5=D1=81=D0=B2=D1=8F=D1=82=D0=BE=D0=B9
+=D0=91=D0=BE=D0=B3=D0=BE=D1=80=D0=BE=D0=B4=D0=B8=D1=86=D1=8B.
+=D1=81=D1=89=D0=BC=D1=87.&nbsp;=D0=90=D0=B2=D1=82=D0=BE=D0=BD=D0=BE=CC=81=
+=D0=BC=D0=B0
+=D0=98=D1=82=D0=B0=D0=BB=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=B3=D0=BE,&nbsp;=
+=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=B0 (313);&nbsp;
+=D0=BF=D1=80=D0=BF.&nbsp;=D0=90=D1=84=D0=B0=D0=BD=D0=B0=CC=81=D1=81=D0=B8=
+=D1=8F =D0=92=D1=8B=D1=81=D0=BE=D1=86=D0=BA=D0=BE=D0=B3=D0=BE,
+=D0=A1=D0=B5=D1=80=D0=BF=D1=83=D1=85=D0=BE=D0=B2=D1=81=D0=BA=D0=BE=D0=B3=D0=
+=BE =D1=87=D1=83=D0=B4=D0=BE=D1=82=D0=B2=D0=BE=D1=80=D1=86=D0=B0,&nbsp;=D0=
+=B8=D0=B3=D1=83=D0=BC=D0=B5=D0=BD=D0=B0
+(1395);&nbsp;
+
+=D0=9F=D0=B5=D1=80=D0=B5=D0=BD=D0=B5=D1=81=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BC=
+=D0=BE=D1=89=D0=B5=D0=B9 =D0=BF=D1=80=D0=B0=D0=B2.&nbsp;=D0=A1=D0=B8=D0=BC=
+=D0=B5=D0=BE=CC=81=D0=BD=D0=B0
+=D0=92=D0=B5=D1=80=D1=85=D0=BE=D1=82=D1=83=D1=80=D1=81=D0=BA=D0=BE=D0=B3=D0=
+=BE (=D0=9C=D0=B5=D1=80=D0=BA=D1=83=D1=88=D0=B8=D0=BD=D1=81=D0=BA=D0=BE=D0=
+=B3=D0=BE) (1704);&nbsp;
+=D0=BF=D1=80=D0=BF.&nbsp;=D0=92=D0=B0=D1=81=D1=81=D0=B8=D0=B0=CC=81=D0=BD=
+=D0=B0 =D0=A2=D0=B8=D0=BA=D1=81=D0=BD=D0=B5=D0=BD=D1=81=D0=BA=D0=BE=D0=B3=
+=D0=BE (1624);&nbsp;
+=D1=81=D1=89=D0=BC=D1=87.&nbsp;=D0=98=D1=83=D0=BB=D0=B8=D0=B0=CC=81=D0=BD=
+=D0=B0
+=D0=93=D0=B0=D0=BB=D0=B0=D1=82=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=B3=D0=BE,&n=
+bsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0, =D0=B8 =
+=D1=81 =D0=BD=D0=B8=D0=BC 40
+=D0=BC=D1=83=D1=87=D0=B5=D0=BD=D0=B8=D0=BA=D0=BE=D0=B2 (IV);&nbsp;
+=D1=81=D1=89=D0=BC=D1=87.&nbsp;=D0=A4=D0=B5=D0=BE=CC=81=D0=B4=D0=BE=D1=80=
+=D0=B0
+=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=D0=B4=D1=80=D0=B8=D0=B9=D1=81=D0=
+=BA=D0=BE=D0=B3=D0=BE,&nbsp;=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=
+=B0;&nbsp;
+=D1=81=D1=89=D0=BC=D1=87.&nbsp;=D0=9A=D0=BE=D1=80=D0=BD=D1=83=CC=81=D1=82=
+=D0=B0,&nbsp;=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=B0
+=D0=9D=D0=B8=D0=BA=D0=BE=D0=BC=D0=B8=D0=B4=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=
+=B3=D0=BE (249=E2=80=93259);&nbsp;
+=D1=81=D1=89=D0=BC=D1=87.&nbsp;=D0=A4=D0=B5=D0=BE=CC=81=D0=B4=D0=BE=D1=80=
+=D0=B0
+=D0=9B=D0=B5=D0=B1=D0=B5=D0=B4=D0=B5=D0=B2=D0=B0,&nbsp;=D0=BF=D1=80=D0=B5=
+=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0;&nbsp;
+=D0=98=D0=BE=D0=B0=CC=81=D0=BD=D0=BD=D0=B0 =D0=9F=D1=80=D1=83=D0=B4=D0=B5=
+=D0=BD=D1=82=D0=BE=D0=B2=D0=B0,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=
+=D1=82=D0=B5=D1=80=D0=B0;&nbsp;
+=D0=9D=D0=B8=D0=BA=D0=BE=D0=BB=D0=B0=D1=8F =D0=96=D0=B8=D1=82=D0=BE=D0=B2=
+=D0=B0,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0;&=
+nbsp;
+=D0=B1=D0=BB=D0=B6. =D0=BC=D1=87.&nbsp;=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B8=
+=CC=81=D1=8F (=D0=92=D0=BE=D1=80=D0=BE=D1=88=D0=B8=D0=BD=D0=B0), =D0=81=D0=
+=BB=D0=BD=D0=B0=D1=82=D1=81=D0=BA=D0=BE=D0=B3=D0=BE
+(1937);&nbsp;
+=D0=98=D0=BA=D0=BE=D0=BD =D0=91=D0=BE=D0=B6=D0=B8=D0=B5=D0=B9 =D0=9C=D0=B0=
+=D1=82=D0=B5=D1=80=D0=B8:
+=C2=AB=D0=91=D0=BE=D1=8F=D0=BD=D1=81=D0=BA=D0=B0=D1=8F=C2=BB (=D0=91=D0=BE=
+=D1=8F=D0=BD=D0=BE=D0=B2=D1=81=D0=BA=D0=B0=D1=8F);&nbsp;
+=D0=9F=D0=B5=D1=80=D0=B5=D0=B9=D1=82=D0=B8 =D0=BD=D0=B0 =D1=81=D1=82=D1=80=
+=D0=B0=D0=BD=D0=B8=D1=86=D1=83 =D0=B4=D0=BD=D1=8F
+=D0=9F=D1=80=D0=BE=D1=81=D0=B8=D0=BC =D1=83=D1=87=D0=B5=D1=81=D1=82=D1=8C, =
+=D1=87=D1=82=D0=BE =D1=86=D0=B5=D1=80=D0=BA=D0=BE=D0=B2=D0=BD=D1=8B=D0=B5 =
+=D1=81=D1=83=D1=82=D0=BA=D0=B8
+=D0=BD=D0=B0=D1=87=D0=B8=D0=BD=D0=B0=D1=8E=D1=82=D1=81=D1=8F =D1=81 =D0=B2=
+=D0=B5=D1=87=D0=B5=D1=80=D0=B0 (=D0=BF=D0=BE=D1=8D=D1=82=D0=BE=D0=BC=D1=83,=
+ =D0=BD=D0=B0=D0=BF=D1=80=D0=B8=D0=BC=D0=B5=D1=80,
+=D0=BF=D1=80=D0=B0=D0=B7=D0=B4=D0=BD=D0=B8=D1=87=D0=BD=D0=BE=D0=B5 =D0=92=
+=D1=81=D0=B5=D0=BD=D0=BE=D1=89=D0=BD=D0=BE=D0=B5 =D0=B1=D0=B4=D0=B5=D0=BD=
+=D0=B8=D0=B5 =D1=81=D0=BB=D1=83=D0=B6=D0=B8=D1=82=D1=81=D1=8F
+=D0=BD=D0=B0=D0=BA=D0=B0=D0=BD=D1=83=D0=BD=D0=B5 =D0=BF=D1=80=D0=B0=D0=B7=
+=D0=B4=D0=BD=D0=B8=D0=BA=D0=B0 =D0=B2=D0=B5=D1=87=D0=B5=D1=80=D0=BE=D0=BC).=
+ =D0=9D=D0=B5=D0=B4=D0=B5=D0=BB=D0=B5=D0=B9
+=D0=B8=D0=BC=D0=B5=D0=BD=D1=83=D0=B5=D1=82=D1=81=D1=8F =D0=B4=D0=B5=D0=BD=
+=D1=8C =D0=B2=D0=BE=D1=81=D0=BA=D1=80=D0=B5=D1=81=D0=BD=D1=8B=D0=B9, =D0=B0=
+ =D0=BD=D0=B5=D0=B4=D0=B5=D0=BB=D0=B5=D0=B9 =D0=B2
+=D1=81=D0=BE=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=D0=BE=D0=BC =D0=BF=
+=D0=BE=D0=BD=D0=B8=D0=BC=D0=B0=D0=BD=D0=B8=D0=B8 - =D1=81=D0=B5=D0=B4=D0=BC=
+=D0=B8=D1=86=D0=B0.
+P.S. =D0=A7=D1=82=D0=BE=D0=B1=D1=8B =D0=BE=D1=82=D0=BA=D0=B0=D0=B7=D0=B0=D1=
+=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B5=D0=
+=BD=D0=B8=D1=8F
+=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8, =D0=B2=D0=BE=D1=81=D0=BF=
+=D0=BE=D0=BB=D1=8C=D0=B7=D1=83=D0=B9=D1=82=D0=B5=D1=81=D1=8C =D1=81=D1=81=
+=D1=8B=D0=BB=D0=BA=D0=BE=D0=B9
+
+--B1_31d3979ea2fcb709379ad009d9f22d6a
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+ =D0=97=D0=B4=D1=80=D0=B0=D0=B2=D1=81=D1=82=D0=B2=D1=83=D0=B9=D1=82=D0=B5, =
+=D0=A1=D0=B0=D0=BB=D0=BE=D0=BC=D0=B8=D1=8F! <br /> =D0=A1=D0=BE=D0=B1=D1=8B=
+=D1=82=D0=B8=D1=8F =D0=BD=D0=B0 25
+=D1=81=D0=B5=D0=BD=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2018:<br /> <b>=D0=9E=D1=
+=82=D0=B4=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BF=D1=80=D0=B0=D0=B7=D0=B4=D0=BD=D0=
+=B8=D0=BA=D0=B0
+=D0=A0=D0=BE=D0=B6=D0=B4=D0=B5=D1=81=D1=82=D0=B2=D0=B0 =D0=9F=D1=80=D0=B5=
+=D1=81=D0=B2=D1=8F=D1=82=D0=BE=D0=B9 =D0=91=D0=BE=D0=B3=D0=BE=D1=80=D0=BE=
+=D0=B4=D0=B8=D1=86=D1=8B</b>. <a
+class=3D"saint_link" href=3D"https://azbyka.ru/days/sv-avtonom-italijskij">=
+ <!--
+--><!-- -->=D1=81=D1=89=D0=BC=D1=87.&nbsp;<!-- --><!-- -->=D0=90=D0=B2=D1=
+=82=D0=BE=D0=BD=D0=BE=CC=81=D0=BC=D0=B0
+=D0=98=D1=82=D0=B0=D0=BB=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=B3=D0=BE<!-- --><=
+!-- --><!-- -->,&nbsp;=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=B0<!--
+--><!-- --><!-- --><!-- --> (313)<!-- --><!-- --><!-- --><!-- --></a><!--
+--><!-- --><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-afanasij-serpuhovskij"> <!-- --><!--
+-->=D0=BF=D1=80=D0=BF.&nbsp;<!-- --><!-- -->=D0=90=D1=84=D0=B0=D0=BD=D0=B0=
+=CC=81=D1=81=D0=B8=D1=8F =D0=92=D1=8B=D1=81=D0=BE=D1=86=D0=BA=D0=BE=D0=B3=
+=D0=BE,
+=D0=A1=D0=B5=D1=80=D0=BF=D1=83=D1=85=D0=BE=D0=B2=D1=81=D0=BA=D0=BE=D0=B3=D0=
+=BE =D1=87=D1=83=D0=B4=D0=BE=D1=82=D0=B2=D0=BE=D1=80=D1=86=D0=B0<!-- --><!-=
+- --><!--
+-->,&nbsp;=D0=B8=D0=B3=D1=83=D0=BC=D0=B5=D0=BD=D0=B0<!-- --><!-- --><!-- --=
+><!-- --> (1395)<!-- --><!--
+--><!-- --><!-- --></a><!-- --><!-- --><!-- -->;&nbsp; </p><p> <a
+class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-simeon-verhoturskij-merkushinskij"> <!--
+-->=D0=9F=D0=B5=D1=80=D0=B5=D0=BD=D0=B5=D1=81=D0=B5=D0=BD=D0=B8=D0=B5 =D0=
+=BC=D0=BE=D1=89=D0=B5=D0=B9 <!-- --><!-- --><!--
+-->=D0=BF=D1=80=D0=B0=D0=B2.&nbsp;<!-- --><!-- -->=D0=A1=D0=B8=D0=BC=D0=B5=
+=D0=BE=CC=81=D0=BD=D0=B0
+=D0=92=D0=B5=D1=80=D1=85=D0=BE=D1=82=D1=83=D1=80=D1=81=D0=BA=D0=BE=D0=B3=D0=
+=BE (=D0=9C=D0=B5=D1=80=D0=BA=D1=83=D1=88=D0=B8=D0=BD=D1=81=D0=BA=D0=BE=D0=
+=B3=D0=BE)<!-- --><!-- --><!--
+--><!-- --><!-- --> (1704)<!-- --><!-- --><!-- --><!-- --></a><!-- --><!--
+--><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-vassian-tiksnenskij"> <!-- --><!--
+-->=D0=BF=D1=80=D0=BF.&nbsp;<!-- --><!-- -->=D0=92=D0=B0=D1=81=D1=81=D0=B8=
+=D0=B0=CC=81=D0=BD=D0=B0
+=D0=A2=D0=B8=D0=BA=D1=81=D0=BD=D0=B5=D0=BD=D1=81=D0=BA=D0=BE=D0=B3=D0=BE<!-=
+- --><!-- --><!-- --><!-- --><!-- --> (1624)<!--
+--><!-- --><!-- --><!-- --></a><!-- --><!-- --><!-- -->;&nbsp; <a
+class=3D"saint_link" href=3D"https://azbyka.ru/days/sv-iulian-galatijskij">=
+ <!--
+--><!-- -->=D1=81=D1=89=D0=BC=D1=87.&nbsp;<!-- --><!-- -->=D0=98=D1=83=D0=
+=BB=D0=B8=D0=B0=CC=81=D0=BD=D0=B0
+=D0=93=D0=B0=D0=BB=D0=B0=D1=82=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=B3=D0=BE<!-=
+- --><!-- --><!--
+-->,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0<!-- =
+--><!-- --><!-- --><!-- -->, =D0=B8 =D1=81 =D0=BD=D0=B8=D0=BC
+40 =D0=BC=D1=83=D1=87=D0=B5=D0=BD=D0=B8=D0=BA=D0=BE=D0=B2 (IV)<!-- --><!-- =
+--><!-- --><!-- --></a><!-- --><!--
+--><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-feodor-aleksandrijskij-episkop"> <!--
+--><!-- -->=D1=81=D1=89=D0=BC=D1=87.&nbsp;<!-- --><!-- -->=D0=A4=D0=B5=D0=
+=BE=CC=81=D0=B4=D0=BE=D1=80=D0=B0
+=D0=90=D0=BB=D0=B5=D0=BA=D1=81=D0=B0=D0=BD=D0=B4=D1=80=D0=B8=D0=B9=D1=81=D0=
+=BA=D0=BE=D0=B3=D0=BE<!-- --><!-- --><!--
+-->,&nbsp;=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=B0<!-- --><!-- --><=
+!-- --><!-- --><!-- --><!--
+--></a><!-- --><!-- --><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-kornut-nikomidijskij-ikonijskij"> <!--
+--><!-- -->=D1=81=D1=89=D0=BC=D1=87.&nbsp;<!-- --><!-- -->=D0=9A=D0=BE=D1=
+=80=D0=BD=D1=83=CC=81=D1=82=D0=B0<!-- --><!--
+--><!-- -->,&nbsp;=D0=B5=D0=BF=D0=B8=D1=81=D0=BA=D0=BE=D0=BF=D0=B0<!-- --><=
+!-- --><!-- --><!-- -->
+=D0=9D=D0=B8=D0=BA=D0=BE=D0=BC=D0=B8=D0=B4=D0=B8=D0=B9=D1=81=D0=BA=D0=BE=D0=
+=B3=D0=BE (249=E2=80=93259)<!-- --><!-- --><!-- --><!--
+--></a><!-- --><!-- --><!-- -->;&nbsp; </p><p> <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-feodor-lebedev"><!-- --><!-- --><!-- --><=
+!--
+--><!-- --><!-- --><!-- --><!-- --><!-- -->=D1=81=D1=89=D0=BC=D1=87.&nbsp;<=
+!-- --><!--
+--><!-- -->=D0=A4=D0=B5=D0=BE=CC=81=D0=B4=D0=BE=D1=80=D0=B0 <span style=3D"=
+font-size:
+10pt;"><em>=D0=9B=D0=B5=D0=B1=D0=B5=D0=B4=D0=B5=D0=B2=D0=B0</em></span><!--=
+ --><!-- --><!-- --><!--
+-->,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0<!-- =
+--><!-- --><!-- --><!-- --><!-- --><!--
+--><!-- --><!-- --></a><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-ioann-prudentov"><!-- --><!-- --><!--
+--><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- -->=D0=98=D0=BE=D0=
+=B0=CC=81=D0=BD=D0=BD=D0=B0
+<span style=3D"font-size: 10pt;"><em>=D0=9F=D1=80=D1=83=D0=B4=D0=B5=D0=BD=
+=D1=82=D0=BE=D0=B2=D0=B0</em></span><!--
+--><!-- --><!-- --><!-- -->,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=
+=82=D0=B5=D1=80=D0=B0<!-- --><!-- --><!--
+--><!-- --><!-- --><!-- --><!-- --><!-- --></a><!-- -->;&nbsp; <a
+class=3D"saint_link" href=3D"https://azbyka.ru/days/sv-nikolaj-zhitov"><!--
+--><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!-- --><!--
+-->=D0=9D=D0=B8=D0=BA=D0=BE=D0=BB=D0=B0=D1=8F <span style=3D"font-size:
+10pt;"><em>=D0=96=D0=B8=D1=82=D0=BE=D0=B2=D0=B0</em></span><!-- --><!-- -->=
+<!-- --><!--
+-->,&nbsp;=D0=BF=D1=80=D0=B5=D1=81=D0=B2=D0=B8=D1=82=D0=B5=D1=80=D0=B0<!-- =
+--><!-- --><!-- --><!-- --><!-- --><!--
+--><!-- --><!-- --></a><!-- -->;&nbsp; <a class=3D"saint_link"
+href=3D"https://azbyka.ru/days/sv-aleksij-voroshin-elnatskij"><!-- --><!--
+--><!-- --><!-- --><!-- --><!-- -->=D0=B1=D0=BB=D0=B6. <!-- --><!-- --><!--=
+ --><!--
+--><!-- -->=D0=BC=D1=87.&nbsp;<!-- --><!-- --><!-- -->=D0=90=D0=BB=D0=B5=D0=
+=BA=D1=81=D0=B8=CC=81=D1=8F <span
+style=3D"font-size: 10pt;"><em>(=D0=92=D0=BE=D1=80=D0=BE=D1=88=D0=B8=D0=BD=
+=D0=B0)</em></span>,
+=D0=81=D0=BB=D0=BD=D0=B0=D1=82=D1=81=D0=BA=D0=BE=D0=B3=D0=BE<!-- --><!-- --=
+><!-- --><!-- --><!-- --><!-- -->
+(1937)<!-- --><!-- --><!-- --><!-- --><!-- --><!-- --></a><!-- -->;&nbsp;
+<div style=3D"height: 8px;"></div>=D0=98=D0=BA=D0=BE=D0=BD =D0=91=D0=BE=D0=
+=B6=D0=B8=D0=B5=D0=B9 =D0=9C=D0=B0=D1=82=D0=B5=D1=80=D0=B8: <a
+href=3D"https://azbyka.ru/days/ikona-bojanskaja-bojanovskaja">=C2=AB=D0=91=
+=D0=BE=D1=8F=D0=BD=D1=81=D0=BA=D0=B0=D1=8F=C2=BB
+(=D0=91=D0=BE=D1=8F=D0=BD=D0=BE=D0=B2=D1=81=D0=BA=D0=B0=D1=8F)</a>;&nbsp; <=
+br/><br/> <a
+href=3D"https://azbyka.ru/days/2018-09-25">=D0=9F=D0=B5=D1=80=D0=B5=D0=B9=
+=D1=82=D0=B8 =D0=BD=D0=B0
+=D1=81=D1=82=D1=80=D0=B0=D0=BD=D0=B8=D1=86=D1=83 =D0=B4=D0=BD=D1=8F</a><br/=
+> =D0=9F=D1=80=D0=BE=D1=81=D0=B8=D0=BC =D1=83=D1=87=D0=B5=D1=81=D1=82=D1=8C=
+, =D1=87=D1=82=D0=BE
+=D1=86=D0=B5=D1=80=D0=BA=D0=BE=D0=B2=D0=BD=D1=8B=D0=B5 =D1=81=D1=83=D1=82=
+=D0=BA=D0=B8 =D0=BD=D0=B0=D1=87=D0=B8=D0=BD=D0=B0=D1=8E=D1=82=D1=81=D1=8F =
+=D1=81 =D0=B2=D0=B5=D1=87=D0=B5=D1=80=D0=B0
+(=D0=BF=D0=BE=D1=8D=D1=82=D0=BE=D0=BC=D1=83, =D0=BD=D0=B0=D0=BF=D1=80=D0=B8=
+=D0=BC=D0=B5=D1=80, =D0=BF=D1=80=D0=B0=D0=B7=D0=B4=D0=BD=D0=B8=D1=87=D0=BD=
+=D0=BE=D0=B5 =D0=92=D1=81=D0=B5=D0=BD=D0=BE=D1=89=D0=BD=D0=BE=D0=B5
+=D0=B1=D0=B4=D0=B5=D0=BD=D0=B8=D0=B5 =D1=81=D0=BB=D1=83=D0=B6=D0=B8=D1=82=
+=D1=81=D1=8F =D0=BD=D0=B0=D0=BA=D0=B0=D0=BD=D1=83=D0=BD=D0=B5 =D0=BF=D1=80=
+=D0=B0=D0=B7=D0=B4=D0=BD=D0=B8=D0=BA=D0=B0
+=D0=B2=D0=B5=D1=87=D0=B5=D1=80=D0=BE=D0=BC). =D0=9D=D0=B5=D0=B4=D0=B5=D0=BB=
+=D0=B5=D0=B9 =D0=B8=D0=BC=D0=B5=D0=BD=D1=83=D0=B5=D1=82=D1=81=D1=8F =D0=B4=
+=D0=B5=D0=BD=D1=8C
+=D0=B2=D0=BE=D1=81=D0=BA=D1=80=D0=B5=D1=81=D0=BD=D1=8B=D0=B9, =D0=B0 =D0=BD=
+=D0=B5=D0=B4=D0=B5=D0=BB=D0=B5=D0=B9 =D0=B2 =D1=81=D0=BE=D0=B2=D1=80=D0=B5=
+=D0=BC=D0=B5=D0=BD=D0=BD=D0=BE=D0=BC
+=D0=BF=D0=BE=D0=BD=D0=B8=D0=BC=D0=B0=D0=BD=D0=B8=D0=B8 - =D1=81=D0=B5=D0=B4=
+=D0=BC=D0=B8=D1=86=D0=B0.<br/> <br/> P.S. =D0=A7=D1=82=D0=BE=D0=B1=D1=8B
+=D0=BE=D1=82=D0=BA=D0=B0=D0=B7=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
+=D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B5=D0=BD=D0=B8=D1=8F =D1=80=D0=B0=D1=81=
+=D1=81=D1=8B=D0=BB=D0=BA=D0=B8,
+=D0=B2=D0=BE=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=D0=B7=D1=83=D0=B9=D1=82=D0=B5=D1=
+=81=D1=8C <a
+href=3D"https://azbyka.ru/days/accounts/unsubscribe/WjNFYVE5bjU2cHhtdTVLYnN=
+vZWRr3814055f25a2de81dbc6ae7364aa5e0409362">=D1=81=D1=81=D1=8B=D0=BB=D0=BA=
+=D0=BE=D0=B9</a>
+
+--B1_31d3979ea2fcb709379ad009d9f22d6a--
+
+--02c5e184-93f7-42a5-85f2-909925f2d441--
+

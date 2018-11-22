@@ -19,10 +19,16 @@ class DsnParser {
     }
 
     const headers = this._extractDsnHeaders(dsnString);
-    const originalRecipient = headers.get('original-recipient');
+    let originalRecipient = headers.get('original-recipient');
     if (!originalRecipient) {
       this.logger.debug(`UID ${message.uid}: missing original-recipient header`);
-      return null;
+
+      const finalRecipient = headers.get('final-recipient');
+      if (!finalRecipient) {
+        this.logger.debug(`UID ${message.uid}: final-recipient is missing too`);
+        return null;
+      }
+      originalRecipient = finalRecipient;
     }
     const status = headers.get('status');
     const diagnosticCode = headers.get('diagnostic-code');

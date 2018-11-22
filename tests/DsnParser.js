@@ -74,5 +74,16 @@ describe('DsnParser', function () {
         `X-Postfix; connect to ail.ru[72.52.4.120]:25: Connection refused`
       ) !== -1);
     });
+
+    it('should correctly extract DSNs without', async function () {
+      const message = await loadMessage('syndicatru.eml');
+      const failureInfo = await dsnParser.extract(message);
+      assert.isOk(failureInfo);
+      assert.equal(failureInfo.dsnStatus, '5.1.10');
+      assert.equal(failureInfo.listId, null);
+      assert.equal(failureInfo.message, message);
+      assert.equal(failureInfo.recipient, 'sabina_094@bl.ru');
+      assert.equal(failureInfo.status, FailureTypes.INVALID_ADDRESS);
+    });
   });
 });
