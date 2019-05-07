@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "imap": "0.8.19",
     "lodash": "4.17.4",
     "logger": "git+https://gitlab.eterfund.ru/TheOwl/logger.git",
