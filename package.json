@@ -18,8 +18,8 @@
     "mailparser": "2.1.0",
     "moment": "^2.22.1",
     "mysql": "^2.16.0",
-    "read-config": "git+https://gitlab.eterfund.ru/TheOwl/read-config.git#87bb1aba6ed991cbfa53ec97bd1d737729dfb71f",
-    "winston": "3.0.0-rc0",
+    "read-config": "^2.0.0",
+    "winston": "^3.2.1",
     "yargs": "10.0.3"
   },
   "devDependencies": {

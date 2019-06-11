@@ -39,11 +39,12 @@ module.exports = function (Database) {
 
 
   const readConfig = require('read-config');
+  const { merge } = require('lodash');
   const createLogger = require('./logger');
   const defaultConfig = join(dirname(__dirname), 'config.default.json');
   const configFilename = argv.config || 'config.json';
 
-  const config = readConfig([defaultConfig, configFilename, cliOptions]);
+  const config = merge(readConfig([defaultConfig, configFilename]), cliOptions);
   const logger = createLogger(config.logging);
   let actionLogger = null;
   if (config.logging.actionLogFile) {
