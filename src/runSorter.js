@@ -1,5 +1,5 @@
 const IMAP = require('imap');
-const createLogger = require('logger');
+const createLogger = require('./logger');
 
 const ReadonlyMailbox = require('./ReadonlyMailbox');
 const Mailbox = require('./Mailbox');

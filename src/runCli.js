@@ -39,7 +39,7 @@ module.exports = function (Database) {
 
 
   const readConfig = require('read-config');
-  const createLogger = require('logger');
+  const createLogger = require('./logger');
   const defaultConfig = join(dirname(__dirname), 'config.default.json');
   const configFilename = argv.config || 'config.json';
 
