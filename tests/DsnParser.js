@@ -49,8 +49,8 @@ describe('DsnParser', function () {
       assert.isNull(failureInfo);
     });
 
-    it('should return null on missing original-recipient header', async function () {
-      const message = await loadMessage('dsn-without-original-recipient.eml');
+    it('should return null on missing final-recipient header', async function () {
+      const message = await loadMessage('dsn-without-final-recipient.eml');
       const failureInfo = await dsnParser.extract(message);
       assert.isNull(failureInfo);
     });

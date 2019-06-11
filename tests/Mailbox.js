@@ -146,16 +146,12 @@ describe('Mailbox', function() {
 
       await assert.isFulfilled(mailbox.initialize());
 
-      assert.isOk(fakeConnection.openBox.calledOnce);
-      assert.isOk(fakeConnection.openBox.calledWith('INBOX', true));
       assert.isNotOk(fakeConnection.connect.called);
     });
 
     it('will behave correctly with uninitialized connection', async function () {
       await assert.isFulfilled(mailbox.initialize());
 
-      assert.isOk(fakeConnection.openBox.calledOnce);
-      assert.isOk(fakeConnection.openBox.calledWith('INBOX', true));
       assert.isOk(fakeConnection.connect.calledOnce);
     });
 
@@ -166,19 +162,12 @@ describe('Mailbox', function() {
 
       await assert.isRejected(mailbox.initialize(), testError);
     });
-
-    it('will throw on openBox errors', async function () {
-      fakeConnection.openBox = (box, readonly, onOpen) => {
-        onOpen(testError);
-      };
-
-      await assert.isRejected(mailbox.initialize(), testError);
-    });
   });
 
   describe('#close', function () {
     it('should pass false expungeOnClose', async function () {
       await mailbox.initialize();
+      await mailbox.setBoxName('INBOX');
       await mailbox.close();
 
       assert.equal(fakeConnection.closeBox.getCall(0).args[0], false);
@@ -187,6 +176,7 @@ describe('Mailbox', function() {
     it('should pass true expungeOnClose', async function () {
       mailbox.expungeOnClose = true;
       await mailbox.initialize();
+      await mailbox.setBoxName('INBOX');
       await mailbox.close();
 
       assert.equal(fakeConnection.closeBox.getCall(0).args[0], true);

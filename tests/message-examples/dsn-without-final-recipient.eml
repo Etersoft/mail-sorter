@@ -52,7 +52,6 @@ X-Postfix-Queue-ID: 0CA846D64CA
 X-Postfix-Sender: rfc822; noreply@youngreaders.ru
 Arrival-Date: Tue,  3 Apr 2018 12:30:40 +0300 (MSK)
 
-Final-Recipient: rfc822; zd_os@ail.ru
 Action: failed
 Status: 4.4.1
 Diagnostic-Code: X-Postfix; connect to ail.ru[72.52.4.120]:25: Connection
