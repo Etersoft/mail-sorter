@@ -13,6 +13,7 @@ class Message {
     this.textAsHtml = data.textAsHtml;
     this.source = source;
     this.subject = data.subject;
+    this.type = null;
 
     this.id = id;
     this.mailbox = mailbox;

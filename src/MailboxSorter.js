@@ -18,6 +18,7 @@ class MailboxSorter extends EventEmitter {
     this.messageBatchSize = options.messageBatchSize;
     this.handlerMap = options.handlerMap;
     this.actions = options.actions || {};
+    this.actionsPerType = options.actionsPerType || {};
     this.logger = logger;
     this.actionLogger = actionLogger;
 
@@ -47,6 +48,10 @@ class MailboxSorter extends EventEmitter {
     }
   }
 
+  _getActions (message) {
+    return Object.assign({}, this.actions, this.actionsPerType[message.type]);
+  }
+
   async _performActionsAndLogResult (message, result) {
     const messageInfo = `UID ${message.uid} (from ${message.fromAddress})`;
     if (result && !result.skipped) {
@@ -72,13 +77,14 @@ class MailboxSorter extends EventEmitter {
 
   async _performPostProcessActions (message) {
     const actionsPerformed = [];
-    if (this.actions.markAsRead) {
+    const actions = this._getActions(message);
+    if (actions.markAsRead) {
       // Pass UID instead of seq no, because some servers do not work correctly
       // with seq numbers
       await this.mailbox.markAsRead(message.uid);
       actionsPerformed.push('mark as read');
     }
-    if (this.actions.delete) {
+    if (actions.delete) {
       await this.mailbox.deleteMessage(message.uid);
       actionsPerformed.push('delete message');
     }
@@ -111,6 +117,7 @@ class MailboxSorter extends EventEmitter {
 
   async _processMessage (message) {
     const messageType = this.classifier.classifyMessage(message);
+    message.type = messageType;
     this.emit(Events.MESSAGE_CLASSIFIED, message, messageType);
     const handler = this.handlerMap[messageType];
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);

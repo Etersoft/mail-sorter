@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const { createFakeLogger } = require('./testing-utils');
 
 const MailboxSorter = require('../src/MailboxSorter');
+const MessageTypes = require('../src/MessageTypes');
 
 
 chai.use(chaiAsPromised);
@@ -11,7 +12,7 @@ const { assert } = chai;
 
 describe('MailboxSorter', function() {
   // Initialization
-  const [TYPE_1, TYPE_2] = [1, 2];
+  const [TYPE_1, TYPE_2] = [MessageTypes.HUMAN, MessageTypes.MAIL_SERVER];
   const BATCH_SIZE = 10;
   const messages = [
     {
@@ -77,6 +78,7 @@ describe('MailboxSorter', function() {
       actions: {
         markAsRead: true
       },
+      actionsPerType: {},
       handlerMap,
       messageBatchSize: BATCH_SIZE
     });
@@ -90,6 +92,7 @@ describe('MailboxSorter', function() {
   describe('constructor', function () {
     it('should throw on null messageBatchSize value', function () {
       assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actionsPerType: {},
         handlerMap,
         messageBatchSize: null
       }));
@@ -97,6 +100,7 @@ describe('MailboxSorter', function() {
 
     it('should throw on negative messageBatchSize value', function () {
       assert.throws(() => new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actionsPerType: {},
         handlerMap,
         messageBatchSize: -1
       }));
@@ -199,6 +203,7 @@ describe('MailboxSorter', function() {
 
     it('should behave correctly with batchSize = 1', async function () {
       sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actionsPerType: {},
         handlerMap,
         messageBatchSize: 1
       });
@@ -209,6 +214,7 @@ describe('MailboxSorter', function() {
 
     it('should behave correctly with batchSize = msgCount', async function () {
       sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actionsPerType: {},
         handlerMap,
         messageBatchSize: messages.length
       });

@@ -3,6 +3,7 @@
     "markAsRead": true,
     "delete": false
   },
+  "actionsPerType": {},
   "database": {
     "readonly": true
   },

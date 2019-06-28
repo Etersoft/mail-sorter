@@ -107,8 +107,15 @@ function createMailboxSorter ({
     [MessageTypes.AUTORESPONDER]: new AutoresponderMessageHandler(mailbox, logger),
     [MessageTypes.UNSUBSCRIBE]: new UnsubscribeMessageHandler(mailbox, mailingListDatabase, logger)
   };
+  const actionsPerType = {};
+  for (const type in config.actionsPerType) {
+    if (type in MessageTypes) {
+      actionsPerType[MessageTypes[type]] = config.actionsPerType[type];
+    }
+  }
   return new MailboxSorter(mailbox, classifier, logger, actionLogger, {
     actions: config.actions,
+    actionsPerType,
     handlerMap,
     messageBatchSize: config.messageBatchSize
   });
