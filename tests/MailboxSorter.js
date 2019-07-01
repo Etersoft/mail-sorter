@@ -76,6 +76,7 @@ describe('MailboxSorter', function() {
 
     sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, fakeActionLogger, {
       actions: {
+        callHandler: true,
         markAsRead: true
       },
       actionsPerType: {},
@@ -203,6 +204,9 @@ describe('MailboxSorter', function() {
 
     it('should behave correctly with batchSize = 1', async function () {
       sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actions: {
+          callHandler: true
+        },
         actionsPerType: {},
         handlerMap,
         messageBatchSize: 1
@@ -214,6 +218,9 @@ describe('MailboxSorter', function() {
 
     it('should behave correctly with batchSize = msgCount', async function () {
       sorter = new MailboxSorter(fakeMailbox, fakeClassifier, fakeLogger, null, {
+        actions: {
+          callHandler: true
+        },
         actionsPerType: {},
         handlerMap,
         messageBatchSize: messages.length

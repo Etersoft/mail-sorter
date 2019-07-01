@@ -1,5 +1,6 @@
 {
   "actions": {
+    "callHandler": true,
     "markAsRead": true,
     "delete": false
   },

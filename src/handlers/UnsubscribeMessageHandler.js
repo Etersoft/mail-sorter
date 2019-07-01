@@ -6,10 +6,18 @@ class UnsubscribeMessageHandler {
   }
 
   async processMessage (message) {
-    await this.mailingListDatabase.unsubscribeAddress(message.fromAddress);
+    const found = await this.mailingListDatabase.unsubscribeAddress(message.fromAddress);
+    if (found) {
+      return {
+        performedActions: ['unsubscribe'],
+        reason: 'Received unsubscribe email',
+        skipped: false
+      };
+    }
+
     return {
-      performedActions: ['unsubscribe'],
-      reason: 'Received unsubscribe email',
+      performedActions: [],
+      reason: 'Received unsubscribe email, but found no address in database',
       skipped: false
     };
   }

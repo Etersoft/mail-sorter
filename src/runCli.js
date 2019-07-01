@@ -1,4 +1,4 @@
-module.exports = function (Database) {
+module.exports = function (additionalDbDrivers = {}) {
   const { dirname, join } = require('path');
   const yargs = require('yargs');
   // Parse CLI args before loading any other modules
@@ -26,7 +26,9 @@ module.exports = function (Database) {
 
   const cliOptions = {
     database: {
-      readonly: argv.dry
+      options: {
+        readonly: argv.dry
+      }
     },
     logging: argv.loglevel ? {
       maxLogLevel: argv.loglevel
@@ -37,12 +39,31 @@ module.exports = function (Database) {
     cliOptions.readonly = true;
   }
 
-
   const readConfig = require('read-config');
   const { merge } = require('lodash');
   const createLogger = require('./logger');
   const defaultConfig = join(dirname(__dirname), 'config.default.json');
   const configFilename = argv.config || 'config.json';
+  const GenericMySqlDatabase = require('./databases/GenericMySqlDatabase');
+  const MultiDatabase = require('./databases/MultiDatabase');
+  const MailServerDatabase = require('./databases/MailServerDatabase');
+  const DummyDatabase = require('./databases/DummyDatabase');
+
+
+  const BUILTIN_DATABASES = {
+    dummy: DummyDatabase,
+    'mail-server': MailServerDatabase,
+    mysql: GenericMySqlDatabase
+  };
+
+  function createDatabase (config, logger) {
+    const databaseMap = Object.assign({}, BUILTIN_DATABASES, additionalDbDrivers);
+    const Database = (config && config.type) ? databaseMap[config.type] : DummyDatabase;
+    if (!Database) {
+      throw new Error('Unknown database type: ' + config.type);
+    }
+    return new Database(config.options, logger);
+  }
 
   const config = merge(readConfig([defaultConfig, configFilename]), cliOptions);
   const logger = createLogger(config.logging);
@@ -55,10 +76,16 @@ module.exports = function (Database) {
       timestamp: true
     });
   }
-  const database = new Database(config.database, logger);
+  const database = Array.isArray(config.database) ? new MultiDatabase(
+    config.map(d => createDatabase(d, logger))
+  ) : createDatabase(config.database, logger);
   require('./runSorter')(config, logger, actionLogger, database).then(() => {
     process.exit(0);
   }).catch(() => {
     process.exit(1);
   });
 };
+
+if (require.main === module) {
+  module.exports();
+}

@@ -11,7 +11,7 @@ class MailServerDatabase {
     }
   }
 
-  disableEmailsForAddress (address, status, fullStatus) {
+  disableEmailsForAddress (address) {
     this.logger.debug('Disable emails: ' + address);
     if (this.readonly) {
       return Promise.resolve(true);
@@ -23,27 +23,19 @@ class MailServerDatabase {
 
   unsubscribeAddress (address) {
     this.logger.debug('Unsubscribe emails: ' + address);
-    const result = {
-      performedActions: ['unsubscribe'],
-      reason: `Unsubscribe email received`,
-      skipped: false
-    };
     if (this.readonly) {
-      return Promise.resolve(result);
+      return Promise.resolve(true);
     }
     return this._disableEmailsForAddress(address).then(queryResult => {
-      if (!queryResult.affectedRows) {
-        return {
-          reason: `Email not found in database (${address})`,
-          skipped: true
-        };
-      }
-      return result;
+      return Boolean(queryResult.affectedRows);
     });
   }
 
   _disableEmailsForAddress (address) {
-    return axios.post(`${this.backend}/mailings/${mailingId}/unsubscribe`);
+    return axios.post(`${this.backend}/mailings/${mailingId}/unsubscribe`, {
+      email: address,
+      skipCodeCheck: true
+    });
   }
 }
 

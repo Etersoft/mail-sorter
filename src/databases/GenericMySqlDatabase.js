@@ -1,16 +1,12 @@
 const { createConnection } = require('mysql');
 
 
-class GenericDatabase {
+class GenericMySqlDatabase {
   constructor (config, logger) {
     this.logger = logger;
 
     if (!config.operation) {
       throw new Error('config.database.operation is not set.');
-    }
-
-    if (config.driver !== 'mysql') {
-      throw new Error('The only supported config.database.driver value is "mysql"');
     }
 
     this.operation = config.operation;
@@ -31,7 +27,7 @@ class GenericDatabase {
     }
   }
 
-  disableEmailsForAddress (address, status, fullStatus) {
+  disableEmailsForAddress (address) {
     this.logger.debug('Disable emails: ' + address);
     if (this.readonly) {
       return Promise.resolve(true);
@@ -43,38 +39,25 @@ class GenericDatabase {
 
   unsubscribeAddress (address) {
     this.logger.debug('Unsubscribe emails: ' + address);
-    const result = {
-      performedActions: ['unsubscribe'],
-      reason: `Unsubscribe email received`,
-      skipped: false
-    };
     if (this.readonly) {
-      return Promise.resolve(result);
+      return Promise.resolve(true);
     }
     return this._query(`
       DELETE FROM ${this.operation.table}
       WHERE ${this.operation.searchColumn} = ?
-    `, [address]).then(queryResult => {
-      if (!queryResult.affectedRows) {
-        return {
-          reason: `Email not found in database (${address})`,
-          skipped: true
-        };
-      }
-      return result;
-    });
+    `, [address]).then(queryResult => Boolean(queryResult.affectedRows));
   }
 
   _disableEmailsForAddress (address) {
     return this._query(`
       DELETE FROM ${this.operation.table}
       WHERE ${this.operation.searchColumn} = ?
-    `, [address]);
+    `, [address]).then(queryResult => Boolean(queryResult.affectedRows));
   }
 
   _query (...args) {
     return new Promise((resolve, reject) => {
-      this.connection.query(...args, (error, results, fields) => {
+      this.connection.query(...args, (error, results) => {
         if (error) {
           reject(error);
           return;
@@ -86,4 +69,4 @@ class GenericDatabase {
   }
 }
 
-module.exports = GenericDatabase;
+module.exports = GenericMySqlDatabase;

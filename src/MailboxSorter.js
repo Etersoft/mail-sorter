@@ -48,8 +48,8 @@ class MailboxSorter extends EventEmitter {
     }
   }
 
-  _getActions (message) {
-    return Object.assign({}, this.actions, this.actionsPerType[message.type]);
+  _getActions (type) {
+    return Object.assign({}, this.actions, this.actionsPerType[type]);
   }
 
   async _performActionsAndLogResult (message, result) {
@@ -77,7 +77,7 @@ class MailboxSorter extends EventEmitter {
 
   async _performPostProcessActions (message) {
     const actionsPerformed = [];
-    const actions = this._getActions(message);
+    const actions = this._getActions(message.type);
     if (actions.markAsRead) {
       // Pass UID instead of seq no, because some servers do not work correctly
       // with seq numbers
@@ -119,8 +119,16 @@ class MailboxSorter extends EventEmitter {
     const messageType = this.classifier.classifyMessage(message);
     message.type = messageType;
     this.emit(Events.MESSAGE_CLASSIFIED, message, messageType);
+    const actions = this._getActions(messageType);
     const handler = this.handlerMap[messageType];
     this.logger.debug(`Message #${message.id} classified as ${MessageTypes.names[messageType]}`);
+
+    if (!actions.callHandler) {
+      this.logger.debug(`Do not calling handler according to settings (#${message.id})`);
+      this.emit(Events.MESSAGE_PROCESSED, message);
+      return;
+    }
+
     if (handler) {
       const result = await handler.processMessage(message);
       await this._performActionsAndLogResult(message, result);
