@@ -39,20 +39,33 @@ class GenericMySqlDatabase {
 
   unsubscribeAddress (address) {
     this.logger.debug('Unsubscribe emails: ' + address);
-    if (this.readonly) {
-      return Promise.resolve(true);
-    }
-    return this._query(`
-      DELETE FROM ${this.operation.table}
-      WHERE ${this.operation.searchColumn} = ?
-    `, [address]).then(queryResult => Boolean(queryResult.affectedRows));
+    return this._performOperation(address);
   }
 
   _disableEmailsForAddress (address) {
-    return this._query(`
-      DELETE FROM ${this.operation.table}
-      WHERE ${this.operation.searchColumn} = ?
-    `, [address]).then(queryResult => Boolean(queryResult.affectedRows));
+    this.logger.debug('Disable emails for address: ' + address);
+    return this._performOperation(address);
+  }
+
+  _performOperation (address) {
+    if (this.readonly) {
+      return Promise.resolve(true);
+    }
+
+    if (this.operation.type === 'delete') {
+      return this._query(`
+        DELETE FROM ${this.operation.table}
+        WHERE ${this.operation.searchColumn} = ?
+      `, [address]).then(queryResult => Boolean(queryResult.affectedRows));
+    } else if (this.operation.type === 'update') {
+      return this._query(`
+        UPDATE ${this.operation.table}
+        SET ${this.operation.modifyColumn} = ?
+        WHERE ${this.operation.searchColumn} = ?
+      `, [this.operation.value, address]).then(queryResult => Boolean(queryResult.affectedRows));
+    } else {
+      throw new Error('Unsupported operation: ' + this.operation.type);
+    }
   }
 
   _query (...args) {
