@@ -77,7 +77,7 @@ module.exports = function (additionalDbDrivers = {}) {
     });
   }
   const database = Array.isArray(config.database) ? new MultiDatabase(
-    config.map(d => createDatabase(d, logger))
+    config.database.map(d => createDatabase(d, logger))
   ) : createDatabase(config.database, logger);
   require('./runSorter')(config, logger, actionLogger, database).then(() => {
     process.exit(0);

@@ -30,3 +30,5 @@ class MultiDatabase {
     };
   }
 }
+
+module.exports = MultiDatabase;
