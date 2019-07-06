@@ -1,41 +1,88 @@
 # mail-sorter
 
-Программа для автоматического чтения ответов почтовых серверов ([Delivery Status Notification](https://ru.wikipedia.org/wiki/%D0%92%D0%BE%D0%B7%D0%B2%D1%80%D0%B0%D1%89%D1%91%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D0%B8%D1%81%D1%8C%D0%BC%D0%BE))
-и реагирования на них.
+[Русский](README-ru.md) | **English**
 
-## Что это такое и зачем это нужно
+This is a program for automated reading of mail server replies
+([Delivery Status Notifications](https://en.wikipedia.org/wiki/Bounce_message))
+and reacting to them.
 
-При выполнении рассылок по большой базе email-адресов можно столкнуться с тем, что
-часть адресов "битая" - например, ящик не существует.
-Если часто пытаться отправлять письма на "битые" адреса, то некоторые почтовые
-сервисы (mail.ru, например) могут начать классифицировать рассылки как спам.
+## Description
 
-Решить эту проблему можно автоматической обработкой ответов почтовых серверов
-(Delivery Status Notification, далее - DSN). Ящики, на которые не получилось
-доставить письмо, исключаются из базы рассылок. Сортировщик предназначен для полностью
-автоматического чтения почтового ящика вроде `noreply@some.domain`, куда обычно приходят
-DSN вперемешку с другими письмами.
+When running mass mailings over a large database of email addresses you may find
+out that some addresses are "broken". Sending emails to "broken" addresses too often may
+lead to recognizing your emails as spam by some email services.
 
-Сортировщик запускается по расписанию (например, раз в час по cron) и через IMAP
-читает новые письма в указанном почтовом ящике. Для каждого письма определяется его
-тип, и от этого зависит, какие действия будут предприняты в его отношении.
+This problem can be solved via reacting to mail server responses
+(Delivery Status Notification, DSN). Addresses that were reported as failed
+are excluded from address database. This sorter is designed to read mailboxes
+automatically, such as `noreply@some.domain`, that usually receive lots of DSNs
+mixed with other sorts of emails.
 
-## Установка и настройка
+Sorter is started on schedule (for example, once per hour via cron). It reads
+new messages in specified mailbox via IMAP protocol. Each message gets classified by type,
+and message type defines actions to be performed.
 
-Для работы необходимы:
+## Installation and setup
+
+You will need:
 * Node.js
-* Redis (для хранения статистики и интеграции с mail-server)
+* Redis (for statistics storage and mail-server integration)
 
-mail-sorter может быть запущен напрямую или через написанную вами обёртку. Всё зависит от того,
-в каком виде представлена база адресов. Встроена поддержка трёх вариантов:
-* база адресов в MySQL, одна строка - один адрес, удаляется из таблицы при отписке/исключении. Запуск
-через скрипт `runWithGenericDatabase.js`, в поле конфига `database` нужно указать:
-  * параметры для соединения с MySQL ([модуль mysql](https://www.npmjs.com/package/mysql));
-  * поля `operation.table` и `operation.searchColumn` - таблица и поле с email соответственно.
-* база от mail-server в Redis. Запуск через скрипт `runWithMailServerDatabase.js`.
-* модуль-заглушка, который просто выводит действия в лог. Запуск через `runWithoutDatabase.js`.
+mail-sorter can be started directly or through your custom wrapper. It depends on your
+address database format. Three database drivers are built in.
 
-Или можно подключить mail-sorter как npm-модуль:
+#### MySQL driver
+Allows to work with a typical MySQL database with email addresses: one row - one address.
+Supports two operations: `update` (set value in row when address is excluded) or `delete`
+(row is deleted when address is excluded).
+Configuration example (`config.database`):
+```json
+{
+  "type": "mysql",
+  "options": {
+    "connection": {
+      "database": "123",
+      "host": "some.hostname",
+      "port": "3307",
+      "user": "user",
+      "password": "password"
+    },
+    "operation": {
+      "type": "update",
+      "table": "personal_accounts",
+      "searchColumn": "email",
+      "modifyColumn": "mailing_disabled",
+      "value": 1
+    }
+  }
+}
+```
+
+#### Mail-server database driver
+Allows to work with mail-server database in Redis. Configuration example (`config.database`):
+```json
+{
+  "type": "mail-server",
+  "options": {
+    "backend": "http://localhost:8000"
+  }
+}
+```
+
+#### Dummy database driver
+Performs no actions, except for writing into log. May be useful, when you have no database
+or just want to test something. This is the default option when `config.database` is not defined.
+Configuration example (`config.database`):
+```json
+{
+  "type": "dummy"
+}
+```
+
+#### Injecting own database drivers
+mail-sorter can be `require`'d as a module. In this mode you can extend a built-in list
+of database drivers:
+
 ```js
 const mailSorter = require('path/to/mail-sorter');
 
@@ -43,27 +90,33 @@ class MyDatabaseClass {
   // ...
 }
 
-mailSorter.runCli(MyDatabaseClass);
+mailSorter.runCli({
+  // allows to use "type": "my-database" in config.database
+  'my-database': MyDatabaseClass
+});
 ```
-Использование в виде npm-модуля необходимо, когда нужен свой класс БД адресов.
+This mode is useful for other address database types.
+Writing own database classes is described in the end of this document.
 
-### Конфигурация
+### Configuration
 
-Есть два файла: `config.default.json` и `config.json`. Первый содержит конфигурацию по умолчанию,
-второй позволяет переопределять параметры на усмотрение пользователя. Файл `config.json` нужно
-создать самостоятельно.
-```json
+There are two config files: `config.default.json` and `config.json`. The latter
+allows to override default parameters. The `config.json` file should be created manually.
+```js
 {
   "actions": {
-    "markAsRead": true, // помечать прочитанными обработанные письма
-    "delete": false // удалять обработанные письма
+    "markAsRead": true, // mark as read all handled messages
+    "delete": false // delete all handled messages
   },
-  "database": {
-    // полностью передаётся в конструктор класса БД
-  },
-  "expungeOnClose": false, // очищать ли то, что помечено на удаление, при закрытии IMAP-соединения
-  "forwardTo": "someone@example.com", // куда пересылать письма от людей
-  "imapConnection": { // параметры imap-соединения
+  "database": [
+    {
+      "type": "mysql",
+      "options": {} // driver options
+    }
+  ],
+  "expungeOnClose": false, // delete messages that were marked for deletion on connection close
+  "forwardTo": "someone@example.com", // where to forward messages from humans
+  "imapConnection": { // IMAP connection parameters
     "host": "imap.yandex.ru",
     "password": "123",
     "port": 993,
@@ -71,106 +124,90 @@ mailSorter.runCli(MyDatabaseClass);
     "user": "123"
   },
   "logging": {
-    "actionLogFile": "path/to/action_log", // файл для лога только с действиями. Опционально.
-    "maxLogLevel": "verbose" // уровень сообщений, которые будут записываться в лог
+    "actionLogFile": "path/to/action_log", // optional: log file for actions only
+    "maxLogLevel": "verbose" // max level of messages that will be written to log (stdout)
   },
-  "mailer": { // настройки smtp-сервера для пересылки сообщений
+  "mailer": { // SMTP server settings for forwarding messages
     "host": "localhost",
     "port": 587
   },
-  "mailboxes": ["INBOX"], // названия почтовых ящиков, которые следует читать
-  "maxForwardDays": 7, // максимальный возраст письма в днях, до которого его допустимо пересылать
-  "maxTemporaryFailures": 3, // количество временных ошибок доставки, которое приведёт к исключению адреса из базы рассылок
-  "messageBatchSize": 100, // по сколько писем извлекать за раз
-  "readonly": true, // readonly-режим: ничего не изменять в почтовом ящике
-  "redis": { // настройки Redis-соединения
-    "pool": { // максимальное и минимальное количество соединений в пуле
+  "mailboxes": ["INBOX"], // mailboxes to read
+  "maxForwardDays": 7, // max age (in days) for message to be forwarded
+  "maxTemporaryFailures": 3, // this amount of temporary failures will lead to address exclusion from database
+  "messageBatchSize": 100, // messages are loaded in batches; this is size of such batch
+  "readonly": true, // readonly mode: no changes in mailbox, no changes in database
+  "redis": { // redis connection parameters
+    "pool": { // min and max number of connections in pool
       "min": 1,
       "max": 5
     }
   },
-  "unsubscribeAdditionalAddress": "unsubscribe" // часть адреса для отписки после знака +
+  "unsubscribeAdditionalAddress": "unsubscribe" // part of "unsubscribe" address after + sign
 }
 ```
 
-## Принцип работы
+## How it works
 
-### Типы писем и действия для них
+### Message types and corresponding actions
 
 #### MAIL_SERVER
-Ответ почтового сервера, DSN. Как правило, это письма с MIME-типом `multipart/report`
-(формат, определённый в [RFC 6522](https://tools.ietf.org/html/rfc6522)),
-однако сортировщик также поддерживает некоторые нестандартные форматы, которые используют
-некоторые сервисы (например, mail.ru). Алгоритм действий при обнаружении такого письма:
-1. Извлечь всю возможную информацию из письма: адрес получателя, статус (тип ошибки)
-и (опционально) `list-id`. Сначала предпринимается попытка парсинга стандартного DSN, потом
-попытка прочитать нестандартные заголовки (`x-mailer-daemon-error` и другие).
-Если ни то, ни другое не увенчается успехом, то письмо **пропускается**.
-2. Изменить статистику для конкретного адреса. Если ошибка постоянная (status = 5.x.x),
-то просто выставляется последний статус и его дата. Если же ошибка временная (status = 4.x.x),
-то дополнительно счётчик временных ошибок увеличивается на 1.
-3. Если ошибка постоянная или превышено пороговое значение счётчика временных ошибок,
-то адрес исключается из базы рассылок.
+Mail server reply, DSN. Usually, these are emails with `multipart/report` MIME-type
+(defined in [RFC 6522](https://tools.ietf.org/html/rfc6522)),
+but sorter also supports some non-standard formats that are used by some services
+(for example, mail.ru). Actions for this message type are the following:
+1. All possible information is extracted from message: receiver address, status (error type),
+and, optionally, `List-Id` header. First we try to parse message as standard DSN, if that fails,
+we fall back to parsing non-standard headers (`x-mailer-daemon-error` and others).
+If both methods have failed, the message is **skipped**.
+2. Change statistics for receiver address. If error is permanent (status = 5.x.x),
+the last status and its date are set. If error is temporary (status = 4.x.x),
+error counter is incremented in addition to actions for permanent errors.
+3. If the error is permanent or temporary error count has exceeded the threshold,
+the address is excluded from mailing database.
+
 
 #### AUTORESPONDER
-Письма автоответчиков. Обнаруживаются по заголовкам: `auto-submitted`, `x-autoreply`, `x-autogenerated`,
-а также по наличию "autoreply" в теме письма. Такие письма просто удаляются.
+Autoresponder message. Detected by headers `auto-submitted`, `x-autoreply`, `x-autogenerated`,
+and by "autoreply" in message subject. Such messages are just deleted.
 
 #### UNSUBSCRIBE
-Письма с запросом на исключение из рассылки. Обнаруживаются по части в адресе получателя после знака `+`.
-По умолчанию это "unsubscribe". Пример адреса для отписки: `noreply+unsubscribe@some.domain`.
-Действие: пометить получателя как отписавшегося в базе рассылки.
+Requests to unsubscribe from mailing. Detected by string after `+` in target address.
+Example of such address: `noreply+unsubscribe@some.domain`. Action: mark user as unsubscribed.
 
 #### HUMAN
-Письма от человека. Строго говоря, сюда попадает всё, что не удалось определить ни в одну другую категорию.
-Поэтому сюда попадают письма от людей, рассылки и прочие нераспознанные форматы автоматически отправленных
-писем. Письма из этой категории пересылаются на адрес, указанный в параметре конфигурации `forwardTo`.
+Messages from humans. This category includes not only human messages, but all messages that do not belong
+to any of other categories. Such messages are forwarded to address specified in config parameter `forwardTo`.
 
-### Действия для обработанных писем
-Если письмо было успешно обработано (не возникло ошибки обработки и письмо не было явным образом **пропущено**),
-то в его отношении применяются действия, указанные в объекте конфигурации `actions`:
+### Actions on handled messages
+If message has been successfully handled (no error and message was not explicitly **skipped**)
+then actions are applied according to `actions` config object:
 ```json
 {
   "actions": {
+    "callHandler": true,
     "markAsRead": true,
     "delete": false
   }
 }
 ```
-* `delete` - удалить письмо;
-* `markAsRead` - пометить прочитанным.
+* `callHandler` - perform actions according to message type; set this to false to effectively skip messages;
+* `delete` - delete message;
+* `markAsRead` - mark message as read.
 
-### База адресов рассылки
+### Address database
 
-Сортировщик ничего не знает о конкретном устройстве базы адресов. Он принимает объект БД извне
-и работает с ним. Объект должен реализовывать интерфейс `MailingDatabase` (описан в синтаксисе TypeScript):
+Sorter does not know anything about database itself - it only works with an object that implements
+certain interface. Interface `MailingDatabase`, described as TypeScript:
 ```ts
 interface MailingDatabase {
-  // вызывается при получении DSN
-  // возвращаемый boolean - признак того, что адрес удалось найти в базе
+  // called when processing DSNs
+  // returns boolean - whether the address is present in database
   disableEmailsForAddress (address: string, status: string, fullStatus: string): Promise<boolean>;
 
-  // вызывается при получении письма об отписке
-  unsubscribeAddress (address: string): Promise<ProcessingResult>;
-}
-
-interface ProcessingResult {
-  // перечень выполненных действий, например, unsubscribe
-  performedActions?: string[];
-  // причина того или иного действия
-  reason: string;
-  // флаг пропуска письма
-  skipped: boolean;
+  // called on unsubscribe mails
+  // returns boolean - whether the address is present in database
+  unsubscribeAddress (address: string): Promise<boolean>;
 }
 ```
 
-Для частых случаев предусмотрены встроенные обобщённые классы БД. С ними можно запускать
-mail-sorter напрямую, без какой-либо обёртки.
-
-#### MailServerDatabase
-Класс для работы с базой рассылок mail-server. Запускается скриптом `runWithMailServerDatabase.js`.
-Использует тот же Redis, что и сам mail-sorter.
-(TODO)
-
-#### GenericDatabase
-Обобщённый класс для работы с базой рассылки в MySQL.
+You can implement your own database classes with any custom logic.
