@@ -25,11 +25,6 @@ module.exports = function (additionalDbDrivers = {}) {
     .argv;
 
   const cliOptions = {
-    database: {
-      options: {
-        readonly: argv.dry
-      }
-    },
     logging: argv.loglevel ? {
       maxLogLevel: argv.loglevel
     } : {},
@@ -62,7 +57,9 @@ module.exports = function (additionalDbDrivers = {}) {
     if (!Database) {
       throw new Error('Unknown database type: ' + config.type);
     }
-    return new Database(config.options, logger);
+    return new Database(Object.assign({}, config.options, {
+      readonly: cliOptions.readonly || false
+    }), logger);
   }
 
   const config = merge(readConfig([defaultConfig, configFilename]), cliOptions);
