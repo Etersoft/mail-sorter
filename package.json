@@ -16,7 +16,7 @@
     "lodash": "^4.17.19",
     "mail-server": "git+https://github.com/Etersoft/mail-server",
     "mailparser": "2.1.0",
-    "moment": "^2.22.1",
+    "moment": "^2.29.2",
     "mysql": "^2.16.0",
     "read-config": "^2.0.0",
     "winston": "^3.2.1",
