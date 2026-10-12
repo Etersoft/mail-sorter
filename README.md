@@ -22,7 +22,28 @@ Sorter is started on schedule (for example, once per hour via cron). It reads
 new messages in specified mailbox via IMAP protocol. Each message gets classified by type,
 and message type defines actions to be performed.
 
-## Installation and setup
+## Working with mail-server
+
+mail-sorter is a part of the mailing system around
+[mail-server](https://github.com/Etersoft/mail-server) (see its README for the
+whole picture), but can be used with any address database. With mail-server:
+
+- point `imapConnection` to the mailbox that receives replies to mailings
+  (the `server.mail.from` address of mail-server);
+- set `redis` to the same Redis server, database and `prefixes` as mail-server:
+  bounces are counted per mailing (found by the `List-Id` header of the original
+  letter) and per address, and mail-server shows them as delivery errors;
+- use the `mail-server` database driver: excluded addresses are removed from all
+  mailings via its API.
+
+```json
+{
+  "database": { "type": "mail-server", "options": { "backend": "http://mail-server:8000" } },
+  "redis": { "host": "localhost", "port": 6379, "db": 0 }
+}
+```
+
+## Installation and running
 
 You will need:
 * Node.js 22.12 or newer
@@ -31,6 +52,7 @@ You will need:
 ```
 $ npm ci --omit=dev
 $ cp config.json.example config.json   # or write config.json yourself, see below
+$ npm start -- -c config.json -d       # dry run: nothing is changed
 $ npm start -- -c config.json          # or: node src/runCli.js -c config.json
 ```
 
@@ -38,16 +60,32 @@ Command line options: `-c PATH` config file (default `config.json` in the curren
 directory), `-d` dry run (nothing is changed in the mailbox and the database),
 `-l LEVEL` maximum log level, `-h` help.
 
-Docker: `docker build -t mail-sorter .` and
-`docker run --rm -v $PWD/config.json:/app/config.json mail-sorter [-d]`.
+Run it on schedule, e.g. hourly from cron:
 
-Tests: `npm test` (Redis tests run only when `REDIS_URL` is set, e.g.
-`REDIS_URL=redis://localhost:6379/15 npm test`; that database is flushed).
+```
+0 * * * * cd /opt/mail-sorter && IMAP_PASSWORD=... node src/runCli.js -c config.json >> /var/log/mail-sorter.log 2>&1
+```
+
+### Docker
+
+```
+$ docker build -t mail-sorter .
+$ docker run --rm -v $PWD/config.json:/app/config.json -e IMAP_PASSWORD=... mail-sorter [-d]
+```
+
+### Tests
+
+`npm test`, `npm run lint`. Redis tests run only when `REDIS_URL` is set, e.g.
+`REDIS_URL=redis://localhost:6379/15 npm test`. **That database is flushed**, so
+use a separate Redis instance.
+
+## Database drivers
 
 mail-sorter can be started directly or through your custom wrapper. It depends on your
-address database format. Three database drivers are built in.
+address database format. Three database drivers are built in. `config.database` can
+also be an array of drivers: an address is then excluded from every database.
 
-#### MySQL driver
+### MySQL driver
 Allows to work with a typical MySQL database with email addresses: one row - one address.
 Supports two operations: `update` (set value in row when address is excluded) or `delete`
 (row is deleted when address is excluded).
@@ -74,7 +112,7 @@ Configuration example (`config.database`):
 }
 ```
 
-#### Mail-server database driver
+### Mail-server database driver
 Excludes addresses from all mailings through the mail-server HTTP API
 (`POST /mailings/unsubscribe`, requires a mail-server version with this endpoint).
 Configuration example (`config.database`):
@@ -87,7 +125,7 @@ Configuration example (`config.database`):
 }
 ```
 
-#### Dummy database driver
+### Dummy database driver
 Performs no actions, except for writing into log. May be useful, when you have no database
 or just want to test something. This is the default option when `config.database` is not defined.
 Configuration example (`config.database`):
@@ -97,7 +135,7 @@ Configuration example (`config.database`):
 }
 ```
 
-#### Injecting own database drivers
+### Injecting own database drivers
 mail-sorter can be `require`'d as a module. In this mode you can extend a built-in list
 of database drivers:
 
@@ -120,7 +158,7 @@ ready-made services instead of the ones created from the config:
 `{ mailingRepository, addressStatsRepository, mailSender }`.
 Writing own database classes is described in the end of this document.
 
-### Configuration
+## Configuration
 
 There are two config files: `config.default.json` and `config.json`. The latter
 allows to override default parameters. The `config.json` file should be created manually.
@@ -139,6 +177,9 @@ YAML configs are no longer supported.
   "actions": {
     "markAsRead": true, // mark as read all handled messages
     "delete": false // delete all handled messages
+  },
+  "actionsPerType": { // optional: override "actions" for message types
+    "HUMAN": { "markAsRead": false }
   },
   "database": [
     {
@@ -226,6 +267,10 @@ then actions are applied according to `actions` config object:
 * `callHandler` - perform actions according to message type; set this to false to effectively skip messages;
 * `delete` - delete message;
 * `markAsRead` - mark message as read.
+
+`actionsPerType` overrides these values for particular message types
+(`MAIL_SERVER`, `AUTORESPONDER`, `UNSUBSCRIBE`, `HUMAN`), for example to leave
+letters from people unread after forwarding them.
 
 ### Address database
 
