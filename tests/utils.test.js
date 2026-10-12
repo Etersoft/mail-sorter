@@ -1,11 +1,10 @@
-const { assert } = require('chai');
+const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
 
 const utils = require('../src/utils');
 
 
-describe('utils', function() {
-  this.timeout(500);
-
+describe('utils', function () {
   describe('extractFromAddress', function () {
     it('should extract addresses of form NAME LASTNAME <FROM>', function () {
       const address = 'Иван Иванов <ivan.ivanov.non-existent@yandex.ru>';

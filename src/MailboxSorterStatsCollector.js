@@ -1,5 +1,3 @@
-const { chunk } = require('lodash');
-
 const MailboxSorter = require('./MailboxSorter');
 
 
@@ -28,9 +26,9 @@ class MailboxSorterStatsCollector {
       const messageIdsWithQuotes = this.stats.failedMessages.map((id, index) => {
         return (index === this.stats.failedMessages.length - 1) ? id : id + ', ';
       });
-      chunk(messageIdsWithQuotes, FAILED_MESSAGES_PER_LINE).forEach(messageIds => {
-        this.logger.info(messageIds.join(''));
-      });
+      for (let i = 0; i < messageIdsWithQuotes.length; i += FAILED_MESSAGES_PER_LINE) {
+        this.logger.info(messageIdsWithQuotes.slice(i, i + FAILED_MESSAGES_PER_LINE).join(''));
+      }
     }
   }
 

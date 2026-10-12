@@ -1,34 +1,34 @@
 {
   "name": "mail-sorter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mailbox reading and sorting library",
-  "main": "dist/index.js",
+  "main": "src/index.js",
+  "bin": {
+    "mail-sorter": "src/runCli.js"
+  },
   "scripts": {
-    "lint": "eslint 'src/**/*.js' 'tests/**/*.js'",
-    "lint-fix": "eslint --fix 'src/**/*.js' 'tests/**/*.js'",
-    "prepare": "babel -d dist src",
-    "test": "mocha tests"
+    "lint": "eslint src tests",
+    "lint-fix": "eslint --fix src tests",
+    "start": "node src/runCli.js",
+    "test": "node --test 'tests/**/*.test.js'"
   },
   "private": true,
+  "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
-    "axios": "^0.19.0",
-    "imap": "0.8.19",
-    "lodash": "^4.17.19",
-    "mail-server": "git+https://github.com/Etersoft/mail-server",
-    "mailparser": "2.1.0",
-    "moment": "^2.22.1",
-    "mysql": "^2.16.0",
-    "read-config": "^2.0.0",
-    "winston": "^3.2.1",
-    "yargs": "10.0.3"
+    "imapflow": "^2.4.0",
+    "json5": "^2.2.3",
+    "mailparser": "^3.9.38",
+    "mysql2": "^3.24.5",
+    "nodemailer": "^10.1.0",
+    "redis": "^6.3.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "chai": "4.1.2",
-    "chai-as-promised": "7.1.1",
-    "eslint": "4.9.0",
-    "mocha": "4.0.1",
-    "sinon": "4.0.1"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0"
   }
 }

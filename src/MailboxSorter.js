@@ -109,9 +109,14 @@ class MailboxSorter extends EventEmitter {
         }
       };
 
-      this.mailbox.loadMessages(
+      const loading = this.mailbox.loadMessages(
         ids, onMessage, reject
       );
+      // Mailbox обрабатывает письма последовательно и завершает промис после
+      // последнего; без этого пачка зависнет, если часть писем исчезла с сервера
+      if (loading && typeof loading.then === 'function') {
+        loading.then(resolve, reject);
+      }
     });
   }
 

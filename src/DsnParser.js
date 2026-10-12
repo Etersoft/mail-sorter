@@ -11,6 +11,7 @@ class DsnParser {
     this.logger = logger;
   }
 
+  // eslint-disable-next-line max-statements
   async extract (message) {
     const dsnString = this._extractDsn(message);
     if (!dsnString) {

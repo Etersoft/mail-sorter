@@ -1,5 +1,14 @@
-const moment = require('moment');
-const { Email } = require('mail-server/server/dist/Email');
+class Email {
+  constructor (parameters) {
+    this.attachments = parameters.attachments;
+    this.headers = parameters.headers || {};
+    this.html = parameters.html;
+    this.receivers = parameters.receivers;
+    this.replyTo = parameters.replyTo;
+    this.text = parameters.text;
+    this.subject = parameters.subject;
+  }
+}
 
 
 class HumanMessageHandler {
@@ -13,14 +22,14 @@ class HumanMessageHandler {
 
   async processMessage (message) {
     const actions = [];
-    const age = moment().diff(moment(message.date), 'days');
+    const age = Math.floor((Date.now() - new Date(message.date).getTime()) / 86400000);
     const notOld = (age <= this.maxForwardDays);
 
     if (notOld && this.forwardTo) {
       await this._forwardMessage(message);
       actions.push(`forwarded to ${this.forwardTo}`);
     }
-    
+
     return {
       performedActions: actions,
       reason: `Human message${notOld ? '' : ', too old'}`,

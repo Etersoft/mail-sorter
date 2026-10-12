@@ -1,16 +1,17 @@
-const sinon = require('sinon');
-const winston = require('winston');
+const { mock } = require('node:test');
 
 
-module.exports = {
-  createFakeLogger () {
-    const logger = {};
-    Object.keys(winston.config.npm.levels).forEach(level => {
-      logger[level] = sinon.spy();
-    });
-    return logger;
-  },
-  sleep (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function createFakeLogger () {
+  const levels = ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'];
+  const logger = {};
+  for (const level of levels) {
+    logger[level] = mock.fn();
   }
-};
+  return logger;
+}
+
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+module.exports = { createFakeLogger, sleep };

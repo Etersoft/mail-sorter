@@ -1,131 +1,95 @@
-const parseMessage = require('mailparser').simpleParser;
+const { simpleParser } = require('mailparser');
 
 const Message = require('./Message');
 
 
+// mailparser 3 по умолчанию склеивает части message/delivery-status с текстом
+// письма; DsnParser нужны они отдельными вложениями
+const PARSER_OPTIONS = { keepDeliveryStatus: true };
+
 class Mailbox {
   constructor (options) {
-    this.connectionOptions = options.connection;
     this.readonly = (typeof options.readonly === 'undefined') ? true : options.readonly;
-    this.imapConnection = options.connection;
+    // Клиент ImapFlow
+    this.client = options.connection;
     this.expungeOnClose = Boolean(options.expungeOnClose);
+    this._mailbox = null;
   }
 
-  // Закрывает ящик и, если expungeOnClose == true, удаляет все письма,
+  // Закрывает ящик и соединение. Если expungeOnClose == true, удаляет все письма,
   // которые были помечены удалёнными
   async close () {
-    return new Promise(resolve => {
-      if (!this._mailbox) {
-        throw new Error('Can\'t close a mailbox that was not opened');
-      }
-      this.imapConnection.closeBox(this.expungeOnClose, resolve);
-    });
+    if (!this._mailbox) {
+      throw new Error('Can\'t close a mailbox that was not opened');
+    }
+    await this._closeCurrentBox();
+    await this.client.logout();
   }
 
-  deleteMessage (messageId) {
-    return this._addFlags(messageId, ['\\Deleted']);
+  async deleteMessage (uid) {
+    await this.client.messageFlagsAdd(String(uid), ['\\Deleted'], { uid: true });
   }
 
-  findUnseen () {
-    return new Promise((resolve, reject) => {
-      this.imapConnection.search(['UNSEEN'], (error, results) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        resolve(results);
-      });
-    });
+  async findUnseen () {
+    return (await this.client.search({ seen: false }, { uid: true })) || [];
   }
 
-  loadMessages (range, onMessage, onError) {
-    const fetchObject = this.imapConnection.fetch(range, {
-      bodies: ''
-    });
-
-    fetchObject.on('message', (messageInfo, id) => {
-      this._loadMessage(messageInfo, id).then(onMessage).catch(onError);
-    });
-
-    fetchObject.once('error', error => {
+  // Загружает письма с указанными UID и вызывает для каждого onMessage.
+  // Письма сначала загружаются целиком: imapflow не позволяет выполнять другие
+  // команды IMAP (например, пометку прочитанным) внутри цикла fetch
+  async loadMessages (uids, onMessage, onError) {
+    let fetched;
+    try {
+      fetched = await this.client.fetchAll(uids.join(','), {
+        internalDate: true,
+        source: true,
+        uid: true
+      }, { uid: true });
+    } catch (error) {
       if (onError) {
         onError(error);
-      } else {
-        throw error;
+        return;
       }
-    });
-  }
+      throw error;
+    }
 
-  async initialize () {
-    await this._ensureConnectionIsReady();
-  }
-
-  async markAsRead (messageId) {
-    await this._addFlags(messageId, ['\\Seen']);
-  }
-
-  async setBoxName (boxName) {
-    await new Promise((resolve, reject) => {
-      this.imapConnection.openBox(boxName, this.readonly, (error, box) => {
-        if (error) {
-          reject(error);
-          return;
+    for (const item of fetched) {
+      try {
+        const data = await simpleParser(item.source, PARSER_OPTIONS);
+        const attributes = { date: item.internalDate, uid: item.uid };
+        await onMessage(new Message(data, attributes, item.seq, this, item.source));
+      } catch (error) {
+        if (!onError) {
+          throw error;
         }
-
-        this._mailbox = box;
-        resolve();
-      });
-    });
-  }
-
-  _addFlags (messageId, flags) {
-    return new Promise((resolve, reject) => {
-      this.imapConnection.addFlags(messageId, flags, error => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve();
-      });
-    });
-  }
-
-  _ensureConnectionIsReady () {
-    if (this.imapConnection.state !== 'authenticated') {
-      return new Promise((resolve, reject) => {
-        this.imapConnection.connect();
-        this.imapConnection.once('ready', resolve);
-        this.imapConnection.once('error', reject);
-      });
-    } else {
-      return Promise.resolve();
+        onError(error);
+      }
     }
   }
 
-  async _loadMessage (message, id) {
-    const buffers = [];
+  async initialize () {
+    if (!this.client.usable) {
+      await this.client.connect();
+    }
+  }
 
-    const [data, attributes] = await Promise.all([
-      // Parse message body
-      new Promise((resolve, reject) => {
-        message.on('body', stream => {
-          stream.on('data', buffer => buffers.push(buffer));
-          try {
-            stream.once && stream.once('error', reject);
-            parseMessage(stream).then(resolve).catch(reject);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      }),
-      // Wait for attributes
-      new Promise(resolve => message.once('attributes', resolve)),
-      // Wait for loading end
-      new Promise(resolve => message.once('end', resolve))
-    ]);
- 
-    return new Message(data, attributes, id, this, Buffer.concat(buffers));
+  async markAsRead (uid) {
+    await this.client.messageFlagsAdd(String(uid), ['\\Seen'], { uid: true });
+  }
+
+  async setBoxName (boxName) {
+    if (this._mailbox) {
+      await this._closeCurrentBox();
+    }
+    this._mailbox = await this.client.mailboxOpen(boxName, { readOnly: this.readonly });
+  }
+
+  async _closeCurrentBox () {
+    // CLOSE удаляет письма с флагом \Deleted, а при переходе в другой ящик
+    // или LOGOUT они остаются
+    if (this.expungeOnClose && !this.readonly) {
+      await this.client.mailboxClose();
+    }
   }
 }
 

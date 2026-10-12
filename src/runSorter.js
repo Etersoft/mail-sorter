@@ -1,4 +1,4 @@
-const IMAP = require('imap');
+const { ImapFlow } = require('imapflow');
 const createLogger = require('./logger');
 
 const ReadonlyMailbox = require('./ReadonlyMailbox');
@@ -11,26 +11,24 @@ const MailServerMessageHandler = require('./handlers/MailServerMessageHandler');
 const AutoresponderMessageHandler = require('./handlers/AutoresponderMessageHandler');
 const MailboxSorterStatsCollector = require('./MailboxSorterStatsCollector');
 const UnsubscribeMessageHandler = require('./handlers/UnsubscribeMessageHandler');
-const { RedisMailingRepository } = require('mail-server/server/dist/RedisMailingRepository');
-const { RedisAddressStatsRepository } = require(
-  'mail-server/server/dist/RedisAddressStatsRepository'
-);
-const { SmtpMailSender } = require('mail-server/server/dist/SmtpMailSender');
-const { RedisConnectionPoolImpl } = require('mail-server/server/dist/RedisConnectionPool');
 const FailureInfoParser = require('./FailureInfoParser');
 const DsnParser = require('./DsnParser');
 const SpecialHeaderParser = require('./SpecialHeaderParser');
 const MailingStatsTracker = require('./MailingStatsTracker');
+const SmtpMailSender = require('./services/SmtpMailSender');
+const {
+  createRedisClient, RedisAddressStatsRepository, RedisMailingRepository
+} = require('./services/RedisRepositories');
 
 
 /* eslint-disable max-statements */
-async function run (config, logger, actionLogger, database) {
+async function run (config, logger, actionLogger, database, services = {}) {
   if (!logger) {
     logger = createLogger(config.logging);
   }
 
   const mailboxConfig = {
-    connection: new IMAP(config.imapConnection),
+    connection: createImapClient(config.imapConnection),
     expungeOnClose: config.expungeOnClose,
     readonly: config.readonly
   };
@@ -41,60 +39,99 @@ async function run (config, logger, actionLogger, database) {
   logger.verbose('Connecting...');
   await mailbox.initialize();
 
-  const redisConnectionPool = config.redis ? new RedisConnectionPoolImpl(
-    config.redis
-  ) : null;
-  const mailingRepository = redisConnectionPool ? new RedisMailingRepository(
-    redisConnectionPool, config.redis.prefixes
-  ) : null;
-  const addressStatsRepository = redisConnectionPool ? new RedisAddressStatsRepository(
-    redisConnectionPool, config.redis.prefixes
-  ) : null;
-  const sorter = createMailboxSorter({
-    config, mailbox, logger, actionLogger, database, mailingRepository, addressStatsRepository
-  });
-  const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
+  const ownServices = await createDefaultServices(config, services);
+  try {
+    const sorter = createMailboxSorter({
+      config, mailbox, logger, actionLogger, database, ...ownServices.services
+    });
+    const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
 
-  for (const boxName of config.mailboxes) {
-    logger.info('Processing mailbox: ' + boxName);
-    await mailbox.setBoxName(boxName);
-    await sorter.sort();
+    for (const boxName of config.mailboxes) {
+      logger.info('Processing mailbox: ' + boxName);
+      await mailbox.setBoxName(boxName);
+      await sorter.sort();
+    }
+
+    statsCollector.logStats();
+    await mailbox.close();
+  } finally {
+    await ownServices.close();
   }
-
-  statsCollector.logStats();
-  await mailbox.close();
 
   logger.info('Done.');
 }
 
-module.exports = function (config, logger, actionLogger, database) {
-  return run(config, logger, actionLogger, database).catch(error => {
+// Параметры совместимы с конфигом модуля imap (node-imap), который
+// использовался раньше: user, password, host, port, tls, tlsOptions
+function createImapClient (imapConfig) {
+  return new ImapFlow({
+    auth: {
+      pass: imapConfig.password,
+      user: imapConfig.user
+    },
+    host: imapConfig.host,
+    logger: false,
+    port: imapConfig.port,
+    secure: Boolean(imapConfig.tls),
+    tls: imapConfig.tlsOptions
+  });
+}
+
+// Хранилища статистики (Redis mail-server) и отправщик писем можно передать
+// готовыми через services; чего нет — создаётся по конфигу
+async function createDefaultServices (config, services) {
+  const result = { ...services };
+  const closers = [];
+
+  if (config.redis && !(services.mailingRepository && services.addressStatsRepository)) {
+    const client = createRedisClient(config.redis);
+    await client.connect();
+    closers.push(() => client.close());
+    result.mailingRepository = services.mailingRepository ||
+      new RedisMailingRepository(client, config.redis.prefixes);
+    result.addressStatsRepository = services.addressStatsRepository ||
+      new RedisAddressStatsRepository(client, config.redis.prefixes);
+  }
+
+  if (config.mailer && !services.mailSender) {
+    const sender = new SmtpMailSender(config.mailer);
+    closers.push(() => sender.close());
+    result.mailSender = sender;
+  }
+
+  return {
+    services: result,
+    async close () {
+      for (const close of closers) {
+        await close();
+      }
+    }
+  };
+}
+
+module.exports = function (config, logger, actionLogger, database, services) {
+  return run(config, logger, actionLogger, database, services).catch(error => {
     if (logger) {
       logger.error(error.stack);
     } else {
-      // eslint-disable-next-line no-console
       console.error(error.stack);
     }
     throw error;
   });
 };
 
-function createMailboxSorter ({ 
-  config, mailbox, logger, actionLogger, database, mailingRepository, addressStatsRepository
+function createMailboxSorter ({
+  config, mailbox, logger, actionLogger, database,
+  mailingRepository, addressStatsRepository, mailSender
 }) {
   const classifier = new MessageClassifier(config.unsubscribeAdditionalAddress);
   const failureInfoParser = new FailureInfoParser(
     new DsnParser(logger), new SpecialHeaderParser(logger)
   );
   const statsTracker = new MailingStatsTracker(logger, mailingRepository, addressStatsRepository);
-  const sender = new SmtpMailSender({
-    from: config.mailer.from,
-    host: config.mailer.host,
-    port: config.mailer.port
-  });
   const mailingListDatabase = database;
   const handlerMap = {
-    [MessageTypes.HUMAN]: new HumanMessageHandler(logger, sender, {
+    [MessageTypes.HUMAN]: new HumanMessageHandler(logger, mailSender, {
       forwardTo: config.forwardTo,
       maxForwardDays: config.maxForwardDays
     }),

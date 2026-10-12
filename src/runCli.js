@@ -1,41 +1,44 @@
-module.exports = function (additionalDbDrivers = {}) {
-  const { dirname, join } = require('path');
-  const yargs = require('yargs');
+#!/usr/bin/env node
+const { dirname, join } = require('node:path');
+const { parseArgs } = require('node:util');
+
+const { deepMerge, readConfig } = require('./readConfig');
+
+
+const USAGE = `Usage: mail-sorter [-d] [-h] [-l LEVEL] [-c path/to/config.json]
+
+Options:
+  -d, --dry            Dry run: do not modify database and mailbox
+  -l, --loglevel LEVEL Sets maximum log level
+  -c, --config PATH    Sets custom config (default: config.json)
+  -h, --help           Show help`;
+
+// eslint-disable-next-line max-statements
+module.exports = function (additionalDbDrivers = {}, services = {}) {
   // Parse CLI args before loading any other modules
-  const argv = yargs
-    .usage('Usage: $0 [-d] [-h] [-c path/to/config.json]')
-    .option('dry', {
-      alias: 'd',
-      boolean: true,
-      describe: 'Dry run: do not modify database and mailbox'
-    })
-    .option('loglevel', {
-      alias: 'l',
-      describe: 'Sets maximum log level',
-      string: true
-    })
-    .option('config', {
-      alias: 'c',
-      describe: 'Sets custom config',
-      string: true
-    })
-    .version(false)
-    .help('help')
-    .alias('help', 'h')
-    .argv;
+  const { values: argv } = parseArgs({
+    options: {
+      config: { short: 'c', type: 'string' },
+      dry: { short: 'd', type: 'boolean' },
+      help: { short: 'h', type: 'boolean' },
+      loglevel: { short: 'l', type: 'string' }
+    }
+  });
+  if (argv.help) {
+    console.log(USAGE);
+    process.exit(0);
+  }
 
   const cliOptions = {
     logging: argv.loglevel ? {
       maxLogLevel: argv.loglevel
-    } : {},
+    } : {}
   };
-  
+
   if (argv.dry) {
     cliOptions.readonly = true;
   }
 
-  const readConfig = require('read-config');
-  const { merge } = require('lodash');
   const createLogger = require('./logger');
   const defaultConfig = join(dirname(__dirname), 'config.default.json');
   const configFilename = argv.config || 'config.json';
@@ -62,7 +65,7 @@ module.exports = function (additionalDbDrivers = {}) {
     }), logger);
   }
 
-  const config = merge(readConfig([defaultConfig, configFilename]), cliOptions);
+  const config = deepMerge(readConfig([defaultConfig, configFilename]), cliOptions);
   const logger = createLogger(config.logging);
   let actionLogger = null;
   if (config.logging.actionLogFile) {
@@ -76,7 +79,7 @@ module.exports = function (additionalDbDrivers = {}) {
   const database = Array.isArray(config.database) ? new MultiDatabase(
     config.database.map(d => createDatabase(d, logger))
   ) : createDatabase(config.database, logger);
-  require('./runSorter')(config, logger, actionLogger, database).then(() => {
+  require('./runSorter')(config, logger, actionLogger, database, services).then(() => {
     process.exit(0);
   }).catch(() => {
     process.exit(1);

@@ -1,6 +1,3 @@
-const axios = require('axios');
-
-
 class MailServerDatabase {
   constructor (config, logger) {
     this.logger = logger;
@@ -11,31 +8,35 @@ class MailServerDatabase {
     }
   }
 
-  disableEmailsForAddress (address) {
+  async disableEmailsForAddress (address) {
     this.logger.debug('Disable emails: ' + address);
     if (this.readonly) {
-      return Promise.resolve(true);
+      return true;
     }
-    return this._disableEmailsForAddress(address).then(queryResult => {
-      return Boolean(queryResult.affectedRows);
-    });
+    return this._disableEmailsForAddress(address);
   }
 
-  unsubscribeAddress (address) {
+  async unsubscribeAddress (address) {
     this.logger.debug('Unsubscribe emails: ' + address);
     if (this.readonly) {
-      return Promise.resolve(true);
+      return true;
     }
-    return this._disableEmailsForAddress(address).then(queryResult => {
-      return Boolean(queryResult.affectedRows);
-    });
+    return this._disableEmailsForAddress(address);
   }
 
-  _disableEmailsForAddress (address) {
-    return axios.post(`${this.backend}/mailings/${mailingId}/unsubscribe`, {
-      email: address,
-      skipCodeCheck: true
+  // Удаляет адрес из всех рассылок mail-server (POST /mailings/unsubscribe).
+  // Ответ: { success: true, data: { removed: <число рассылок> } }
+  async _disableEmailsForAddress (address) {
+    const response = await fetch(`${this.backend}/mailings/unsubscribe`, {
+      body: JSON.stringify({ email: address }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST'
     });
+    if (!response.ok) {
+      throw new Error(`mail-server returned ${response.status}: ${await response.text()}`);
+    }
+    const result = await response.json();
+    return Boolean(result.data && result.data.removed);
   }
 }
 

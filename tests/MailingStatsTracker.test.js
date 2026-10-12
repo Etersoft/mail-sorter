@@ -1,30 +1,28 @@
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const sinon = require('sinon');
+const { describe, it, beforeEach, afterEach, mock } = require('node:test');
+const assert = require('node:assert/strict');
 const { createFakeLogger } = require('./testing-utils');
 
 const FailureTypes = require('../src/FailureTypes');
 const MailingStatsTracker = require('../src/MailingStatsTracker');
 
 
-chai.use(chaiAsPromised);
-const { assert } = chai;
+function resolvesWith (value) {
+  return mock.fn(() => Promise.resolve(value));
+}
 
-describe('MailingStatsTracker', function() {
+describe('MailingStatsTracker', function () {
   const testAddress = 'test-non-existent@etersoft.ru';
-  const statsActions = ['updated stats'];
   let fakeLogger, fakeMailingRepository, fakeStatsRepository, tracker;
   let addressStats, failureInfo, mailing;
-  let clock;
 
   afterEach(function () {
-    clock.restore();
+    mock.timers.reset();
   });
 
   beforeEach(function () {
-    clock = sinon.useFakeTimers();
+    mock.timers.enable({ apis: ['Date'], now: 0 });
     failureInfo = {
-      comment: `DSN status = 5.1.1`,
+      comment: 'DSN status = 5.1.1',
       dsnStatus: '5.1.1',
       listId: 'test-list-id',
       message: {},
@@ -33,13 +31,13 @@ describe('MailingStatsTracker', function() {
     };
     fakeLogger = createFakeLogger();
     fakeMailingRepository = {
-      getByListId: sinon.spy(() => Promise.resolve(mailing)),
-      updateInTransaction: sinon.spy(() => Promise.resolve(mailing))
+      getByListId: mock.fn(() => Promise.resolve(mailing)),
+      updateInTransaction: mock.fn(() => Promise.resolve(mailing))
     };
     fakeStatsRepository = {
-      create: sinon.spy(() => Promise.resolve(addressStats)),
-      getByEmail: sinon.spy(() => Promise.resolve(addressStats)),
-      updateInTransaction: sinon.spy(() => Promise.resolve(addressStats))
+      create: mock.fn(() => Promise.resolve(addressStats)),
+      getByEmail: mock.fn(() => Promise.resolve(addressStats)),
+      updateInTransaction: mock.fn(() => Promise.resolve(addressStats))
     };
     addressStats = {
       temporaryFailureCount: 1
@@ -51,83 +49,87 @@ describe('MailingStatsTracker', function() {
     tracker = new MailingStatsTracker(fakeLogger, fakeMailingRepository, fakeStatsRepository);
   });
 
-  this.timeout(500);
-
   describe('#countFailure', function () {
     it('should not modify mailing info without list-id', async function () {
       failureInfo.listId = null;
       const actions = await tracker.countFailure(failureInfo);
-      assert.isFalse(fakeMailingRepository.updateInTransaction.called);
+      assert.equal(fakeMailingRepository.updateInTransaction.mock.callCount(), 0);
       assert.deepEqual(actions, ['updated address stats']);
     });
 
     it('should modify mailing info with list-id', async function () {
       const actions = await tracker.countFailure(failureInfo);
-      assert.isTrue(fakeMailingRepository.updateInTransaction.called);
+      assert.ok(fakeMailingRepository.updateInTransaction.mock.callCount() > 0);
       assert.deepEqual(actions, ['updated mailing stats', 'updated address stats']);
     });
 
     it('should not modify mailing stats for unknown list-id', async function () {
-      fakeMailingRepository.getByListId = sinon.spy(() => Promise.resolve(null));
+      fakeMailingRepository.getByListId = resolvesWith(null);
       const actions = await tracker.countFailure(failureInfo);
-      assert.isFalse(fakeMailingRepository.updateInTransaction.called);
+      assert.equal(fakeMailingRepository.updateInTransaction.mock.callCount(), 0);
       assert.deepEqual(actions, ['updated address stats']);
     });
 
     it('should increment undeliveredCount for mailing in transaction', async function () {
-      const actions = await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeMailingRepository.updateInTransaction.getCall(0).args[1];
+      await tracker.countFailure(failureInfo);
+      const transactionScenario =
+        fakeMailingRepository.updateInTransaction.mock.calls[0].arguments[1];
       const initialValue = mailing.undeliveredCount;
       await transactionScenario(mailing);
       assert.equal(mailing.undeliveredCount, initialValue + 1);
     });
 
     it('should change lastStatus for address in transaction', async function () {
-      const actions = await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await tracker.countFailure(failureInfo);
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       await transactionScenario(addressStats);
       assert.equal(addressStats.lastStatus, failureInfo.dsnStatus);
     });
 
     it('should change lastStatusDate = now for address in transaction', async function () {
-      const actions = await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await tracker.countFailure(failureInfo);
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       await transactionScenario(addressStats);
       assert.equal(addressStats.lastStatusDate.getTime(), Date.now());
     });
 
     it('should increment temporaryFailureCount for temp failures', async function () {
       failureInfo.status = FailureTypes.TEMPORARY_FAILURE;
-      const actions = await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await tracker.countFailure(failureInfo);
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       const initialValue = addressStats.temporaryFailureCount;
       await transactionScenario(addressStats);
       assert.equal(addressStats.temporaryFailureCount, initialValue + 1);
     });
 
     it('should not increment temporaryFailureCount for non-temp failures', async function () {
-      const actions = await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      await tracker.countFailure(failureInfo);
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       const initialValue = addressStats.temporaryFailureCount;
       await transactionScenario(addressStats);
       assert.equal(addressStats.temporaryFailureCount, initialValue);
     });
 
     it('should not create new address stats object if it was found in repo', async function () {
-      const actions = await tracker.countFailure(failureInfo);
-      assert.isFalse(fakeStatsRepository.create.called);
+      await tracker.countFailure(failureInfo);
+      assert.equal(fakeStatsRepository.create.mock.callCount(), 0);
     });
 
     it('should create new address stats object if missing', async function () {
       fakeStatsRepository.updateInTransaction = () => Promise.resolve(null);
-      const actions = await tracker.countFailure(failureInfo);
-      assert.isTrue(fakeStatsRepository.create.calledOnce);
+      await tracker.countFailure(failureInfo);
+      assert.equal(fakeStatsRepository.create.mock.callCount(), 1);
     });
 
     it('should change spam flag for address in transaction', async function () {
       failureInfo.spam = true;
       await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       await transactionScenario(addressStats);
       assert.equal(addressStats.spam, true);
     });
@@ -135,7 +137,8 @@ describe('MailingStatsTracker', function() {
     it('should set diagnosticCode for address in transaction', async function () {
       failureInfo.diagnosticCode = 'test';
       await tracker.countFailure(failureInfo);
-      const transactionScenario = fakeStatsRepository.updateInTransaction.getCall(0).args[1];
+      const transactionScenario =
+        fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
       await transactionScenario(addressStats);
       assert.equal(addressStats.diagnosticCode, 'test');
     });
