@@ -38,6 +38,9 @@ $ npm start -- -c config.json          # или: node src/runCli.js -c config.js
 в текущем каталоге), `-d` пробный запуск (ничего не меняется ни в ящике, ни в базе),
 `-l УРОВЕНЬ` максимальный уровень лога, `-h` справка.
 
+Docker: `docker build -t mail-sorter .` и
+`docker run --rm -v $PWD/config.json:/app/config.json mail-sorter [-d]`.
+
 Тесты: `npm test` (тесты Redis запускаются, только если задан `REDIS_URL`, например
 `REDIS_URL=redis://localhost:6379/15 npm test`; эта база очищается).
 

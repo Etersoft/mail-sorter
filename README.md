@@ -38,6 +38,9 @@ Command line options: `-c PATH` config file (default `config.json` in the curren
 directory), `-d` dry run (nothing is changed in the mailbox and the database),
 `-l LEVEL` maximum log level, `-h` help.
 
+Docker: `docker build -t mail-sorter .` and
+`docker run --rm -v $PWD/config.json:/app/config.json mail-sorter [-d]`.
+
 Tests: `npm test` (Redis tests run only when `REDIS_URL` is set, e.g.
 `REDIS_URL=redis://localhost:6379/15 npm test`; that database is flushed).
 
