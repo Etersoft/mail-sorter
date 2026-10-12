@@ -13,21 +13,15 @@ class MultiDatabase {
     return result;
   }
 
+  // Как и драйверы, возвращает true, если адрес найден хотя бы в одной базе
   async unsubscribeAddress (address) {
-    const actions = [];
-    let skipped = true;
+    let result = false;
     for (const db of this.databases) {
-      const dbResult = await db.unsubscribeAddress(address);
-      if (!dbResult.skipped) {
-        skipped = false;
-        actions.push(...dbResult.performedActions);
+      if (await db.unsubscribeAddress(address)) {
+        result = true;
       }
     }
-
-    return {
-      performedActions: actions,
-      skipped
-    };
+    return result;
   }
 }
 
