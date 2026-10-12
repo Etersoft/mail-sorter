@@ -25,8 +25,21 @@ and message type defines actions to be performed.
 ## Installation and setup
 
 You will need:
-* Node.js
+* Node.js 22.12 or newer
 * Redis (for statistics storage and mail-server integration)
+
+```
+$ npm ci --omit=dev
+$ cp config.json.example config.json   # or write config.json yourself, see below
+$ npm start -- -c config.json          # or: node src/runCli.js -c config.json
+```
+
+Command line options: `-c PATH` config file (default `config.json` in the current
+directory), `-d` dry run (nothing is changed in the mailbox and the database),
+`-l LEVEL` maximum log level, `-h` help.
+
+Tests: `npm test` (Redis tests run only when `REDIS_URL` is set, e.g.
+`REDIS_URL=redis://localhost:6379/15 npm test`; that database is flushed).
 
 mail-sorter can be started directly or through your custom wrapper. It depends on your
 address database format. Three database drivers are built in.
@@ -59,7 +72,9 @@ Configuration example (`config.database`):
 ```
 
 #### Mail-server database driver
-Allows to work with mail-server database in Redis. Configuration example (`config.database`):
+Excludes addresses from all mailings through the mail-server HTTP API
+(`POST /mailings/unsubscribe`, requires a mail-server version with this endpoint).
+Configuration example (`config.database`):
 ```json
 {
   "type": "mail-server",
@@ -96,12 +111,26 @@ mailSorter.runCli({
 });
 ```
 This mode is useful for other address database types.
+
+The second argument of `runCli` (and the fifth argument of `run`) allows to pass
+ready-made services instead of the ones created from the config:
+`{ mailingRepository, addressStatsRepository, mailSender }`.
 Writing own database classes is described in the end of this document.
 
 ### Configuration
 
 There are two config files: `config.default.json` and `config.json`. The latter
 allows to override default parameters. The `config.json` file should be created manually.
+
+Config files are parsed as [JSON5](https://json5.org/) (comments and trailing commas
+are allowed) and support:
+* `"%{NAME}"` — value of the environment variable `NAME`, `"%{NAME|default}"` — with
+  a default value (useful for passwords);
+* `"@{path.to.field}"` — value of another config field;
+* `"__parent": "base.json"` — inherit from another file (path is relative to the
+  current file).
+
+YAML configs are no longer supported.
 ```js
 {
   "actions": {
@@ -118,9 +147,10 @@ allows to override default parameters. The `config.json` file should be created 
   "forwardTo": "someone@example.com", // where to forward messages from humans
   "imapConnection": { // IMAP connection parameters
     "host": "imap.yandex.ru",
-    "password": "123",
+    "password": "%{IMAP_PASSWORD}",
     "port": 993,
-    "tls": true,
+    "tls": true, // false: plain connection, STARTTLS is used when the server supports it
+    "tlsOptions": { "rejectUnauthorized": true }, // optional: Node.js TLS options
     "user": "123"
   },
   "logging": {
@@ -128,19 +158,19 @@ allows to override default parameters. The `config.json` file should be created 
     "maxLogLevel": "verbose" // max level of messages that will be written to log (stdout)
   },
   "mailer": { // SMTP server settings for forwarding messages
+    "from": "noreply@example.com",
     "host": "localhost",
-    "port": 587
+    "port": 587,
+    "auth": { "user": "...", "pass": "..." } // optional
   },
   "mailboxes": ["INBOX"], // mailboxes to read
   "maxForwardDays": 7, // max age (in days) for message to be forwarded
   "maxTemporaryFailures": 3, // this amount of temporary failures will lead to address exclusion from database
   "messageBatchSize": 100, // messages are loaded in batches; this is size of such batch
   "readonly": true, // readonly mode: no changes in mailbox, no changes in database
-  "redis": { // redis connection parameters
-    "pool": { // min and max number of connections in pool
-      "min": 1,
-      "max": 5
-    }
+  "redis": { // Redis of mail-server: "url" or "host"/"port"/"db"/"password"
+    "url": "redis://localhost:6379/0",
+    "prefixes": {} // optional: key prefixes, the same as in mail-server config
   },
   "unsubscribeAdditionalAddress": "unsubscribe" // part of "unsubscribe" address after + sign
 }

@@ -1,0 +1,17 @@
+{
+  // See README.md for all options
+  "database": { "type": "dummy" },
+  "forwardTo": "someone@example.com",
+  "imapConnection": {
+    "host": "imap.example.com",
+    "password": "%{IMAP_PASSWORD}",
+    "user": "noreply@example.com"
+  },
+  "mailer": {
+    "from": "noreply@example.com",
+    "host": "smtp.example.com",
+    "port": 587
+  },
+  "readonly": true,
+  "redis": { "url": "redis://localhost:6379/0" }
+}
