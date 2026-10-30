@@ -34,7 +34,12 @@ whole picture), but can be used with any address database. With mail-server:
   bounces are counted per mailing (found by the `List-Id` header of the original
   letter) and per address, and mail-server shows them as delivery errors;
 - use the `mail-server` database driver: excluded addresses are removed from all
-  mailings via its API.
+  mailings via its API;
+- the result of every run is written to Redis (key `MAIL_SORTER_STATUS`, prefix
+  `sorterStatusKey`): times, success or error, message counts per type and
+  performed actions, failed message numbers and the time of the last successful
+  run. Runs with `readonly` are recorded too (with `"readonly": true`).
+  mail-server shows the result in its web interface.
 
 ```json
 {

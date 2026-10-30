@@ -7,7 +7,8 @@ const { createClient, WatchError } = require('redis');
 const DEFAULT_PREFIXES = {
   addressStatsKeyPrefix: 'ADDRESS_STATS_',
   commonDataKeyPrefix: 'MAILING_COMMON_DATA_',
-  idCounterKey: 'MAILING_ID_COUNTER'
+  idCounterKey: 'MAILING_ID_COUNTER',
+  sorterStatusKey: 'MAIL_SORTER_STATUS'
 };
 
 // Переводит параметры клиента redis 2.x (как в конфиге mail-server)
@@ -126,8 +127,33 @@ class RedisMailingRepository {
   }
 }
 
+// Итог последнего запуска mail-sorter; mail-server показывает его в
+// веб-интерфейсе (GET /sorter/status). lastSuccessAt переносится из
+// предыдущей записи, если запуск завершился ошибкой
+class RedisSorterStatusRepository {
+  constructor (client, prefixes = {}) {
+    this.client = client;
+    this.key = prefixes.sorterStatusKey || DEFAULT_PREFIXES.sorterStatusKey;
+  }
+
+  async get () {
+    const json = await this.client.get(this.key);
+    return json ? JSON.parse(json) : null;
+  }
+
+  async save (status) {
+    const previous = await this.get();
+    const lastSuccessAt = status.success ? status.finishedAt :
+      (previous && previous.lastSuccessAt) || null;
+    const saved = { ...status, lastSuccessAt };
+    await this.client.set(this.key, JSON.stringify(saved));
+    return saved;
+  }
+}
+
 module.exports = {
   createRedisClient,
   RedisAddressStatsRepository,
-  RedisMailingRepository
+  RedisMailingRepository,
+  RedisSorterStatusRepository
 };

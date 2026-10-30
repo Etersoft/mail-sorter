@@ -59,6 +59,7 @@ class MailboxSorter extends EventEmitter {
       if (result.performedActions) {
         performedActions = performedActions.concat(result.performedActions);
       }
+      this.emit(Events.MESSAGE_ACTIONS_PERFORMED, message, performedActions);
       const actionString = performedActions.join(', ');
       const reasonString = result.reason || 'unknown';
 
@@ -89,7 +90,6 @@ class MailboxSorter extends EventEmitter {
       actionsPerformed.push('delete message');
     }
 
-    this.emit(Events.MESSAGE_ACTIONS_PERFORMED, message);
     return actionsPerformed;
   }
 

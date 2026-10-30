@@ -17,7 +17,8 @@ const SpecialHeaderParser = require('./SpecialHeaderParser');
 const MailingStatsTracker = require('./MailingStatsTracker');
 const SmtpMailSender = require('./services/SmtpMailSender');
 const {
-  createRedisClient, RedisAddressStatsRepository, RedisMailingRepository
+  createRedisClient, RedisAddressStatsRepository, RedisMailingRepository,
+  RedisSorterStatusRepository
 } = require('./services/RedisRepositories');
 
 
@@ -36,15 +37,23 @@ async function run (config, logger, actionLogger, database, services = {}) {
     logger.info('Mailbox opened in readonly mode: no modifications will be made');
   }
   const mailbox = config.readonly ? new ReadonlyMailbox(mailboxConfig) : new Mailbox(mailboxConfig);
-  logger.verbose('Connecting...');
-  await mailbox.initialize();
 
   const ownServices = await createDefaultServices(config, services);
+  const { sorterStatusRepository } = ownServices.services;
+  const status = {
+    mailboxes: config.mailboxes,
+    readonly: Boolean(config.readonly),
+    startedAt: new Date().toISOString()
+  };
+  let statsCollector = null;
   try {
+    logger.verbose('Connecting...');
+    await mailbox.initialize();
+
     const sorter = createMailboxSorter({
       config, mailbox, logger, actionLogger, database, ...ownServices.services
     });
-    const statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
+    statsCollector = new MailboxSorterStatsCollector(sorter, MessageTypes.names, logger);
 
     for (const boxName of config.mailboxes) {
       logger.info('Processing mailbox: ' + boxName);
@@ -54,11 +63,31 @@ async function run (config, logger, actionLogger, database, services = {}) {
 
     statsCollector.logStats();
     await mailbox.close();
+    status.success = true;
+  } catch (error) {
+    status.success = false;
+    status.error = error.message;
+    throw error;
   } finally {
+    if (sorterStatusRepository) {
+      await saveStatus(sorterStatusRepository, status, statsCollector, logger);
+    }
     await ownServices.close();
   }
 
   logger.info('Done.');
+}
+
+async function saveStatus (repository, status, statsCollector, logger) {
+  try {
+    await repository.save({
+      ...status,
+      ...(statsCollector ? statsCollector.getSummary() : {}),
+      finishedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    logger.warn('Failed to save run status: ' + error.message);
+  }
 }
 
 // Параметры совместимы с конфигом модуля imap (node-imap), который
@@ -77,13 +106,14 @@ function createImapClient (imapConfig) {
   });
 }
 
-// Хранилища статистики (Redis mail-server) и отправщик писем можно передать
+// Хранилища статистики и итога запуска (Redis mail-server) и отправщик писем можно передать
 // готовыми через services; чего нет — создаётся по конфигу
 async function createDefaultServices (config, services) {
   const result = { ...services };
   const closers = [];
 
-  if (config.redis && !(services.mailingRepository && services.addressStatsRepository)) {
+  if (config.redis && !(services.mailingRepository && services.addressStatsRepository &&
+      services.sorterStatusRepository)) {
     const client = createRedisClient(config.redis);
     await client.connect();
     closers.push(() => client.close());
@@ -91,6 +121,8 @@ async function createDefaultServices (config, services) {
       new RedisMailingRepository(client, config.redis.prefixes);
     result.addressStatsRepository = services.addressStatsRepository ||
       new RedisAddressStatsRepository(client, config.redis.prefixes);
+    result.sorterStatusRepository = services.sorterStatusRepository ||
+      new RedisSorterStatusRepository(client, config.redis.prefixes);
   }
 
   if (config.mailer && !services.mailSender) {

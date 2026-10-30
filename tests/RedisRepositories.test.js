@@ -2,7 +2,8 @@ const { describe, it, before, after, beforeEach } = require('node:test');
 const assert = require('node:assert/strict');
 
 const {
-  createRedisClient, RedisAddressStatsRepository, RedisMailingRepository
+  createRedisClient, RedisAddressStatsRepository, RedisMailingRepository,
+  RedisSorterStatusRepository
 } = require('../src/services/RedisRepositories');
 
 
@@ -95,5 +96,17 @@ describe('Redis repositories', { skip: !REDIS_URL && 'REDIS_URL is not set' }, f
     } finally {
       await other.close();
     }
+  });
+
+  it('should save sorter status keeping the last success time', async function () {
+    const repository = new RedisSorterStatusRepository(client);
+    assert.equal(await repository.get(), null);
+
+    await repository.save({ finishedAt: '2026-10-30T10:00:00.000Z', success: true });
+    const failed = await repository.save({
+      error: 'connect ECONNREFUSED', finishedAt: '2026-10-30T11:00:00.000Z', success: false
+    });
+    assert.equal(failed.lastSuccessAt, '2026-10-30T10:00:00.000Z');
+    assert.deepEqual(JSON.parse(await client.get('MAIL_SORTER_STATUS')), failed);
   });
 });
