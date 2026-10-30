@@ -113,8 +113,11 @@ Configuration example (`config.database`):
 ```
 
 ### Mail-server database driver
-Excludes addresses from all mailings through the mail-server HTTP API
-(`POST /mailings/unsubscribe`, requires a mail-server version with this endpoint).
+Excludes addresses through the mail-server HTTP API (`POST /mailings/unsubscribe`,
+requires a mail-server version with this endpoint): undeliverable addresses from
+all mailings, senders of unsubscribe letters only from mailings with the
+`List-Unsubscribe` header (`listUnsubscribe` option of the mailing; mail-server
+versions without this option reject such unsubscribe requests with 400).
 Configuration example (`config.database`):
 ```json
 {

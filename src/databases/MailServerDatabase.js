@@ -13,22 +13,23 @@ class MailServerDatabase {
     if (this.readonly) {
       return true;
     }
-    return this._disableEmailsForAddress(address);
+    return this._disableEmailsForAddress(address, false);
   }
 
+  // Письмо на адрес из List-Unsubscribe — отписка только от рассылок с этим заголовком
   async unsubscribeAddress (address) {
     this.logger.debug('Unsubscribe emails: ' + address);
     if (this.readonly) {
       return true;
     }
-    return this._disableEmailsForAddress(address);
+    return this._disableEmailsForAddress(address, true);
   }
 
-  // Удаляет адрес из всех рассылок mail-server (POST /mailings/unsubscribe).
+  // Удаляет адрес из рассылок mail-server (POST /mailings/unsubscribe).
   // Ответ: { success: true, data: { removed: <число рассылок> } }
-  async _disableEmailsForAddress (address) {
+  async _disableEmailsForAddress (address, listUnsubscribe) {
     const response = await fetch(`${this.backend}/mailings/unsubscribe`, {
-      body: JSON.stringify({ email: address }),
+      body: JSON.stringify({ email: address, ...(listUnsubscribe ? { listUnsubscribe } : {}) }),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST'
     });

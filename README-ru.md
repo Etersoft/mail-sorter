@@ -112,8 +112,11 @@ mail-sorter может быть запущен напрямую или чере�
 ```
 
 ### Драйвер mail-server
-Исключает адреса из всех рассылок через HTTP API mail-server
-(`POST /mailings/unsubscribe`, нужна версия mail-server с этим методом).
+Исключает адреса через HTTP API mail-server (`POST /mailings/unsubscribe`, нужна
+версия mail-server с этим методом): недоставляемые — из всех рассылок,
+отправителей писем с просьбой отписаться — только из рассылок с заголовком
+`List-Unsubscribe` (настройка рассылки `listUnsubscribe`; версии mail-server без
+этой настройки отвечают на такой запрос отписки ошибкой 400).
 Пример конфигурации (`config.database`):
 ```json
 {
