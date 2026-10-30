@@ -103,14 +103,13 @@ class DsnParser {
       return null;
     }
 
-    let listId = originalMessage.headers.get('list');
-    // because mailparser transforms headers
-    if (listId && listId.id) {
-      listId = listId.id;
-      return [
-        listId.name,
-        listId.mail ? `<${listId.mail}>` : null
-      ].filter(part => typeof part === 'string').join(' ');
+    // Значение берётся из исходной строки заголовка: mailparser разбирает его
+    // как адрес и теряет скобки у идентификаторов без «@» (<метка.домен>)
+    const header = (originalMessage.headerLines || [])
+      .find(header => header.key === 'list-id');
+    const listId = header && header.line.match(/<[^<>]*>/);
+    if (listId) {
+      return listId[0];
     } else {
       this.logger.debug(`UID ${message.uid}: no list-id`);
       return null;

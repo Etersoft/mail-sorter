@@ -38,6 +38,12 @@ describe('DsnParser', function () {
       assert.equal(failureInfo.status, FailureTypes.TEMPORARY_FAILURE);
     });
 
+    it('should keep brackets of List-Id without "@"', async function () {
+      const message = await loadMessage('dsn-dotted-list-id.eml');
+      const failureInfo = await dsnParser.extract(message);
+      assert.equal(failureInfo.listId, '<20261027-2.eterpost.etersoft.ru>');
+    });
+
     it('should return null on missing DSN attachment', async function () {
       const message = await loadMessage('email-without-dsn.eml');
       const failureInfo = await dsnParser.extract(message);
