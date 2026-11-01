@@ -7,6 +7,9 @@ class SmtpMailSender {
     this.transport = createTransport({
       auth: config.auth,
       host: config.host,
+      // Имя в EHLO; без него nodemailer берёт имя системы, если в нём есть
+      // точка, иначе [127.0.0.1]
+      name: config.name,
       pool: true,
       port: config.port,
       secure: config.secure

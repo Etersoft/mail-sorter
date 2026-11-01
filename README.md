@@ -213,7 +213,9 @@ YAML configs are no longer supported.
     "from": "noreply@example.com",
     "host": "localhost",
     "port": 587,
-    "auth": { "user": "...", "pass": "..." } // optional
+    "auth": { "user": "...", "pass": "..." }, // optional
+    "secure": false, // optional: true for TLS right away (port 465); otherwise STARTTLS
+    "name": "mailing.example.com" // optional: EHLO name; by default the system host name if it is a full domain name, otherwise [127.0.0.1]
   },
   "mailboxes": ["INBOX"], // mailboxes to read
   "maxForwardDays": 7, // max age (in days) for message to be forwarded
