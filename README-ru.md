@@ -122,12 +122,16 @@ mail-sorter может быть запущен напрямую или чере�
 отправителей писем с просьбой отписаться — только из рассылок с заголовком
 `List-Unsubscribe` (настройка рассылки `listUnsubscribe`; версии mail-server без
 этой настройки отвечают на такой запрос отписки ошибкой 400).
+`apiKey` — ключ API mail-server (выдаётся его командой `api-keys add`,
+передаётся в заголовке `Authorization: Bearer`); нужен, когда mail-server
+проверяет ключи.
 Пример конфигурации (`config.database`):
 ```json
 {
   "type": "mail-server",
   "options": {
-    "backend": "http://localhost:8000"
+    "backend": "http://localhost:8000",
+    "apiKey": "%{MAIL_SERVER_API_KEY}"
   }
 }
 ```

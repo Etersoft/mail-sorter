@@ -123,12 +123,15 @@ requires a mail-server version with this endpoint): undeliverable addresses from
 all mailings, senders of unsubscribe letters only from mailings with the
 `List-Unsubscribe` header (`listUnsubscribe` option of the mailing; mail-server
 versions without this option reject such unsubscribe requests with 400).
+`apiKey` is the mail-server API key (created with its `api-keys add` command,
+sent as `Authorization: Bearer`); it is needed when mail-server checks keys.
 Configuration example (`config.database`):
 ```json
 {
   "type": "mail-server",
   "options": {
-    "backend": "http://localhost:8000"
+    "backend": "http://localhost:8000",
+    "apiKey": "%{MAIL_SERVER_API_KEY}"
   }
 }
 ```

@@ -2,6 +2,7 @@ class MailServerDatabase {
   constructor (config, logger) {
     this.logger = logger;
     this.backend = config.backend;
+    this.apiKey = config.apiKey;
     this.readonly = config.readonly;
     if (config.readonly) {
       logger.info('Dry run: will not unsubscribe anyone');
@@ -28,9 +29,13 @@ class MailServerDatabase {
   // Удаляет адрес из рассылок mail-server (POST /mailings/unsubscribe).
   // Ответ: { success: true, data: { removed: <число рассылок> } }
   async _disableEmailsForAddress (address, listUnsubscribe) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (this.apiKey) {
+      headers.Authorization = `Bearer ${this.apiKey}`;
+    }
     const response = await fetch(`${this.backend}/mailings/unsubscribe`, {
       body: JSON.stringify({ email: address, ...(listUnsubscribe ? { listUnsubscribe } : {}) }),
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       method: 'POST'
     });
     if (!response.ok) {
