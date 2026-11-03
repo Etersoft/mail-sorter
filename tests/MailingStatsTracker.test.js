@@ -70,6 +70,20 @@ describe('MailingStatsTracker', function () {
       assert.deepEqual(actions, ['updated address stats']);
     });
 
+    it('should remember the mailing of the error in address stats', async function () {
+      await tracker.countFailure(failureInfo);
+      const scenario = fakeStatsRepository.updateInTransaction.mock.calls[0].arguments[1];
+      const stats = { temporaryFailureCount: 0 };
+      await scenario(stats);
+      assert.equal(stats.lastMailingId, 1);
+
+      fakeStatsRepository.updateInTransaction = resolvesWith(null);
+      failureInfo.listId = null;
+      await tracker.countFailure(failureInfo);
+      const created = fakeStatsRepository.create.mock.calls[0].arguments[0];
+      assert.equal(created.lastMailingId, undefined);
+    });
+
     it('should increment undeliveredCount for mailing in transaction', async function () {
       await tracker.countFailure(failureInfo);
       const transactionScenario =

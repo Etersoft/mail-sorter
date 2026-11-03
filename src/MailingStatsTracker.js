@@ -12,11 +12,12 @@ class MailingStatsTracker {
 
   async countFailure (failureInfo) {
     const actions = [];
+    let mailingId = null;
     if (failureInfo.listId) {
-      await this._modifyMailingCounters(failureInfo, actions);
+      mailingId = await this._modifyMailingCounters(failureInfo, actions);
     }
-    
-    await this._modifyAddressCounters(failureInfo, actions);
+
+    await this._modifyAddressCounters(failureInfo, mailingId, actions);
 
     return actions;
   }
@@ -38,7 +39,8 @@ class MailingStatsTracker {
     return null;
   }
 
-  async _modifyAddressCounters (failureInfo, actions) {
+  // mailingId — рассылка, в которой возникла ошибка (показывается в mail-server)
+  async _modifyAddressCounters (failureInfo, mailingId, actions) {
     const { diagnosticCode, dsnStatus, recipient, spam, status } = failureInfo;
     const stats = await this.addressStatsRepository.updateInTransaction(
       recipient, // find stats by this email
@@ -47,6 +49,7 @@ class MailingStatsTracker {
         stats.lastStatusDate = new Date();
         stats.spam = spam;
         stats.diagnosticCode = diagnosticCode;
+        stats.lastMailingId = mailingId || undefined;
         if (status === FailureTypes.TEMPORARY_FAILURE) {
           stats.temporaryFailureCount++;
         }
@@ -58,6 +61,7 @@ class MailingStatsTracker {
     } else {
       await this.addressStatsRepository.create({
         email: recipient,
+        lastMailingId: mailingId || undefined,
         lastStatus: dsnStatus,
         lastStatusDate: new Date(),
         spam, diagnosticCode
@@ -71,7 +75,7 @@ class MailingStatsTracker {
     const mailingId = await this._getMailingIdByListId(listId);
     if (!mailingId) {
       this.logger.debug(`UID ${message.uid}: no mailing with list-id ${listId}`);
-      return;
+      return null;
     }
     
     const mailing = await this.mailingRepository.updateInTransaction(
@@ -88,6 +92,7 @@ class MailingStatsTracker {
         }`
       );
     }
+    return mailingId;
   }
 }
 
