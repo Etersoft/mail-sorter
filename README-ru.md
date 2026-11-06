@@ -1,4 +1,9 @@
-# mail-sorter
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/pochtar-logo-dark.svg">
+  <img alt="Почтарь" src="docs/pochtar-logo.svg" height="64">
+</picture>
+
+# eterpost-sorter
 
 **Русский** | [English](README.md)
 

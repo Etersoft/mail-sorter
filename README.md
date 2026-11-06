@@ -1,4 +1,9 @@
-# mail-sorter
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/eterpost-logo-dark.svg">
+  <img alt="Eterpost" src="docs/eterpost-logo.svg" height="64">
+</picture>
+
+# eterpost-sorter
 
 [Русский](README-ru.md) | **English**
 
