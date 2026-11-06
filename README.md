@@ -25,7 +25,7 @@ and message type defines actions to be performed.
 ## Working with mail-server
 
 mail-sorter is a part of the mailing system around
-[mail-server](https://github.com/Etersoft/mail-server) (see its README for the
+[mail-server](https://github.com/Eterpost/eterpost-server) (see its README for the
 whole picture), but can be used with any address database. With mail-server:
 
 - point `imapConnection` to the mailbox that receives replies to mailings

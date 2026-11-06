@@ -25,7 +25,7 @@ DSN вперемешку с другими письмами.
 ## Работа с mail-server
 
 mail-sorter входит в систему рассылок вокруг
-[mail-server](https://github.com/Etersoft/mail-server) (общая схема — в его README),
+[mail-server](https://github.com/Eterpost/eterpost-server) (общая схема — в его README),
 но может работать и с любой другой базой адресов. С mail-server:
 
 - `imapConnection` указывает на ящик, куда приходят ответы на рассылки

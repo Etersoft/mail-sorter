@@ -1,5 +1,5 @@
 {
-  "name": "mail-sorter",
+  "name": "eterpost-sorter",
   "version": "0.2.0",
   "description": "Mailbox reading and sorting library",
   "main": "src/index.js",
