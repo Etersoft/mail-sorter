@@ -5,7 +5,7 @@
 
 # eterpost-sorter
 
-[Русский](README-ru.md) | **English**
+[Русский](README.ru.md) | **English**
 
 This is a program for automated reading of mail server replies
 ([Delivery Status Notifications](https://en.wikipedia.org/wiki/Bounce_message))
